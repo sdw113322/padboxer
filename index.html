@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+    <title></title>
+	<link rel=stylesheet type="text/css" href="./css/main.css"> 
+	<link rel=stylesheet type="text/css" href="./css/magic-bootstrap-min.css"> 
+	<script src="./js/jquery-2.1.1.min.js"></script>
+	<script src="./js/bootstrap.min.js"></script>
+	<script src="./js/main.js"></script>
+	<script src="./js/jquery.tablesorter.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="pageHeader"> </div>
+      <div class="body">
+	  <div class="nav">
+	  <ul class="nav nav-pills">
+		  <li><a href="#" id="btn-add"" style="font-size:16px;">新增寵物</a></li>
+		  <li class="active"><a href="#" id="btn-box" style="font-size:16px;">box</a></li>
+		  <li><a href="#" id="btn-material"" style="font-size:16px;">素材</a></li>
+	  </ul>
+	  </div>
+	  <div id="add" style="display:none" class="form-inline" role="form">
+		<div class="form-group">
+		<div class="input-group">
+		<div class="input-group-addon">No.</div>
+		<input type="text" class="form-control" style="width:50px;" name="no"></input>
+		</div>
+		</div>
+		<div class="form-group">
+		<div class="input-group">
+		<div class="input-group-addon">X</div>
+		<input type="text" class="form-control" style="width:50px;" value="1" name="quantity"></input>
+		</div>
+		</div>
+		<button id="btn-add-enter"class="btn btn-default">新增</button>
+		<button class="btn-add-hide btn btn-default">取消</button>
+	  </div>
+	  <div class="mainTable" id="mainTable">
+		  <table>
+			<thead>
+				<tr>
+					<th>No.</th>
+					<th>中文名</th>
+					<th>日文名</th>
+					<th>進化素材</th>
+					<th>動作</th>
+				</tr>
+			</thead>
+			<tbody>
+			 </tbody>
+		  </table>
+		</div>
+		<div id="material" style="display:none" class="container-fluid">
+			<div class="col-md-6 mainTable">
+				<h2>火曜日　星期二</h2>
+				<table>
+					<thead>
+						<tr>
+							<th>No.</th>
+							<th>名稱</th>
+							<th>現有</th>
+							<th>需要</th>
+							<th>總計</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="red">
+							<td>147</td>
+							<td>火番</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="blue">
+							<td>148</td>
+							<td>水番</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="green">
+							<td>149</td>
+							<td>木番</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="yellow">
+							<td>150</td>
+							<td>光番</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="purple">
+							<td>151</td>
+							<td>暗番</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="purple">
+							<td>321</td>
+							<td>虹番</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="yellow">
+							<td>1176</td>
+							<td>黃金番</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+				<h2>水曜日　星期三</h2>
+				<table>
+					<thead>
+						<tr>
+							<th>No.</th>
+							<th>名稱</th>
+							<th>現有</th>
+							<th>需要</th>
+							<th>總計</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="red">
+							<td>161</td>
+							<td>火假面</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="red">
+							<td>171</td>
+							<td>火神面</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="red">
+							<td>166</td>
+							<td>火鬼面</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="blue">
+							<td>162</td>
+							<td>水假面</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="blue">
+							<td>172</td>
+							<td>水神面</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="blue">
+							<td>167</td>
+							<td>水鬼面</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="blue">
+							<td>1294</td>
+							<td>古代水面</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="green">
+							<td>163</td>
+							<td>木假面</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="green">
+							<td>173</td>
+							<td>木神面</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="green">
+							<td>168</td>
+							<td>木鬼面</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="green">
+							<td>1295</td>
+							<td>古代木面</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="yellow">
+							<td>164</td>
+							<td>光假面</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="yellow">
+							<td>174</td>
+							<td>光神面</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="yellow">
+							<td>169</td>
+							<td>光鬼面</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="purple">
+							<td>165</td>
+							<td>暗假面</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="purple">
+							<td>175</td>
+							<td>暗神面</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="purple">
+							<td>170</td>
+							<td>暗鬼面</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="yellow">
+							<td>234</td>
+							<td>神秘面</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="col-md-6 mainTable">
+				<h2>木曜日　星期四</h2>
+				<table>
+					<thead>
+						<tr>
+							<th>No.</th>
+							<th>名稱</th>
+							<th>現有</th>
+							<th>需要</th>
+							<th>總計</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="green">
+							<td>152</td>
+							<td>龍種</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="green">
+							<td>153</td>
+							<td>龍芽</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="green">
+							<td>154</td>
+							<td>龍花</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="green">
+							<td>227</td>
+							<td>龍果</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="red">
+							<td>1085</td>
+							<td>紅龍果</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="blue">
+							<td>1086</td>
+							<td>藍龍果</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="green">
+							<td>1087</td>
+							<td>綠龍果</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+				<h2>金曜日　星期五</h2>
+				<table>
+					<thead>
+						<tr>
+							<th>No.</th>
+							<th>名稱</th>
+							<th>現有</th>
+							<th>需要</th>
+							<th>總計</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="red">
+							<td>155</td>
+							<td>火精</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="blue">
+							<td>156</td>
+							<td>水精</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="green">
+							<td>157</td>
+							<td>木精</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="yellow">
+							<td>158</td>
+							<td>光精</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="purple">
+							<td>159</td>
+							<td>暗精</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="purple">
+							<td>160</td>
+							<td>彩精</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="red">
+							<td>246</td>
+							<td>雙倍火精</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="blue">
+							<td>247</td>
+							<td>雙倍水精</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="green">
+							<td>248</td>
+							<td>雙倍木精</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="yellow">
+							<td>249</td>
+							<td>雙倍光精</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="purple">
+							<td>250</td>
+							<td>雙倍暗精</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="purple">
+							<td>251</td>
+							<td>雙倍彩精</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="yellow">
+							<td>915</td>
+							<td>光魚蛋</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr class="green">
+							<td>916</td>
+							<td>暗魚蛋</td>
+							<td>0</td>
+							<td>0</td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+      </div>
+      <div class="footer"> 
+	  </div>
+    </div>
+    <div class="modal fade" id="ultimateBranch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">關閉</span></button>
+			<h4 class="modal-title" id="myModalLabel">選擇究極進化分支</h4>
+		  </div>
+		  <div class="modal-body">
+			<form></form>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+			<button type="submit" class="btn btn-primary">儲存變更</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+  </body>
+</html>
