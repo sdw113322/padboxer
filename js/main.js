@@ -43,7 +43,7 @@ function boxDisplay( box )
 
 function boxReset()
 {
-	$("#mainTable tbody").empty();
+	$("#mainTable table").remove();
 }
 
 function internalLoad()
@@ -54,6 +54,12 @@ function internalLoad()
 		var ultimate = JSON.parse(window.localStorage.ultimate);
 		console.log(ultimate);
 		var allNeed = [];
+		$("#mainTable").append($("<table>")
+			.append("<thead><tr><th>No.</th><th>中文名</th><th>日文名</th><th>進化素材</th><th>動作</th></tr></thead>")	
+			.append($("<tbody>"))
+		);
+		var box = boxLoad();
+		boxDisplay(box);
 		$("#mainTable tbody tr").each(function() {
 			var text = $( this ).children().text();
 			var choice = $( this ).attr('data-choice');
@@ -132,7 +138,6 @@ function internalLoad()
 				}
 				else if(evolution[text].status == 'n')
 					$( this ).append("<td>" + "無法進化" + "</td>");
-				//$("#material").text("");
 			}else
 				$( this ).append($("<td>"));
 			//顯示動作
@@ -145,9 +150,9 @@ function internalLoad()
 						deleteMonster(id,box);
 						var string = JSON.stringify(box);
 						window.localStorage.box = string;
-						box = boxLoad();
+						//box = boxLoad();
 						boxReset();
-						boxDisplay(box);
+						//boxDisplay(box);
 						internalLoad();
 					})
 				)
@@ -160,6 +165,7 @@ function internalLoad()
 			var total = $(this).children().eq(2).text() - $(this).children().eq(3).text();
 			$(this).children().eq(4).text(total);
 		});
+		$("#mainTable table").tablesorter();
 	}else
 		return false;
 }
@@ -222,14 +228,10 @@ function deleteMonster(id,box)//不是 property 裡的 id，是指索引值
 }
 
 $(document).ready(function() {
-	var box = boxLoad();
-	boxDisplay(box);
 	if(internalLoad() == false){
 		externalLoad();
 		window.setTimeout("internalLoad();",5000);
 	}
-	console.log(box);
-	console.log(window.localStorage.box);
 	$("#add #btn-add-enter").click(function(){
 		var box = boxLoad();
 		var a = $("#add input[name='no']").val();
@@ -240,9 +242,7 @@ $(document).ready(function() {
 		}
 		var string = JSON.stringify(box);
 		window.localStorage.box = string;
-		box = boxLoad();
 		boxReset();
-		boxDisplay(box);
 		internalLoad();
 		$("#add input[name='no']").val("");
 		$("#add input[name='quantity']").val("1");
@@ -258,9 +258,7 @@ $(document).ready(function() {
 		$("#ultimateBranch .modal-body").append($("<form>"));
 		var string = JSON.stringify(box);
 		window.localStorage.box = string;
-		box = boxLoad();
 		boxReset();
-		boxDisplay(box);
 		internalLoad();
 		$('#ultimateBranch').modal('hide');
 	});
