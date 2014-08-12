@@ -5,16 +5,19 @@ function monster(id,no,choice)
 	this.choice = choice;
 }
 
-function boxLoad()
+function dataLoad( target )
 {
-	var box = [];
-	if(!(window.localStorage.getItem("box") === null)){
-		var string = window.localStorage.box;
-		box = JSON.parse(string);
-		return box;
+	var result = [];
+	if(!(window.localStorage.getItem(target) === null)){
+		var string = window.localStorage.getItem(target);
+		result = JSON.parse(string);
+		return result;
 	}else{
-		window.localStorage.boxid = 0;
-		return box;
+		if(target == "box")
+			window.localStorage.boxid = 0;
+		else if(target == "material")
+			window.localStorage.materialid = 0;
+		return result;
 	}
 }
 
@@ -58,7 +61,7 @@ function internalLoad()
 			.append("<thead><tr><th>No.</th><th>中文名</th><th>日文名</th><th>進化素材</th><th>動作</th></tr></thead>")	
 			.append($("<tbody>"))
 		);
-		var box = boxLoad();
+		var box = dataLoad("box");
 		boxDisplay(box);
 		$("#mainTable tbody tr").each(function() {
 			var text = $( this ).children().text();
@@ -146,13 +149,11 @@ function internalLoad()
 					.addClass("glyphicon glyphicon-remove")
 					.click(function(){
 						var id = $(this).parent().parent().attr('id');
-						var box = boxLoad();
+						var box = dataLoad("box");
 						deleteMonster(id,box);
 						var string = JSON.stringify(box);
 						window.localStorage.box = string;
-						//box = boxLoad();
 						boxReset();
-						//boxDisplay(box);
 						internalLoad();
 					})
 				)
@@ -233,7 +234,7 @@ $(document).ready(function() {
 		window.setTimeout("internalLoad();",5000);
 	}
 	$("#add #btn-add-enter").click(function(){
-		var box = boxLoad();
+		var box = dataLoad("box");
 		var a = $("#add input[name='no']").val();
 		var b = $("#add input[name='quantity']").val();
 		var i = 0;
@@ -250,7 +251,7 @@ $(document).ready(function() {
 	$("#ultimateBranch .btn-primary").click(function(){
 		var branchChoice = $("input[type='radio']:checked", "#ultimateBranch").val();
 		var id = $("input[type='radio']:checked", "#ultimateBranch").attr("data-id");
-		var box = boxLoad();
+		var box = dataLoad("box");
 		console.log(id);
 		console.log(branchChoice);
 		box[id].choice = branchChoice;
