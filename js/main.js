@@ -5,6 +5,12 @@ function monster(id,no,choice)
 	this.choice = choice;
 }
 
+function material(no,qty)
+{
+	this.no = no;
+	this.quantity = qty;
+}
+
 function dataLoad( target )
 {
 	var result = [];
@@ -15,8 +21,54 @@ function dataLoad( target )
 	}else{
 		if(target == "box")
 			window.localStorage.boxid = 0;
-		else if(target == "material")
-			window.localStorage.materialid = 0;
+		else if(target == "material"){
+			result[0] = new material(147,0);
+			result[1] = new material(148,0);
+			result[2] = new material(149,0);
+			result[3] = new material(150,0);
+			result[4] = new material(151,0);
+			result[5] = new material(321,0);
+			result[6] = new material(1176,0);
+			result[7] = new material(161,0);
+			result[8] = new material(171,0);
+			result[9] = new material(166,0);
+			result[10] = new material(162,0);
+			result[11] = new material(172,0);
+			result[12] = new material(167,0);
+			result[13] = new material(1294,0);
+			result[14] = new material(163,0);
+			result[15] = new material(173,0);
+			result[16] = new material(168,0);
+			result[17] = new material(1295,0);
+			result[18] = new material(164,0);
+			result[19] = new material(174,0);
+			result[20] = new material(169,0);
+			result[21] = new material(165,0);
+			result[22] = new material(175,0);
+			result[23] = new material(170,0);
+			result[24] = new material(234,0);
+			result[25] = new material(152,0);
+			result[26] = new material(153,0);
+			result[27] = new material(154,0);
+			result[28] = new material(227,0);
+			result[29] = new material(1085,0);
+			result[30] = new material(1086,0);
+			result[31] = new material(1087,0);
+			result[32] = new material(155,0);
+			result[33] = new material(156,0);
+			result[34] = new material(157,0);
+			result[35] = new material(158,0);
+			result[36] = new material(159,0);
+			result[37] = new material(160,0);
+			result[38] = new material(246,0);
+			result[39] = new material(247,0);
+			result[40] = new material(248,0);
+			result[41] = new material(249,0);
+			result[42] = new material(250,0);
+			result[43] = new material(251,0);
+			result[44] = new material(915,0);
+			result[45] = new material(916,0);
+		}
 		return result;
 	}
 }
@@ -25,7 +77,6 @@ function boxDisplay( box )
 {
 	var i = 0;
 	var choice;
-	var allHave = [];
 	for(i=0;i<box.length;i++){
 		if(box[i].hasOwnProperty('choice'))
 			choice = box[i].choice;
@@ -33,16 +84,16 @@ function boxDisplay( box )
 			choice = 0;
 		$("#mainTable tbody").append( $(" <tr> ").attr( 'id' , i ).attr( 'data-choice' , choice )
 						.append( $(" <td> ").text( box[i].no )));
-		if(box[i].no in allHave)
-			allHave[box[i].no] ++;
-		else
-			allHave[box[i].no] = 1;
-	}
-		$("#material tbody tr").each(function(){
-			var no = $(this).children().first().text();
-			$(this).children().eq(2).text(allHave[no]);
-		});
-	}
+	}	
+}
+	
+function materialDisplay( material )
+{
+	$("#material tbody tr").each(function( index ){
+		var no = $(this).children().first().text();
+		$(this).children().eq(2).text(material[index].no);
+	});
+}
 
 function boxReset()
 {
@@ -62,7 +113,9 @@ function internalLoad()
 			.append($("<tbody>"))
 		);
 		var box = dataLoad("box");
+		var material = dataLoad("material");
 		boxDisplay(box);
+		materialDisplay(material);
 		$("#mainTable tbody tr").each(function() {
 			var text = $( this ).children().text();
 			var choice = $( this ).attr('data-choice');
@@ -295,5 +348,8 @@ $(document).ready(function() {
 		if(event.keyCode == 13){
 			$("#add #btn-add-enter").click();
 		}
+	});
+	$("#clear").click(function(){
+		window.localStorage.clear();
 	});
 });
