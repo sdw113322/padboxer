@@ -91,7 +91,7 @@ function materialDisplay( material )
 {
 	$("#material tbody tr").each(function( index ){
 		var no = $(this).children().first().text();
-		$(this).children().eq(2).text(material[index].no);
+		$(this).children().eq(2).text(material[index].quantity);
 	});
 }
 
@@ -351,5 +351,14 @@ $(document).ready(function() {
 	});
 	$("#clear").click(function(){
 		window.localStorage.clear();
+	});
+	$("span.add-material").click(function(){
+		var id = $(this).attr('data-id');
+		var material = dataLoad("material");
+		material[id].quantity ++;
+		var string = JSON.stringify(material);
+		window.localStorage.material = string;
+		boxReset();
+		internalLoad();
 	});
 });
