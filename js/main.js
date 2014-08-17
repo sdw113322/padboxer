@@ -235,6 +235,7 @@ function internalLoad()
 						var box = dataLoad("box");
 						var material = dataLoad("material");
 						var need = [];
+						var notHave = [];
 						var error = 0;
 						if(text in evolution){
 							if(evolution[text].status == 'y'){
@@ -256,11 +257,11 @@ function internalLoad()
 								}
 							}
 							else if(evolution[text].status == 'n'){
-								alert("error!");
+								alert("無法進化");
 								error = 1;
 							}
 						}else{
-							alert(text);
+							alert("錯誤");
 							error = 1;
 						}
 						if(error == 0){
@@ -274,13 +275,15 @@ function internalLoad()
 								if(i<46){
 									material[i].quantity --;
 									if(material[i].quantity < 0){
-										error = 1;
-										alert("error!");
+										error = 2;
+										notHave.push(need[index]);
 									}
 								}
 							}
 						}
-						if(error == 0){
+						if(error == 0)
+							var accept = confirm ("真的要進化嗎？");
+						if(error == 0 && accept == true){
 							var string = JSON.stringify(material);
 							window.localStorage.material = string;
 							deleteMonster(id,box);
@@ -288,6 +291,13 @@ function internalLoad()
 							window.localStorage.box = string;
 							boxReset();
 							internalLoad();
+						}else if(error == 0){
+							boxReset();
+							internalLoad();
+						}
+						if(error == 2){
+							alert(notHave + "不存在\n無法進化");
+						
 						}
 					})
 				);
@@ -432,6 +442,7 @@ $(document).ready(function() {
 	});
 	$("#clear").click(function(){
 		window.localStorage.clear();
+		document.location.reload(true);
 	});
 	$("span.add-material").click(function(){
 		var id = $(this).attr('data-id');
