@@ -129,7 +129,12 @@ function internalLoad()
 			//顯示進化素材
 			if(text in evolution){
 				if(evolution[text].status == 'y'){
-					$( this ).append("<td>" + evolution[text].need + "</td>");
+					$( this ).append($("<td>"));
+					for(var key in evolution[text].need){
+						$( this ).children().eq(3).append($("<span>").text(evolution[text].need[key]).attr("data-id",evolution[text].need[key]));
+						if(key < evolution[text].need.length - 1)
+							$( this ).children().eq(3).append(",");
+					}
 					var j = 0;
 					for(j=0;j<evolution[text].need.length;j++){
 						if(evolution[text].need[j] in allNeed)
@@ -141,11 +146,19 @@ function internalLoad()
 				else if(evolution[text].status == 'u'){
 					if(choice > 0){
 						var i = 1;
+						var ultimateNeed = ultimate[i].need;
 						while(ultimate[i].result!=choice){
-							var ultimateNeed = ultimate[i].need;
 							i++;
+							ultimateNeed = ultimate[i].need;
 						}
-						$( this ).append("<td>" + ultimateNeed + "</td>");
+						console.log(ultimate[i].need);
+						$( this ).append($("<td>"));
+						console.log(ultimateNeed);
+						for(var key in ultimateNeed){
+							$( this ).children().eq(3).append($("<span>").text(ultimateNeed[key]).attr("data-id",ultimateNeed[key]));
+							if(key < ultimateNeed.length - 1)
+								$( this ).children().eq(3).append(",");
+						}
 						for(j=0;j<ultimateNeed.length;j++){
 							if(ultimateNeed[j] in allNeed)
 								allNeed[ultimateNeed[j]] ++;
@@ -211,6 +224,74 @@ function internalLoad()
 					})
 				)
 			);
+			if(evolution[text].status != "n")
+				$( this ).children().last().append($("<span>")
+					.addClass("glyphicon glyphicon-forward")
+					.click(function(){
+						var text = $( this ).parent().parent().children().first().text();
+						var id = $( this ).parent().parent().attr("id");
+						var evolution = JSON.parse(window.localStorage.evolution);
+						var ultimate = JSON.parse(window.localStorage.ultimate);
+						var box = dataLoad("box");
+						var material = dataLoad("material");
+						var need = [];
+						var error = 0;
+						if(text in evolution){
+							if(evolution[text].status == 'y'){
+								need = evolution[text].need;
+							}
+							else if(evolution[text].status == 'u'){
+								if(choice > 0){
+									var i = 1;
+									var ultimateNeed = ultimate[i].need;
+									while(ultimate[i].result!=choice){
+										i++;
+										ultimateNeed = ultimate[i].need;
+									}
+									need = ultimateNeed;
+								}
+								else{
+									alert("error!");
+									error = 1;
+								}
+							}
+							else if(evolution[text].status == 'n'){
+								alert("error!");
+								error = 1;
+							}
+						}else{
+							alert(text);
+							error = 1;
+						}
+						if(error == 0){
+							for(var index in need){
+								var i = 0;
+								console.log(need[index]);
+								while(material[i].no != parseInt(need[index]) && i<45){
+									i++;
+									console.log(i);
+								}
+								if(i<46){
+									material[i].quantity --;
+									if(material[i].quantity < 0){
+										error = 1;
+										alert("error!");
+									}
+								}
+							}
+						}
+						if(error == 0){
+							var string = JSON.stringify(material);
+							window.localStorage.material = string;
+							deleteMonster(id,box);
+							string = JSON.stringify(box);
+							window.localStorage.box = string;
+							boxReset();
+							internalLoad();
+						}
+					})
+				);
+			
 		});
 		console.log(allNeed);
 		$("#material tbody tr").each(function(){
@@ -360,5 +441,25 @@ $(document).ready(function() {
 		window.localStorage.material = string;
 		boxReset();
 		internalLoad();
+	});
+	$("span.edit-material")
+		.attr("data-toggle","modal")
+		.attr("data-target","#material-modal")
+		.click(function(){
+			var id = $(this).attr('data-id');
+			var material = dataLoad("material");
+			$("#material-modal .modal-body form input").val(material[id].quantity);
+			$("#material-modal .modal-body form input").attr("data-id",id);
+		});
+	$("#material-modal .btn-primary").click(function(){
+		var value = $("#material-modal .modal-body form input").val();
+		var id = $("#material-modal .modal-body form input").attr("data-id");
+		var material = dataLoad("material");
+		material[id].quantity = value;
+		var string = JSON.stringify(material);
+		window.localStorage.material = string;
+		boxReset();
+		internalLoad();
+		$('#material-modal').modal('hide');
 	});
 });
