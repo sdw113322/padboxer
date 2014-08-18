@@ -131,7 +131,13 @@ function internalLoad()
 				if(evolution[text].status == 'y'){
 					$( this ).append($("<td>"));
 					for(var key in evolution[text].need){
-						$( this ).children().eq(3).append($("<span>").text(evolution[text].need[key]).attr("data-id",evolution[text].need[key]));
+						$( this ).children().eq(3).append(
+							$("<span>")
+								.attr("title",name[evolution[text].need[key]].chinese)
+								.attr("class","material-display")
+								.attr("data-id",evolution[text].need[key])
+								.text(evolution[text].need[key])
+							);
 						if(key < evolution[text].need.length - 1)
 							$( this ).children().eq(3).append(",");
 					}
@@ -155,7 +161,12 @@ function internalLoad()
 						$( this ).append($("<td>"));
 						console.log(ultimateNeed);
 						for(var key in ultimateNeed){
-							$( this ).children().eq(3).append($("<span>").text(ultimateNeed[key]).attr("data-id",ultimateNeed[key]));
+							$( this ).children().eq(3).append(
+								$("<span>").text(ultimateNeed[key])
+									.attr("data-id",ultimateNeed[key])
+									.attr("title",name[ultimateNeed[key]].chinese)
+									.attr("class","material-display")
+								);
 							if(key < ultimateNeed.length - 1)
 								$( this ).children().eq(3).append(",");
 						}
@@ -303,6 +314,7 @@ function internalLoad()
 				);
 			
 		});
+		$(".material-display").tooltipster(); //active tooltipster
 		console.log(allNeed);
 		$("#material tbody tr").each(function(){
 			var no = $(this).children().first().text();
