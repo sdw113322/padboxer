@@ -247,6 +247,7 @@ function internalLoad()
 						var material = dataLoad("material");
 						var need = [];
 						var notHave = [];
+						var notIn = [];
 						var error = 0;
 						if(text in evolution){
 							if(evolution[text].status == 'y'){
@@ -281,19 +282,29 @@ function internalLoad()
 								console.log(need[index]);
 								while(material[i].no != parseInt(need[index]) && i<45){
 									i++;
-									console.log(i);
 								}
+								if(material[45].no != parseInt(need[index]) && i==45)
+									i++;
 								if(i<46){
+									console.log(material);
+									console.log(material[i].quantity);
 									material[i].quantity --;
+									console.log(material[i].quantity);
 									if(material[i].quantity < 0){
 										error = 2;
 										notHave.push(need[index]);
 									}
+								}else{
+									notIn.push(need[index]);
 								}
 							}
 						}
-						if(error == 0)
-							var accept = confirm ("真的要進化嗎？");
+						if(error == 0){
+							if(notIn.length == 0)
+								var accept = confirm ("真的要進化嗎？");
+							else
+								var accept = confirm ("沒有統計" + notIn + "\n真的要進化嗎？");
+						}
 						if(error == 0 && accept == true){
 							var string = JSON.stringify(material);
 							window.localStorage.material = string;
