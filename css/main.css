@@ -20,6 +20,12 @@
 	  .nav{
 	    padding-bottom: 20px;
 	  }
+	  .nav-left{
+		float: left;
+	  }
+	  .nav-right{
+		float: right;
+	  }
 	  #add{
 		padding-bottom: 20px;
 	  }
