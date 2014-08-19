@@ -444,29 +444,29 @@ $(document).ready(function() {
 	});
 	$("#btn-add").click(function(){
 		$("#add").show( 400 );
-		$("#btn-add").parent().addClass("active");
+		$("#btn-add").addClass("active");
 	});
 	$(".btn-add-hide").click(function(){
 		$("#add").hide( 400 );
 		$("#add input[name='no']").val("");
 		$("#add input[name='quantity']").val("1");
-		$("#btn-add").parent().removeClass("active");
+		$("#btn-add").removeClass("active");
 	});
 	$("#btn-material").click(function(){
 		$("#mainTable").hide( 400 );
 		window.setTimeout("$(\"#material\").show( 400 );",400);
-		$("#btn-add").parent().addClass("disabled");
+		$("#btn-add").attr("disabled","disabled");
 		$("#btn-box").parent().removeClass("active");
 		$("#btn-material").parent().addClass("active");
 		$("#add").hide( 400 );
 		$("#add input[name='no']").val("");
 		$("#add input[name='quantity']").val("1");
-		$("#btn-add").parent().removeClass("active");
+		$("#btn-add").removeClass("active");
 	});	
 	$("#btn-box").click(function(){
 		$("#material").hide( 400 );
 		window.setTimeout("$(\"#mainTable\").show( 400 );",400);
-		$("#btn-add").parent().removeClass("disabled");
+		$("#btn-add").removeAttr("disabled");
 		$("#btn-box").parent().addClass("active");
 		$("#btn-material").parent().removeClass("active");
 	});	
