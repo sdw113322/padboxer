@@ -245,7 +245,7 @@ function internalLoad( load_times )
 						boxReset();
 						internalLoad();
 					})
-				)
+				).append(" ")
 			);
 			if(evolution[text].status != "n")
 				$( this ).children().last().append($("<span>")
