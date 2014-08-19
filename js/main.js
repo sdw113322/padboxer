@@ -100,13 +100,25 @@ function boxReset()
 	$("#mainTable table").remove();
 }
 
-function internalLoad()
+function internalLoad( load_times )
 {
 	if(!(window.localStorage.getItem("name") === null)&&!(window.localStorage.getItem("evolution") === null)&&!(window.localStorage.getItem("ultimate") === null)){
 		var name = JSON.parse(window.localStorage.name);
 		var evolution = JSON.parse(window.localStorage.evolution);
 		var ultimate = JSON.parse(window.localStorage.ultimate);
 		console.log(ultimate);
+		if(window.localStorage.getItem("time") === null){
+			var date1 = new Date(0);
+		}
+		else
+			var date1 = new Date(window.localStorage.time);
+		var date2 = new Date();
+		var delta = date2 - date1;
+		console.log(window.localStorage.time);
+		if(delta > (86400000 * 7) && load_times < 1){
+			window.localStorage.time = date2;
+			return false;
+		}
 		var allNeed = [];
 		$("#mainTable").append($("<table>")
 			.append("<thead><tr><th>No.</th><th>中文名</th><th>日文名</th><th>進化素材</th><th>動作</th></tr></thead>")	
@@ -396,9 +408,9 @@ function deleteMonster(id,box)//不是 property 裡的 id，是指索引值
 }
 
 $(document).ready(function() {
-	if(internalLoad() == false){
+	if(internalLoad(0) == false){
 		externalLoad();
-		window.setTimeout("internalLoad();",5000);
+		window.setTimeout("internalLoad(1);",5000);
 	}
 	$("#add #btn-add-enter").click(function(){
 		var box = dataLoad("box");
@@ -495,5 +507,9 @@ $(document).ready(function() {
 		boxReset();
 		internalLoad();
 		$('#material-modal').modal('hide');
+	});
+	$("#update").click(function(){
+		window.localStorage.removeItem("time");
+		document.location.reload(true);
 	});
 });
