@@ -9,4 +9,4 @@ Puzzle & Dragons 素材管理程式
 The program can be used to calculate the demand of (ultimate) evolution materials in Puzzle & Dragons.<br>
 In the "BOX" tab, you can add/view monsters you would like to (ultimate) evolve.<br>
 In the "material" tab, you can edit the quantity of materials you have.<br>
-There are a "evolve" button in the "BOX" tab. It makes users use the program more convenient.
+There are "evolve" buttons in the "BOX" tab. It makes users use the program more convenient.
