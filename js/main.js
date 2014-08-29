@@ -114,11 +114,17 @@ function internalLoad( load_times )
 			var date1 = new Date(window.localStorage.time);
 		var date2 = new Date();
 		var delta = date2 - date1;
-		console.log(window.localStorage.time);
 		if(delta > (86400000 * 7) && load_times < 1){
 			window.localStorage.time = date2;
 			return false;
 		}
+		var data_date = new Date(evolution[0].time);
+		var curr_date = data_date.getDate();
+		var curr_month = data_date.getMonth();
+		curr_month++;
+		var curr_year = data_date.getFullYear();
+		$(".data-date").text(curr_year + "/" + curr_month + "/" + curr_date);
+		console.log(new Date(evolution[0].time));
 		var allNeed = [];
 		$("#mainTable").append($("<table>")
 			.append("<thead><tr><th>No.</th><th>中文名</th><th>日文名</th><th>進化素材</th><th>動作</th></tr></thead>")	
@@ -236,6 +242,7 @@ function internalLoad( load_times )
 			$( this ).append($("<td>")
 				.append($("<span>")
 					.addClass("glyphicon glyphicon-remove")
+					.attr("title","刪除")
 					.click(function(){
 						var id = $(this).parent().parent().attr('id');
 						var box = dataLoad("box");
@@ -245,11 +252,12 @@ function internalLoad( load_times )
 						boxReset();
 						internalLoad();
 					})
-				)
+				).append(" ")
 			);
 			if(evolution[text].status != "n")
 				$( this ).children().last().append($("<span>")
 					.addClass("glyphicon glyphicon-forward")
+					.attr("title","進化")
 					.click(function(){
 						var text = $( this ).parent().parent().children().first().text();
 						var id = $( this ).parent().parent().attr("id");
@@ -454,9 +462,11 @@ $(document).ready(function() {
 	});
 	$("#btn-material").click(function(){
 		$("#mainTable").hide( 400 );
+		$("#about").hide( 400 );
 		window.setTimeout("$(\"#material\").show( 400 );",400);
 		$("#btn-add").attr("disabled","disabled");
 		$("#btn-box").parent().removeClass("active");
+		$("#btn-about").parent().removeClass("active");
 		$("#btn-material").parent().addClass("active");
 		$("#add").hide( 400 );
 		$("#add input[name='no']").val("");
@@ -465,10 +475,26 @@ $(document).ready(function() {
 	});	
 	$("#btn-box").click(function(){
 		$("#material").hide( 400 );
+		$("#about").hide( 400 );
 		window.setTimeout("$(\"#mainTable\").show( 400 );",400);
 		$("#btn-add").removeAttr("disabled");
 		$("#btn-box").parent().addClass("active");
 		$("#btn-material").parent().removeClass("active");
+		$("#btn-about").parent().removeClass("active");
+	});	
+	$("#btn-about").click(function(){
+		$("#mainTable").hide( 400 );
+		$("#material").hide( 400 );
+		window.setTimeout("$(\"#about\").show( 400 );",400);
+		$("#btn-add").removeAttr("disabled");
+		$("#btn-about").parent().addClass("active");
+		$("#btn-box").parent().removeClass("active");
+		$("#btn-material").parent().removeClass("active");
+		$("#btn-add").attr("disabled","disabled");
+		$("#add").hide( 400 );
+		$("#add input[name='no']").val("");
+		$("#add input[name='quantity']").val("1");
+		$("#btn-add").removeClass("active");
 	});	
 	$("#add input").keyup(function(event){
 		if(event.keyCode == 13){

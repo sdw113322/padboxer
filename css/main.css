@@ -26,6 +26,9 @@
 	  .nav-right{
 		float: right;
 	  }
+	  .footer{
+		text-align:center;
+	  }
 	  #add{
 		padding-bottom: 20px;
 	  }
