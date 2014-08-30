@@ -505,6 +505,10 @@ $(document).ready(function() {
 		window.localStorage.clear();
 		document.location.reload(true);
 	});
+	$("#backup").click(function(){
+		var backup = window.localStorage.boxid + "      " + window.localStorage.box + "      " + window.localStorage.material;
+		$("#backup-modal .modal-body textarea").val(backup);
+	});
 	$("span.add-material").click(function(){
 		var id = $(this).attr('data-id');
 		var material = dataLoad("material");
@@ -533,6 +537,17 @@ $(document).ready(function() {
 		boxReset();
 		internalLoad();
 		$('#material-modal').modal('hide');
+	});
+	$("#import-modal .btn-primary").click(function(){
+		var value = $("#import-modal .modal-body textarea").val();
+		var splits = value.split("      ");
+		window.localStorage.boxid = splits[0];
+		window.localStorage.box = splits[1];
+		window.localStorage.material = splits[2];
+		boxReset();
+		internalLoad();
+		$("#import-modal .modal-body textarea").val();
+		$('#import-modal').modal('hide');
 	});
 	$("#update").click(function(){
 		window.localStorage.removeItem("time");
