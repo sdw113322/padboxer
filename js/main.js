@@ -421,7 +421,6 @@ $(document).ready(function() {
 		$("#mainTable").hide( 400 );
 		$("#material").hide( 400 );
 		window.setTimeout("$(\"#about\").show( 400 );",400);
-		$("#btn-add").removeAttr("disabled");
 		$("#btn-about").parent().addClass("active").siblings('.active').removeClass('active');
 		$("#btn-add").attr("disabled","disabled");
 		$("#add").hide( 400 );
