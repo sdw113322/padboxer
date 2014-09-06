@@ -401,15 +401,6 @@ function externalLoad()
 	});
 }
 
-function addMonster(no,box)
-{
-	var mon = new monster;
-	mon.id = window.localStorage.boxid;
-	mon.no = no;
-	box.push(mon);
-	window.localStorage.boxid ++;
-} 
-
 function deleteMonster(id,box)//不是 property 裡的 id，是指索引值
 {
 		box.splice(id,1);
@@ -425,6 +416,24 @@ function addMaterial( id )
 	internalLoad();
 }
 
+function addMonster(no,times,box)
+{
+	var mon = {};
+	var i = 0;
+	for(i=0;i<times;i++){
+		mon["id"] = window.localStorage.boxid;
+		mon["no"] = no;
+		box.push(mon);
+		window.localStorage.boxid ++;
+	}
+	var string = JSON.stringify(box);
+	window.localStorage.box = string;
+	boxReset();
+	internalLoad();
+	$("#add input[name='no']").val("");
+	$("#add input[name='quantity']").val("1");
+} 
+
 $(document).ready(function() {
 	if(internalLoad(0) == false){
 		externalLoad();
@@ -434,16 +443,7 @@ $(document).ready(function() {
 		var box = dataLoad("box");
 		var a = $("#add input[name='no']").val();
 		var b = $("#add input[name='quantity']").val();
-		var i = 0;
-		for(i=0;i<b;i++){
-			addMonster(a,box);
-		}
-		var string = JSON.stringify(box);
-		window.localStorage.box = string;
-		boxReset();
-		internalLoad();
-		$("#add input[name='no']").val("");
-		$("#add input[name='quantity']").val("1");
+		$.debounce( 250, addMonster(a,b,box) );
 	});
 	$("#ultimateBranch .btn-primary").click(function(){
 		var branchChoice = $("input[type='radio']:checked", "#ultimateBranch").val();
