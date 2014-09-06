@@ -1,16 +1,3 @@
-function monster(id,no,choice)
-{
-	this.id = id;
-	this.no = no;
-	this.choice = choice;
-}
-
-function material(no,qty)
-{
-	this.no = no;
-	this.quantity = qty;
-}
-
 function dataLoad( target )
 {
 	var result = [];
@@ -22,52 +9,9 @@ function dataLoad( target )
 		if(target == "box")
 			window.localStorage.boxid = 0;
 		else if(target == "material"){
-			result[0] = new material(147,0);
-			result[1] = new material(148,0);
-			result[2] = new material(149,0);
-			result[3] = new material(150,0);
-			result[4] = new material(151,0);
-			result[5] = new material(321,0);
-			result[6] = new material(1176,0);
-			result[7] = new material(161,0);
-			result[8] = new material(171,0);
-			result[9] = new material(166,0);
-			result[10] = new material(162,0);
-			result[11] = new material(172,0);
-			result[12] = new material(167,0);
-			result[13] = new material(1294,0);
-			result[14] = new material(163,0);
-			result[15] = new material(173,0);
-			result[16] = new material(168,0);
-			result[17] = new material(1295,0);
-			result[18] = new material(164,0);
-			result[19] = new material(174,0);
-			result[20] = new material(169,0);
-			result[21] = new material(165,0);
-			result[22] = new material(175,0);
-			result[23] = new material(170,0);
-			result[24] = new material(234,0);
-			result[25] = new material(152,0);
-			result[26] = new material(153,0);
-			result[27] = new material(154,0);
-			result[28] = new material(227,0);
-			result[29] = new material(1085,0);
-			result[30] = new material(1086,0);
-			result[31] = new material(1087,0);
-			result[32] = new material(155,0);
-			result[33] = new material(156,0);
-			result[34] = new material(157,0);
-			result[35] = new material(158,0);
-			result[36] = new material(159,0);
-			result[37] = new material(160,0);
-			result[38] = new material(246,0);
-			result[39] = new material(247,0);
-			result[40] = new material(248,0);
-			result[41] = new material(249,0);
-			result[42] = new material(250,0);
-			result[43] = new material(251,0);
-			result[44] = new material(915,0);
-			result[45] = new material(916,0);
+			var string = "[{\"no\":147,\"quantity\":\"0\"},{\"no\":148,\"quantity\":0},{\"no\":149,\"quantity\":0},{\"no\":150,\"quantity\":0},{\"no\":151,\"quantity\":0},{\"no\":321,\"quantity\":0},{\"no\":1176,\"quantity\":0},{\"no\":161,\"quantity\":0},{\"no\":171,\"quantity\":0},{\"no\":166,\"quantity\":0},{\"no\":162,\"quantity\":0},{\"no\":172,\"quantity\":0},{\"no\":167,\"quantity\":0},{\"no\":1294,\"quantity\":0},{\"no\":163,\"quantity\":0},{\"no\":173,\"quantity\":0},{\"no\":168,\"quantity\":0},{\"no\":1295,\"quantity\":0},{\"no\":164,\"quantity\":0},{\"no\":174,\"quantity\":0},{\"no\":169,\"quantity\":0},{\"no\":165,\"quantity\":0},{\"no\":175,\"quantity\":0},{\"no\":170,\"quantity\":0},{\"no\":234,\"quantity\":0},{\"no\":152,\"quantity\":0},{\"no\":153,\"quantity\":0},{\"no\":154,\"quantity\":0},{\"no\":227,\"quantity\":0},{\"no\":1085,\"quantity\":0},{\"no\":1086,\"quantity\":0},{\"no\":1087,\"quantity\":0},{\"no\":155,\"quantity\":0},{\"no\":156,\"quantity\":0},{\"no\":157,\"quantity\":0},{\"no\":158,\"quantity\":0},{\"no\":159,\"quantity\":0},{\"no\":160,\"quantity\":0},{\"no\":246,\"quantity\":0},{\"no\":247,\"quantity\":0},{\"no\":248,\"quantity\":0},{\"no\":249,\"quantity\":0},{\"no\":250,\"quantity\":0},{\"no\":251,\"quantity\":0},{\"no\":915,\"quantity\":0},{\"no\":916,\"quantity\":0}]";
+			window.localStorage.material = string;
+			result = JSON.parse(string);
 		}
 		return result;
 	}
@@ -106,7 +50,6 @@ function internalLoad( load_times )
 		var name = JSON.parse(window.localStorage.name);
 		var evolution = JSON.parse(window.localStorage.evolution);
 		var ultimate = JSON.parse(window.localStorage.ultimate);
-		console.log(ultimate);
 		if(window.localStorage.getItem("time") === null){
 			var date1 = new Date(0);
 		}
@@ -124,7 +67,6 @@ function internalLoad( load_times )
 		curr_month++;
 		var curr_year = data_date.getFullYear();
 		$(".data-date").text(curr_year + "/" + curr_month + "/" + curr_date);
-		console.log(new Date(evolution[0].time));
 		var allNeed = [];
 		$("#mainTable").append($("<table>")
 			.append("<thead><tr><th>No.</th><th>中文名</th><th>日文名</th><th>進化素材</th><th>動作</th></tr></thead>")	
@@ -175,9 +117,7 @@ function internalLoad( load_times )
 							i++;
 							ultimateNeed = ultimate[i].need;
 						}
-						console.log(ultimate[i].need);
 						$( this ).append($("<td>"));
-						console.log(ultimateNeed);
 						for(var key in ultimateNeed){
 							$( this ).children().eq(3).append(
 								$("<span>").text(ultimateNeed[key])
@@ -223,7 +163,6 @@ function internalLoad( load_times )
 											).append("   " + value + " - " + name[value].chinese + " - " + name[value].japanese )
 										);
 									});
-									console.log(ultimateResult);
 								})
 							)
 						);
@@ -299,17 +238,13 @@ function internalLoad( load_times )
 						if(error == 0){
 							for(var index in need){
 								var i = 0;
-								console.log(need[index]);
 								while(material[i].no != parseInt(need[index]) && i<45){
 									i++;
 								}
 								if(material[45].no != parseInt(need[index]) && i==45)
 									i++;
 								if(i<46){
-									console.log(material);
-									console.log(material[i].quantity);
 									material[i].quantity --;
-									console.log(material[i].quantity);
 									if(material[i].quantity < 0){
 										error = 2;
 										notHave.push(need[index]);
@@ -346,7 +281,6 @@ function internalLoad( load_times )
 			
 		});
 		$(".material-display").tooltipster(); //active tooltipster
-		console.log(allNeed);
 		$("#material tbody tr").each(function(){
 			var no = $(this).children().first().text();
 			$(this).children().eq(3).text(allNeed[no]);
@@ -369,7 +303,6 @@ function externalLoad()
 		},
 		error: function(request,error) 
 		{
-		 console.log(arguments);
 		 alert ( "錯誤: " + error );
 		}
 	});
@@ -382,7 +315,6 @@ function externalLoad()
 		},
 		error: function(request,error) 
 		{
-		 console.log(arguments);
 		 alert ( "錯誤: " + error );
 		}
 	});
@@ -395,7 +327,6 @@ function externalLoad()
 		},
 		error: function(request,error) 
 		{
-		 console.log(arguments);
 		 alert ( "錯誤: " + error );
 		}
 	});
@@ -449,8 +380,6 @@ $(document).ready(function() {
 		var branchChoice = $("input[type='radio']:checked", "#ultimateBranch").val();
 		var id = $("input[type='radio']:checked", "#ultimateBranch").attr("data-id");
 		var box = dataLoad("box");
-		console.log(id);
-		console.log(branchChoice);
 		box[id].choice = branchChoice;
 		$("#ultimateBranch .modal-body form").remove();
 		$("#ultimateBranch .modal-body").append($("<form>"));
@@ -475,9 +404,7 @@ $(document).ready(function() {
 		$("#about").hide( 400 );
 		window.setTimeout("$(\"#material\").show( 400 );",400);
 		$("#btn-add").attr("disabled","disabled");
-		$("#btn-box").parent().removeClass("active");
-		$("#btn-about").parent().removeClass("active");
-		$("#btn-material").parent().addClass("active");
+		$("#btn-material").parent().addClass("active").siblings('.active').removeClass('active');
 		$("#add").hide( 400 );
 		$("#add input[name='no']").val("");
 		$("#add input[name='quantity']").val("1");
@@ -488,18 +415,14 @@ $(document).ready(function() {
 		$("#about").hide( 400 );
 		window.setTimeout("$(\"#mainTable\").show( 400 );",400);
 		$("#btn-add").removeAttr("disabled");
-		$("#btn-box").parent().addClass("active");
-		$("#btn-material").parent().removeClass("active");
-		$("#btn-about").parent().removeClass("active");
+		$("#btn-box").parent().addClass("active").siblings('.active').removeClass('active');
 	});	
 	$("#btn-about").click(function(){
 		$("#mainTable").hide( 400 );
 		$("#material").hide( 400 );
 		window.setTimeout("$(\"#about\").show( 400 );",400);
 		$("#btn-add").removeAttr("disabled");
-		$("#btn-about").parent().addClass("active");
-		$("#btn-box").parent().removeClass("active");
-		$("#btn-material").parent().removeClass("active");
+		$("#btn-about").parent().addClass("active").siblings('.active').removeClass('active');
 		$("#btn-add").attr("disabled","disabled");
 		$("#add").hide( 400 );
 		$("#add input[name='no']").val("");
