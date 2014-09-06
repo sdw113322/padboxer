@@ -415,6 +415,16 @@ function deleteMonster(id,box)//不是 property 裡的 id，是指索引值
 		box.splice(id,1);
 }
 
+function addMaterial( id )
+{
+	var material = dataLoad("material");
+	material[id].quantity ++;
+	var string = JSON.stringify(material);
+	window.localStorage.material = string;
+	boxReset();
+	internalLoad();
+}
+
 $(document).ready(function() {
 	if(internalLoad(0) == false){
 		externalLoad();
@@ -511,12 +521,7 @@ $(document).ready(function() {
 	});
 	$("span.add-material").click(function(){
 		var id = $(this).attr('data-id');
-		var material = dataLoad("material");
-		material[id].quantity ++;
-		var string = JSON.stringify(material);
-		window.localStorage.material = string;
-		boxReset();
-		internalLoad();
+		$.debounce( 250, addMaterial(id) );
 	});
 	$("span.edit-material")
 		.attr("data-toggle","modal")
