@@ -393,6 +393,39 @@ $(document).ready(function() {
 		$("#add").show( 400 );
 		$("#btn-add").addClass("active");
 	});
+	$("#btn-add-preview").click(function(){
+		var name = JSON.parse(window.localStorage.name);
+		var evolution = JSON.parse(window.localStorage.evolution);
+		var ultimate = JSON.parse(window.localStorage.ultimate);
+		var no = $("#add input[name='no']").val();
+		var qty = $("#add input[name='quantity']").val();
+		$("#preview-modal h4").text(no + " - " + name[no].chinese);
+		if(evolution[no].status == "y"){
+			$("#preview-modal #preview-status").text("狀態：可以進化")
+			$("#preview-modal .modal-body").append($("<h5>").text( "進化為 " + evolution[no].result +" - "+name[evolution[no].result].chinese + "需要：" ));
+			for(var key in evolution[no].need){
+				$("#preview-modal .modal-body").append(evolution[no].need[key] + " - " + name[evolution[no].need[key]].chinese + "<br>");
+			}
+		}else if(evolution[no].status == "u"){
+			$("#preview-modal #preview-status").text("狀態：可以究極進化");
+			var i = 1;
+			var ultimateResult = [];
+			if(ultimateResult.length > 0)
+			ultimateResult.length = 0;
+			while(i < ultimate.length){
+				if(no == ultimate[i].no)
+					ultimateResult.push(ultimate[i]);
+				i++;
+			}
+			$.each(ultimateResult,function(index,value){
+				$("#preview-modal .modal-body").append($("<h5>").text( "進化為 " + value.result +" - "+name[value.result].chinese + "需要：" ));
+				for(var key in value.need){
+					$("#preview-modal .modal-body").append(value.need[key] + " - " + name[value.need[key]].chinese + "<br>");
+				}
+			});
+		}else
+			$("#preview-modal #preview-status").text("狀態：不能進化");
+	});
 	$(".btn-add-hide").click(function(){
 		$("#add").hide( 400 );
 		$("#add input[name='no']").val("");
@@ -479,5 +512,15 @@ $(document).ready(function() {
 	$("#update").click(function(){
 		window.localStorage.removeItem("time");
 		document.location.reload(true);
+	});
+	$("#preview-modal [data-dismiss='modal']").click(function(){
+		$("#preview-modal .modal-body").empty().append($("<span>").attr("id","preview-status"));
+	});
+	$("#preview-modal .btn-primary").click(function(){
+		var no = $("#add input[name='no']").val();
+		var qty = $("#add input[name='quantity']").val();
+		var box = dataLoad("box");
+		$.debounce( 250, addMonster(no,qty,box) );
+		$("#preview-modal .modal-body").empty().append($("<span>").attr("id","preview-status"));
 	});
 });
