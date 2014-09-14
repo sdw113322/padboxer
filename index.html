@@ -49,6 +49,7 @@
 		</div>
 		</div>
 		<button id="btn-add-enter"class="btn btn-default">新增</button>
+		<button id="btn-add-preview"class="btn btn-default" data-toggle="modal" data-target="#preview-modal">預覽</button>
 		<button class="btn-add-hide btn btn-default">取消</button>
 	  </div>
 	  <div class="mainTable" id="mainTable">
@@ -642,14 +643,14 @@
 		</div>
 		<div id="about" style="display:none">
 			<h2>Puzzle & Dragons 素材管理程式</h2>
-			<p style="font-size:16px;">版本號碼：0.6<br>
+			<p style="font-size:16px;">版本號碼：0.7 development<br>
 			資料產生日期：<span class="data-date"></span><br>
 			GITHUB:<a href="https://github.com/sdw113322/padboxer/">https://github.com/sdw113322/padboxer/</a><br>
 			made by sdw113322</p>
 		</div>
       </div>
 	  <div class="footer"> 
-		Puzzle & Dragons 素材管理程式 - version 0.6
+		Puzzle & Dragons 素材管理程式 - version 0.7 development
 	  </div>
     </div>
     <div class="modal fade" id="ultimateBranch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -717,6 +718,23 @@
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
 			<button type="submit" class="btn btn-primary">儲存變更</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<div class="modal fade" id="preview-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">關閉</span></button>
+			<h4 class="modal-title" id="myModalLabel2"></h4>
+		  </div>
+		  <div class="modal-body">
+			<span id="preview-status"></span><br>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+			<button type="submit" class="btn btn-primary">新增</button>
 		  </div>
 		</div>
 	  </div>

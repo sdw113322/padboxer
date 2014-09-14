@@ -393,6 +393,51 @@ $(document).ready(function() {
 		$("#add").show( 400 );
 		$("#btn-add").addClass("active");
 	});
+	$("#btn-add-preview").click(function(){
+		var name = JSON.parse(window.localStorage.name);
+		var evolution = JSON.parse(window.localStorage.evolution);
+		var ultimate = JSON.parse(window.localStorage.ultimate);
+		var no = $("#add input[name='no']").val();
+		var qty = $("#add input[name='quantity']").val();
+		$("#preview-modal .modal-body").empty().append($("<span>").attr("id","preview-status"));
+		$("#preview-modal h4").text(no + " - " + name[no].chinese);
+		if(evolution[no].status == "y"){
+			$("#preview-modal #preview-status").text("可以進化")
+			$("#preview-modal .modal-body").append($("<h5>").text( "進化為 " + evolution[no].result +" - "+name[evolution[no].result].chinese + "需要：" ));
+			$("#preview-modal .modal-body").append($("<table>").addClass("table table-bordered").append($("<thead>").append($("<tr>").append($("<th>").text("名稱")).append($("<th>").text("現有")).append($("<th>").text("總共")))));
+			for(var key in evolution[no].need){
+				
+				$("#preview-modal .modal-body table").append($("<tr>")
+					.append($("<td>").text(evolution[no].need[key] + " - " + name[evolution[no].need[key]].chinese))
+					.append($("<td>").text($("#material table tr td:first-child:contains('" + evolution[no].need[key] + "')").next().next().text()))
+					.append($("<td>").text($("#material table tr td:first-child:contains('" + evolution[no].need[key] + "')").next().next().next().next().text()))
+				);
+			}
+		}else if(evolution[no].status == "u"){
+			$("#preview-modal #preview-status").text("可以究極進化");
+			var i = 1;
+			var ultimateResult = [];
+			if(ultimateResult.length > 0)
+			ultimateResult.length = 0;
+			while(i < ultimate.length){
+				if(no == ultimate[i].no)
+					ultimateResult.push(ultimate[i]);
+				i++;
+			}
+			$.each(ultimateResult,function(index,value){
+				$("#preview-modal .modal-body").append($("<h5>").text( "進化為 " + value.result +" - "+name[value.result].chinese + "需要：" ));
+				$("#preview-modal .modal-body").append($("<table>").addClass("table table-bordered").attr("data-number",index).append($("<thead>").append($("<tr>").append($("<th>").text("名稱")).append($("<th>").text("現有")).append($("<th>").text("總共")))));
+				for(var key in value.need){
+					$("#preview-modal .modal-body table[data-number='"+ index +"']").append($("<tr>")
+						.append($("<td>").text(value.need[key] + " - " + name[value.need[key]].chinese))
+						.append($("<td>").text($("#material table tr td:first-child:contains('" + value.need[key] + "')").next().next().text()))
+						.append($("<td>").text($("#material table tr td:first-child:contains('" + value.need[key] + "')").next().next().next().next().text()))
+					);
+				}
+			});
+		}else
+			$("#preview-modal #preview-status").text("不能進化");
+	});
 	$(".btn-add-hide").click(function(){
 		$("#add").hide( 400 );
 		$("#add input[name='no']").val("");
@@ -479,5 +524,12 @@ $(document).ready(function() {
 	$("#update").click(function(){
 		window.localStorage.removeItem("time");
 		document.location.reload(true);
+	});
+	$("#preview-modal .btn-primary").click(function(){
+		$('#preview-modal').modal('hide');
+		var no = $("#add input[name='no']").val();
+		var qty = $("#add input[name='quantity']").val();
+		var box = dataLoad("box");
+		$.debounce( 250, addMonster(no,qty,box) );
 	});
 });
