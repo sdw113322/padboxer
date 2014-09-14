@@ -399,6 +399,7 @@ $(document).ready(function() {
 		var ultimate = JSON.parse(window.localStorage.ultimate);
 		var no = $("#add input[name='no']").val();
 		var qty = $("#add input[name='quantity']").val();
+		$("#preview-modal .modal-body").empty().append($("<span>").attr("id","preview-status"));
 		$("#preview-modal h4").text(no + " - " + name[no].chinese);
 		if(evolution[no].status == "y"){
 			$("#preview-modal #preview-status").text("可以進化")
@@ -524,14 +525,11 @@ $(document).ready(function() {
 		window.localStorage.removeItem("time");
 		document.location.reload(true);
 	});
-	$("#preview-modal [data-dismiss='modal']").click(function(){
-		$("#preview-modal .modal-body").empty().append($("<span>").attr("id","preview-status"));
-	});
 	$("#preview-modal .btn-primary").click(function(){
+		$('#preview-modal').modal('hide');
 		var no = $("#add input[name='no']").val();
 		var qty = $("#add input[name='quantity']").val();
 		var box = dataLoad("box");
 		$.debounce( 250, addMonster(no,qty,box) );
-		$("#preview-modal .modal-body").empty().append($("<span>").attr("id","preview-status"));
 	});
 });
