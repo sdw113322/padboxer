@@ -206,11 +206,14 @@ function internalLoad( load_times )
 						var material = dataLoad("material");
 						var need = [];
 						var notHave = [];
+						var result = 0;
 						var notIn = [];
 						var error = 0;
 						if(text in evolution){
 							if(evolution[text].status == 'y'){
 								need = evolution[text].need;
+								if(evolution[evolution[text].result].status == 'y' || evolution[evolution[text].result].status == 'u')
+									result = evolution[text].result;
 							}
 							else if(evolution[text].status == 'u'){
 								if(choice > 0){
@@ -259,11 +262,20 @@ function internalLoad( load_times )
 								var accept = confirm ("真的要進化嗎？");
 							else
 								var accept = confirm ("沒有統計" + notIn + "\n真的要進化嗎？");
+							if(window.localStorage.getItem("settingA") === null){
+								var settingA = confirm ("要自動將以進化的寵物加至box中嗎？\n設定可在\"關於\"分頁中修改");
+								if(settingA == true)
+									window.localStorage.settingA = 1;
+								else
+									window.localStorage.settingA = 0;
+							}
 						}
 						if(error == 0 && accept == true){
 							var string = JSON.stringify(material);
 							window.localStorage.material = string;
 							deleteMonster(id,box);
+							if(result != 0 && window.localStorage.settingA == 1)
+								addMonster(result,1,box);
 							string = JSON.stringify(box);
 							window.localStorage.box = string;
 							boxReset();
@@ -531,5 +543,16 @@ $(document).ready(function() {
 		var qty = $("#add input[name='quantity']").val();
 		var box = dataLoad("box");
 		$.debounce( 250, addMonster(no,qty,box) );
+	});
+	if(window.localStorage.settingA == 0 || window.localStorage.getItem("settingA") === null)
+		$("#settingA").prop('checked',false);
+	else
+		$("#settingA").prop('checked',true);
+	$("#settingA").click(function(){
+		if($("#settingA").prop( "checked" )){
+			window.localStorage.settingA = 1;		
+		}else{
+			window.localStorage.settingA = 0;
+		}
 	});
 });
