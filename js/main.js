@@ -491,8 +491,11 @@ $(document).ready(function() {
 		}
 	});
 	$("#clear").click(function(){
-		window.localStorage.clear();
-		document.location.reload(true);
+		var accept = confirm ("真的要清空嗎？");
+		if(accept == true){
+			window.localStorage.clear();
+			document.location.reload(true);
+		}
 	});
 	$("#backup").click(function(){
 		var backup = window.localStorage.boxid + "      " + window.localStorage.box + "      " + window.localStorage.material;
