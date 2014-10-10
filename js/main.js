@@ -33,10 +33,116 @@ function boxDisplay( box )
 	
 function materialDisplay( material )
 {
-	$("#material tbody tr").each(function( index ){
-		var no = $(this).children().first().text();
-		$(this).children().eq(2).text(material[index].quantity);
-	});
+	$("#material").append(
+		$("<div>").addClass("col-md-6 mainTable").append(
+			$("<h2>").text("火曜日　星期二")
+		).append(
+			$("<table>").attr("id","tue").append(
+				$("<thead>").append(
+					$("<tr>").append(
+						$("<th>").text("No.")
+					).append(
+						$("<th>").text("名稱")
+					).append(
+						$("<th>").text("現有")
+					).append(
+						$("<th>").text("需要")
+					).append(
+						$("<th>").text("總計")
+					).append(
+						$("<th>").text("動作")
+					)
+				)
+			).append($("<tbody>"))
+		).append(
+			$("<h2>").text("水曜日　星期三")
+		).append(
+			$("<table>").attr("id","wed").append(
+				$("<thead>").append(
+					$("<tr>").append(
+						$("<th>").text("No.")
+					).append(
+						$("<th>").text("名稱")
+					).append(
+						$("<th>").text("現有")
+					).append(
+						$("<th>").text("需要")
+					).append(
+						$("<th>").text("總計")
+					).append(
+						$("<th>").text("動作")
+					)
+				)
+			).append($("<tbody>"))
+		)
+	).append(
+		$("<div>").addClass("col-md-6 mainTable").append(
+			$("<h2>").text("木曜日　星期四")
+		).append(
+			$("<table>").attr("id","thu").append(
+				$("<thead>").append(
+					$("<tr>").append(
+						$("<th>").text("No.")
+					).append(
+						$("<th>").text("名稱")
+					).append(
+						$("<th>").text("現有")
+					).append(
+						$("<th>").text("需要")
+					).append(
+						$("<th>").text("總計")
+					).append(
+						$("<th>").text("動作")
+					)
+				)
+			).append($("<tbody>"))
+		).append(
+			$("<h2>").text("金曜日　星期五")
+		).append(
+			$("<table>").attr("id","fri").append(
+				$("<thead>").append(
+					$("<tr>").append(
+						$("<th>").text("No.")
+					).append(
+						$("<th>").text("名稱")
+					).append(
+						$("<th>").text("現有")
+					).append(
+						$("<th>").text("需要")
+					).append(
+						$("<th>").text("總計")
+					).append(
+						$("<th>").text("動作")
+					)
+				)
+			).append($("<tbody>"))
+		)
+	);
+	var day = ["tue","wed","thu","fri"];
+	for(var key1 in materialTemplate[0]){
+		for(var key2 in materialTemplate[0][key1]){
+			$("#" + day[key1] + " tbody").append(
+				$("<tr>").addClass(materialAttr[materialTemplate[0][key1][key2]].element).append(
+					$("<td>").text(materialAttr[materialTemplate[0][key1][key2]].no)
+				).append(
+					$("<td>").text(materialAttr[materialTemplate[0][key1][key2]].name)
+				).append(
+					$("<td>").text(material[materialTemplate[0][key1][key2]].quantity)
+				).append(
+					$("<td>").text("0")
+				).append(
+					$("<td>").text("0")
+				).append(
+					$("<td>").append(
+						$("<span>").addClass("glyphicon glyphicon-plus add-material").attr("title","+1").attr("data-id",materialTemplate[0][key1][key2])
+					).append(" ")
+					.append(
+						$("<span>").addClass("glyphicon glyphicon-pencil edit-material").attr("title","修改").attr("data-id",materialTemplate[0][key1][key2])
+					)
+				)
+			);
+		}
+	}
 }
 
 function boxReset()
