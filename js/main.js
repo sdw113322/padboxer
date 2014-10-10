@@ -33,6 +33,7 @@ function boxDisplay( box )
 	
 function materialDisplay( material )
 {
+	$("#material").empty();
 	$("#material").append(
 		$("<div>").addClass("col-md-6 mainTable").append(
 			$("<h2>").text("火曜日　星期二")
@@ -135,9 +136,21 @@ function materialDisplay( material )
 				).append(
 					$("<td>").append(
 						$("<span>").addClass("glyphicon glyphicon-plus add-material").attr("title","+1").attr("data-id",materialTemplate[0][key1][key2])
+						.click(function(){
+							var id = $(this).attr('data-id');
+							$.debounce( 250, addMaterial(id) );
+						})
 					).append(" ")
 					.append(
 						$("<span>").addClass("glyphicon glyphicon-pencil edit-material").attr("title","修改").attr("data-id",materialTemplate[0][key1][key2])
+						.attr("data-toggle","modal")
+						.attr("data-target","#material-modal")
+						.click(function(){
+							var id = $(this).attr('data-id');
+							var material = dataLoad("material");
+							$("#material-modal .modal-body form input").val(material[id].quantity);
+							$("#material-modal .modal-body form input").attr("data-id",id);
+						})
 					)
 				)
 			);
@@ -607,19 +620,6 @@ $(document).ready(function() {
 		var backup = window.localStorage.boxid + "      " + window.localStorage.box + "      " + window.localStorage.material;
 		$("#backup-modal .modal-body textarea").val(backup);
 	});
-	$("span.add-material").click(function(){
-		var id = $(this).attr('data-id');
-		$.debounce( 250, addMaterial(id) );
-	});
-	$("span.edit-material")
-		.attr("data-toggle","modal")
-		.attr("data-target","#material-modal")
-		.click(function(){
-			var id = $(this).attr('data-id');
-			var material = dataLoad("material");
-			$("#material-modal .modal-body form input").val(material[id].quantity);
-			$("#material-modal .modal-body form input").attr("data-id",id);
-		});
 	$("#material-modal .btn-primary").click(function(){
 		var value = $("#material-modal .modal-body form input").val();
 		var id = $("#material-modal .modal-body form input").attr("data-id");
