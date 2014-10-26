@@ -286,10 +286,6 @@ function internalLoad( load_times )
 							)
 						);
 	//
-						$("#ultimateBranch [data-dismiss='modal']").click(function(){
-							$("#ultimateBranch .modal-body form").remove();
-							$("#ultimateBranch .modal-body").append($("<form>"));
-						});
 					}
 				}
 				else if(evolution[text].status == 'n')
@@ -512,13 +508,15 @@ $(document).ready(function() {
 		var id = $("input[type='radio']:checked", "#ultimateBranch").attr("data-id");
 		var box = dataLoad("box");
 		box[id].choice = branchChoice;
-		$("#ultimateBranch .modal-body form").remove();
-		$("#ultimateBranch .modal-body").append($("<form>"));
 		var string = JSON.stringify(box);
 		window.localStorage.box = string;
 		boxReset();
 		internalLoad();
 		$('#ultimateBranch').modal('hide');
+	});
+	$('#ultimateBranch').on('hidden.bs.modal', function (e) {
+		$("#ultimateBranch .modal-body form").remove();
+		$("#ultimateBranch .modal-body").append($("<form>"));
 	});
 	$("#btn-add").click(function(){
 		$("#add").show( 400 );
