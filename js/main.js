@@ -215,7 +215,7 @@ function internalLoad( load_times )
 		$(".data-date").text(curr_year + "/" + curr_month + "/" + curr_date);
 		var allNeed = [];
 		$("#mainTable").append($("<table>")
-			.append("<thead><tr><th>No.</th><th>No.</th><th>中文名</th><th>日文名</th><th>進化素材</th><th>動作</th></tr></thead>")	
+			.append("<thead><tr><th>No.</th><th></th><th>中文名</th><th>日文名</th><th>進化素材</th><th>動作</th></tr></thead>")	
 			.append($("<tbody>"))
 		);
 		var box = dataLoad("box");
