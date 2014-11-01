@@ -43,6 +43,8 @@ function materialDisplay( material )
 					$("<tr>").append(
 						$("<th>").text("No.")
 					).append(
+						$("<th>")
+					).append(
 						$("<th>").text("名稱")
 					).append(
 						$("<th>").text("現有")
@@ -62,6 +64,8 @@ function materialDisplay( material )
 				$("<thead>").append(
 					$("<tr>").append(
 						$("<th>").text("No.")
+					).append(
+						$("<th>")
 					).append(
 						$("<th>").text("名稱")
 					).append(
@@ -85,6 +89,8 @@ function materialDisplay( material )
 					$("<tr>").append(
 						$("<th>").text("No.")
 					).append(
+						$("<th>")
+					).append(
 						$("<th>").text("名稱")
 					).append(
 						$("<th>").text("現有")
@@ -104,6 +110,8 @@ function materialDisplay( material )
 				$("<thead>").append(
 					$("<tr>").append(
 						$("<th>").text("No.")
+					).append(
+						$("<th>")
 					).append(
 						$("<th>").text("名稱")
 					).append(
@@ -125,6 +133,8 @@ function materialDisplay( material )
 			$("#" + day[key1] + " tbody").append(
 				$("<tr>").addClass(materialAttr[materialTemplate[0][key1][key2]].element).append(
 					$("<td>").text(materialAttr[materialTemplate[0][key1][key2]].no)
+				).append(
+					$("<td>").append($("<img>").attr("src","icon/"+ materialAttr[materialTemplate[0][key1][key2]].no +".png").attr("width",36).attr("height",36))
 				).append(
 					$("<td>").text(materialAttr[materialTemplate[0][key1][key2]].name)
 				).append(
@@ -410,9 +420,9 @@ function internalLoad( load_times )
 		$(".material-display").tooltipster(); //active tooltipster
 		$("#material tbody tr").each(function(){
 			var no = $(this).children().first().text();
-			$(this).children().eq(3).text(allNeed[no]);
-			var total = $(this).children().eq(2).text() - $(this).children().eq(3).text();
-			$(this).children().eq(4).text(total);
+			$(this).children().eq(4).text(allNeed[no]);
+			var total = $(this).children().eq(3).text() - $(this).children().eq(4).text();
+			$(this).children().eq(5).text(total);
 		});
 		$("#mainTable table").tablesorter();
 	}else
