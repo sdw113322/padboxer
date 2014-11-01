@@ -1,3 +1,20 @@
+(function( $ ) {
+	$.fn.addIcon = function( no ) {
+		if(!(window.localStorage.getItem("name") === null)){
+			var name = JSON.parse(window.localStorage.name);
+			this.append(
+			$("<img>")
+				.attr("src","icon/"+ no +".png")
+				.attr("width",36)
+				.attr("height",36)
+				.attr("class","material-display")//tootipster has been used
+				.attr("title",name[no].chinese)
+			);
+		}
+		return this;
+	};
+}( jQuery ));
+
 function dataLoad( target )
 {
 	var result = [];
@@ -134,7 +151,7 @@ function materialDisplay( material )
 				$("<tr>").addClass(materialAttr[materialTemplate[0][key1][key2]].element).append(
 					$("<td>").text(materialAttr[materialTemplate[0][key1][key2]].no)
 				).append(
-					$("<td>").append($("<img>").attr("src","icon/"+ materialAttr[materialTemplate[0][key1][key2]].no +".png").attr("width",36).attr("height",36))
+					$("<td>").addIcon(materialAttr[materialTemplate[0][key1][key2]].no)
 				).append(
 					$("<td>").text(materialAttr[materialTemplate[0][key1][key2]].name)
 				).append(
@@ -198,7 +215,7 @@ function internalLoad( load_times )
 		$(".data-date").text(curr_year + "/" + curr_month + "/" + curr_date);
 		var allNeed = [];
 		$("#mainTable").append($("<table>")
-			.append("<thead><tr><th>No.</th><th>中文名</th><th>日文名</th><th>進化素材</th><th>動作</th></tr></thead>")	
+			.append("<thead><tr><th>No.</th><th>No.</th><th>中文名</th><th>日文名</th><th>進化素材</th><th>動作</th></tr></thead>")	
 			.append($("<tbody>"))
 		);
 		var box = dataLoad("box");
@@ -208,6 +225,8 @@ function internalLoad( load_times )
 		$("#mainTable tbody tr").each(function() {
 			var text = $( this ).children().text();
 			var choice = $( this ).attr('data-choice');
+			//顯示圖片
+			$( this ).append($("<td>").addIcon(text));
 			//顯示中文名
 			if(text in name){
 				$( this ).append($("<td>").text(name[text].chinese));
@@ -220,15 +239,9 @@ function internalLoad( load_times )
 				if(evolution[text].status == 'y'){
 					$( this ).append($("<td>"));
 					for(var key in evolution[text].need){
-						$( this ).children().eq(3).append(
-							$("<span>")
-								.attr("title",name[evolution[text].need[key]].chinese)
-								.attr("class","material-display")
-								.attr("data-id",evolution[text].need[key])
-								.text(evolution[text].need[key])
-							);
+						$( this ).children().eq(4).addIcon(evolution[text].need[key]);
 						if(key < evolution[text].need.length - 1)
-							$( this ).children().eq(3).append(",");
+							$( this ).children().eq(4).append(" ");
 					}
 					var j = 0;
 					for(j=0;j<evolution[text].need.length;j++){
@@ -248,14 +261,9 @@ function internalLoad( load_times )
 						}
 						$( this ).append($("<td>"));
 						for(var key in ultimateNeed){
-							$( this ).children().eq(3).append(
-								$("<span>").text(ultimateNeed[key])
-									.attr("data-id",ultimateNeed[key])
-									.attr("title",name[ultimateNeed[key]].chinese)
-									.attr("class","material-display")
-								);
+							$( this ).children().eq(4).addIcon(ultimateNeed[key]);
 							if(key < ultimateNeed.length - 1)
-								$( this ).children().eq(3).append(",");
+								$( this ).children().eq(4).append(" ");
 						}
 						for(j=0;j<ultimateNeed.length;j++){
 							if(ultimateNeed[j] in allNeed)
