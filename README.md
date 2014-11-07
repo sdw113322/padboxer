@@ -10,3 +10,6 @@ The program can be used to calculate the demand of (ultimate) evolution material
 In the "BOX" tab, you can add/view monsters you would like to (ultimate) evolve.<br>
 In the "material" tab, you can edit the quantity of materials you have.<br>
 There are "evolve" buttons in the "BOX" tab. It makes users use the program more convenient.
+
+If you find any bugs or have any feature requests, please make use of our bug tracker(http://bug.22web.org/).
+
