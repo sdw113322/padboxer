@@ -16,6 +16,128 @@
 	};
 }( jQuery ));
 
+(function( $ ) {
+	$.fn.showAction = function( no ) {
+		if(!(window.localStorage.getItem("evolution") === null)){
+			var evolution = JSON.parse(window.localStorage.evolution);
+			$( this ).append($("<span>")
+					.addClass("glyphicon glyphicon-remove")
+					.attr("title","刪除")
+					.click(function(){
+						var id = $(this).parent().parent().attr('id');
+						var box = dataLoad("box");
+						deleteMonster(id,box);
+						var string = JSON.stringify(box);
+						window.localStorage.box = string;
+						var resort = true;
+						$("#mainTable table #" + id).remove();
+						$("#mainTable table").trigger("update", [resort]);
+					})
+				).append(" ");
+			if(no in evolution && evolution[no].status != "n")
+				$( this ).append($("<span>")
+					.addClass("glyphicon glyphicon-forward")
+					.attr("title","進化")
+					.click(function(){
+						var text = $( this ).parent().parent().children().first().text();
+						var id = $( this ).parent().parent().attr("id");
+						var evolution = JSON.parse(window.localStorage.evolution);
+						var ultimate = JSON.parse(window.localStorage.ultimate);
+						var box = dataLoad("box");
+						var material = dataLoad("material");
+						var need = [];
+						var notHave = [];
+						var result = 0;
+						var notIn = [];
+						var error = 0;
+						if(text in evolution){
+							if(evolution[text].status == 'y'){
+								need = evolution[text].need;
+								if(evolution[evolution[text].result].status == 'y' || evolution[evolution[text].result].status == 'u')
+									result = evolution[text].result;
+							}
+							else if(evolution[text].status == 'u'){
+								if(choice > 0){
+									var i = 1;
+									var ultimateNeed = ultimate[i].need;
+									while(ultimate[i].result!=choice){
+										i++;
+										ultimateNeed = ultimate[i].need;
+									}
+									need = ultimateNeed;
+								}
+								else{
+									alert("error!");
+									error = 1;
+								}
+							}
+							else if(evolution[text].status == 'n'){
+								alert("無法進化");
+								error = 1;
+							}
+						}else{
+							alert("錯誤");
+							error = 1;
+						}
+						if(error == 0){
+							for(var index in need){
+								var i = 0;
+								while(material[i].no != parseInt(need[index]) && i<45){
+									i++;
+								}
+								if(material[45].no != parseInt(need[index]) && i==45)
+									i++;
+								if(i<46){
+									material[i].quantity --;
+									if(material[i].quantity < 0){
+										error = 2;
+										notHave.push(need[index]);
+									}
+								}else{
+									notIn.push(need[index]);
+								}
+							}
+						}
+						if(error == 0){
+							if(notIn.length == 0)
+								var accept = confirm ("真的要進化嗎？");
+							else
+								var accept = confirm ("沒有統計" + notIn + "\n真的要進化嗎？");
+							if(window.localStorage.getItem("settingA") === null){
+								var settingA = confirm ("要自動將以進化的寵物加至box中嗎？\n設定可在\"關於\"分頁中修改");
+								if(settingA == true)
+									window.localStorage.settingA = 1;
+								else
+									window.localStorage.settingA = 0;
+							}
+						}
+						if(error == 0 && accept == true){
+							var string = JSON.stringify(material);
+							window.localStorage.material = string;
+							deleteMonster(id,box);
+							if(result != 0 && window.localStorage.settingA == 1)
+								addMonster(result,1,box);
+							string = JSON.stringify(box);
+							window.localStorage.box = string;
+							var resort = true;
+							$("#mainTable table #" + id).remove();
+							$("#mainTable table").trigger("update", [resort]);
+						}else if(error == 0){
+							var resort = true;
+							$("#mainTable table #" + id).remove();
+							$("#mainTable table").trigger("update", [resort]);
+						}
+						if(error == 2){
+							alert(notHave + "不存在\n無法進化");
+						
+						}
+					})
+				);
+		}
+		return this;
+	};
+}( jQuery ));
+
 function dataLoad( target )
 {
 	var result = [];
@@ -48,7 +170,89 @@ function boxDisplay( box )
 						.append( $(" <td> ").text( box[i].no )));
 	}	
 }
-	
+
+(function( $ ) {
+	$.fn.showNeedMaterial = function( no ) {
+		if(!(window.localStorage.getItem("evolution") === null && window.localStorage.getItem("ultimate") === null)){
+			var evolution = JSON.parse(window.localStorage.evolution);
+			var ultimate = JSON.parse(window.localStorage.ultimate);
+			var allNeed = [];
+			var choice = $( this ).parent().attr('data-choice');
+			if(no in evolution){
+				if(evolution[no].status == 'y'){
+					for(var key in evolution[no].need){
+						$( this ).addIcon(evolution[no].need[key]);
+						if(key < evolution[no].need.length - 1)
+							$( this ).append(" ");
+					}
+					var j = 0;
+					for(j=0;j<evolution[no].need.length;j++){
+						if(evolution[no].need[j] in allNeed)
+							allNeed[evolution[no].need[j]] ++;
+						else
+							allNeed[evolution[no].need[j]] = 1;
+					}
+				}
+				else if(evolution[no].status == 'u'){
+					if(choice > 0){
+						var i = 1;
+						var ultimateNeed = ultimate[i].need;
+						while(ultimate[i].result!=choice){
+							i++;
+							ultimateNeed = ultimate[i].need;
+						}
+						for(var key in ultimateNeed){
+							$( this ).addIcon(ultimateNeed[key]);
+							if(key < ultimateNeed.length - 1)
+								$( this ).append(" ");
+						}
+						for(j=0;j<ultimateNeed.length;j++){
+							if(ultimateNeed[j] in allNeed)
+								allNeed[ultimateNeed[j]] ++;
+							else
+								allNeed[ultimateNeed[j]] = 1;
+						}
+					}
+					else{
+						var id  = $(this).parent().attr('id');
+						$( this ).append($("<button>")
+								.text("請選取究極進化分支")
+								.addClass("btn btn-warning")
+								.attr("data-toggle","modal")
+								.attr("data-target","#ultimateBranch")
+								.click(id,function(){
+									var i = 1;
+									var ultimateResult = [];
+									if(ultimateResult.length > 0)
+										ultimateResult.length = 0;
+									while(i < ultimate.length){
+										if(no == ultimate[i].no)
+											ultimateResult.push(ultimate[i].result);
+										i++;
+									}
+									$.each(ultimateResult,function(index,value){
+										$("#ultimateBranch .modal-body form").append($("<label>")
+											.append($("<input>")
+												.attr("type","radio")
+												.attr("value",value)
+												.attr("data-id",id)
+												.attr("name","ultimateChoose")
+											).append("   " + value + " - " + name[value].chinese + " - " + name[value].japanese )
+										);
+									});
+								})
+							);
+	//
+					}
+				}
+				else if(evolution[no].status == 'n')
+					$( this ).text("無法進化");
+			}
+		}
+		return this;
+	};
+}( jQuery ));
+
 function materialDisplay( material )
 {
 	$("#material").empty();
@@ -221,13 +425,13 @@ function internalLoad( load_times )
 		curr_month++;
 		var curr_year = data_date.getFullYear();
 		$(".data-date").text(curr_year + "/" + curr_month + "/" + curr_date);
-		var allNeed = [];
 		$("#mainTable").append($("<table>")
 			.append("<thead><tr><th>No.</th><th></th><th>中文名</th><th>日文名</th><th>進化素材</th><th>動作</th></tr></thead>")	
 			.append($("<tbody>"))
 		);
 		var box = dataLoad("box");
 		var material = dataLoad("material");
+		var allNeed = [];
 		boxDisplay(box);
 		materialDisplay(material);
 		$("#mainTable tbody tr").each(function() {
@@ -243,14 +447,9 @@ function internalLoad( load_times )
 			}else
 				$( this ).append($("<td>")).append($("<td>"));
 			//顯示進化素材
+			$( this ).append($("<td>").showNeedMaterial(text));
 			if(text in evolution){
 				if(evolution[text].status == 'y'){
-					$( this ).append($("<td>"));
-					for(var key in evolution[text].need){
-						$( this ).children().eq(4).addIcon(evolution[text].need[key]);
-						if(key < evolution[text].need.length - 1)
-							$( this ).children().eq(4).append(" ");
-					}
 					var j = 0;
 					for(j=0;j<evolution[text].need.length;j++){
 						if(evolution[text].need[j] in allNeed)
@@ -267,12 +466,6 @@ function internalLoad( load_times )
 							i++;
 							ultimateNeed = ultimate[i].need;
 						}
-						$( this ).append($("<td>"));
-						for(var key in ultimateNeed){
-							$( this ).children().eq(4).addIcon(ultimateNeed[key]);
-							if(key < ultimateNeed.length - 1)
-								$( this ).children().eq(4).append(" ");
-						}
 						for(j=0;j<ultimateNeed.length;j++){
 							if(ultimateNeed[j] in allNeed)
 								allNeed[ultimateNeed[j]] ++;
@@ -280,157 +473,10 @@ function internalLoad( load_times )
 								allNeed[ultimateNeed[j]] = 1;
 						}
 					}
-					else{
-						var id  = $(this).attr('id');
-						$( this ).append($("<td>")
-							.append($("<button>")
-								.text("請選取究極進化分支")
-								.addClass("btn btn-warning")
-								.attr("data-toggle","modal")
-								.attr("data-target","#ultimateBranch")
-								.click(id,function(){
-									var i = 1;
-									var ultimateResult = [];
-									if(ultimateResult.length > 0)
-										ultimateResult.length = 0;
-									while(i < ultimate.length){
-										if(text == ultimate[i].no)
-											ultimateResult.push(ultimate[i].result);
-										i++;
-									}
-									$.each(ultimateResult,function(index,value){
-										$("#ultimateBranch .modal-body form").append($("<label>")
-											.append($("<input>")
-												.attr("type","radio")
-												.attr("value",value)
-												.attr("data-id",id)
-												.attr("name","ultimateChoose")
-											).append("   " + value + " - " + name[value].chinese + " - " + name[value].japanese )
-										);
-									});
-								})
-							)
-						);
-	//
-					}
 				}
-				else if(evolution[text].status == 'n')
-					$( this ).append("<td>" + "無法進化" + "</td>");
-			}else
-				$( this ).append($("<td>"));
+			}
 			//顯示動作
-			$( this ).append($("<td>")
-				.append($("<span>")
-					.addClass("glyphicon glyphicon-remove")
-					.attr("title","刪除")
-					.click(function(){
-						var id = $(this).parent().parent().attr('id');
-						var box = dataLoad("box");
-						deleteMonster(id,box);
-						var string = JSON.stringify(box);
-						window.localStorage.box = string;
-						boxReset();
-						internalLoad();
-					})
-				).append(" ")
-			);
-			if(text in evolution && evolution[text].status != "n")
-				$( this ).children().last().append($("<span>")
-					.addClass("glyphicon glyphicon-forward")
-					.attr("title","進化")
-					.click(function(){
-						var text = $( this ).parent().parent().children().first().text();
-						var id = $( this ).parent().parent().attr("id");
-						var evolution = JSON.parse(window.localStorage.evolution);
-						var ultimate = JSON.parse(window.localStorage.ultimate);
-						var box = dataLoad("box");
-						var material = dataLoad("material");
-						var need = [];
-						var notHave = [];
-						var result = 0;
-						var notIn = [];
-						var error = 0;
-						if(text in evolution){
-							if(evolution[text].status == 'y'){
-								need = evolution[text].need;
-								if(evolution[evolution[text].result].status == 'y' || evolution[evolution[text].result].status == 'u')
-									result = evolution[text].result;
-							}
-							else if(evolution[text].status == 'u'){
-								if(choice > 0){
-									var i = 1;
-									var ultimateNeed = ultimate[i].need;
-									while(ultimate[i].result!=choice){
-										i++;
-										ultimateNeed = ultimate[i].need;
-									}
-									need = ultimateNeed;
-								}
-								else{
-									alert("error!");
-									error = 1;
-								}
-							}
-							else if(evolution[text].status == 'n'){
-								alert("無法進化");
-								error = 1;
-							}
-						}else{
-							alert("錯誤");
-							error = 1;
-						}
-						if(error == 0){
-							for(var index in need){
-								var i = 0;
-								while(material[i].no != parseInt(need[index]) && i<45){
-									i++;
-								}
-								if(material[45].no != parseInt(need[index]) && i==45)
-									i++;
-								if(i<46){
-									material[i].quantity --;
-									if(material[i].quantity < 0){
-										error = 2;
-										notHave.push(need[index]);
-									}
-								}else{
-									notIn.push(need[index]);
-								}
-							}
-						}
-						if(error == 0){
-							if(notIn.length == 0)
-								var accept = confirm ("真的要進化嗎？");
-							else
-								var accept = confirm ("沒有統計" + notIn + "\n真的要進化嗎？");
-							if(window.localStorage.getItem("settingA") === null){
-								var settingA = confirm ("要自動將以進化的寵物加至box中嗎？\n設定可在\"關於\"分頁中修改");
-								if(settingA == true)
-									window.localStorage.settingA = 1;
-								else
-									window.localStorage.settingA = 0;
-							}
-						}
-						if(error == 0 && accept == true){
-							var string = JSON.stringify(material);
-							window.localStorage.material = string;
-							deleteMonster(id,box);
-							if(result != 0 && window.localStorage.settingA == 1)
-								addMonster(result,1,box);
-							string = JSON.stringify(box);
-							window.localStorage.box = string;
-							boxReset();
-							internalLoad();
-						}else if(error == 0){
-							boxReset();
-							internalLoad();
-						}
-						if(error == 2){
-							alert(notHave + "不存在\n無法進化");
-						
-						}
-					})
-				);
+			$( this ).append($("<td>").showAction(text));
 			
 		});
 		$(".material-display").tooltipster(); //active tooltipster
@@ -524,18 +570,26 @@ function minusMaterial( id )
 
 function addMonster(no,times,box)
 {
+	var name = JSON.parse(window.localStorage.name);
 	var mon = {};
 	var i = 0;
+	var resort = true;
 	for(i=0;i<times;i++){
 		mon["id"] = window.localStorage.boxid;
 		mon["no"] = no;
 		box.push(mon);
 		window.localStorage.boxid ++;
+		$row = $("<tr>")
+				.append($("<td>").text(no))
+				.append($("<td>").addIcon(no))
+				.append($("<td>").text(name[no].chinese))
+				.append($("<td>").text(name[no].japanese))
+				.append($("<td>").showNeedMaterial(no))
+				.append($("<td>").showAction(no));
+		$("#mainTable table").find('tbody').append($row).trigger("addRows", [$row, resort]);
 	}
 	var string = JSON.stringify(box);
 	window.localStorage.box = string;
-	boxReset();
-	internalLoad();
 	$("#add input[name='no']").val("");
 	$("#add input[name='quantity']").val("1");
 } 
