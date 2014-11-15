@@ -2,14 +2,15 @@
 	$.fn.addIcon = function( no ) {
 		if(!(window.localStorage.getItem("name") === null)){
 			var name = JSON.parse(window.localStorage.name);
-			this.append(
-			$("<img>")
-				.attr("src","icon/"+ no +".png")
-				.attr("width",36)
-				.attr("height",36)
-				.attr("class","material-display")//tootipster has been used
-				.attr("title",name[no].chinese)
-			);
+			if(no in name)
+				this.append(
+				$("<img>")
+					.attr("src","icon/"+ no +".png")
+					.attr("width",36)
+					.attr("height",36)
+					.attr("class","material-display")//tootipster has been used
+					.attr("title",name[no].chinese)
+				);
 		}
 		return this;
 	};
@@ -166,6 +167,13 @@ function materialDisplay( material )
 						.click(function(){
 							var id = $(this).attr('data-id');
 							$.debounce( 250, addMaterial(id) );
+						})
+					).append(" ")
+					.append(
+						$("<span>").addClass("glyphicon glyphicon-minus minus-material").attr("title","-1").attr("data-id",materialTemplate[0][key1][key2])
+						.click(function(){
+							var id = $(this).attr('data-id');
+							$.debounce( 250, minusMaterial(id) );
 						})
 					).append(" ")
 					.append(
@@ -326,7 +334,7 @@ function internalLoad( load_times )
 					})
 				).append(" ")
 			);
-			if(evolution[text].status != "n")
+			if(text in evolution && evolution[text].status != "n")
 				$( this ).children().last().append($("<span>")
 					.addClass("glyphicon glyphicon-forward")
 					.attr("title","進化")
@@ -488,8 +496,30 @@ function addMaterial( id )
 	material[id].quantity ++;
 	var string = JSON.stringify(material);
 	window.localStorage.material = string;
-	boxReset();
-	internalLoad();
+	$("#material tr").each(function(){
+		if($(this).children().eq(6).children().attr("data-id") == id){
+			var available = Number($(this).children().eq(3).text()) + 1;
+			var total = Number($(this).children().eq(5).text()) + 1;
+			$(this).children().eq(3).text(available);
+			$(this).children().eq(5).text(total);
+		}
+	});
+}
+
+function minusMaterial( id )
+{
+	var material = dataLoad("material");
+	material[id].quantity --;
+	var string = JSON.stringify(material);
+	window.localStorage.material = string;
+	$("#material tr").each(function(){
+		if($(this).children().eq(6).children().attr("data-id") == id){
+			var available = Number($(this).children().eq(3).text()) - 1;
+			var total = Number($(this).children().eq(5).text()) - 1;
+			$(this).children().eq(3).text(available);
+			$(this).children().eq(5).text(total);
+		}
+	});
 }
 
 function addMonster(no,times,box)
@@ -643,8 +673,14 @@ $(document).ready(function() {
 		material[id].quantity = value;
 		var string = JSON.stringify(material);
 		window.localStorage.material = string;
-		boxReset();
-		internalLoad();
+		$("#material tr").each(function(){
+		if($(this).children().eq(6).children().attr("data-id") == id){
+			var available = value;
+			var total = value - Number($(this).children().eq(4).text());
+			$(this).children().eq(3).text(available);
+			$(this).children().eq(5).text(total);
+		}
+	});
 		$('#material-modal').modal('hide');
 	});
 	$("#import-modal .btn-primary").click(function(){
