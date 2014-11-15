@@ -53,7 +53,7 @@ function materialDisplay( material )
 {
 	$("#material").empty();
 	$("#material").append(
-		$("<div>").addClass("col-md-6 mainTable").append(
+		$("<div>").addClass("col-md-7 mainTable").append(
 			$("<h2>").text("火曜日　星期二")
 		).append(
 			$("<table>").attr("id","tue").append(
@@ -99,7 +99,7 @@ function materialDisplay( material )
 			).append($("<tbody>"))
 		)
 	).append(
-		$("<div>").addClass("col-md-6 mainTable").append(
+		$("<div>").addClass("col-md-7 mainTable").append(
 			$("<h2>").text("木曜日　星期四")
 		).append(
 			$("<table>").attr("id","thu").append(
