@@ -26,12 +26,48 @@
 					.click(function(){
 						var id = $(this).parent().parent().attr('id');
 						var box = dataLoad("box");
+						var evolution = JSON.parse(window.localStorage.evolution);
+						var ultimate = JSON.parse(window.localStorage.ultimate);
+						var choice = $("#mainTable table #" + id).attr("data-choice");
+						var need = [];
+						var text = $("#mainTable table #" + id).children().eq(0).text();
 						deleteMonster(id,box);
 						var string = JSON.stringify(box);
 						window.localStorage.box = string;
 						var resort = true;
 						$("#mainTable table #" + id).remove();
 						$("#mainTable table").trigger("update", [resort]);
+						if(text in evolution){
+							if(evolution[text].status == 'y'){
+								need = evolution[text].need;
+							}
+							else if(evolution[text].status == 'u'){
+								if(choice > 0){
+									var i = 1;
+									var ultimateNeed = [];
+									while(ultimate[i].result!=choice){
+										i++;
+										ultimateNeed = ultimate[i].need;
+									}
+									need = ultimateNeed;
+								}
+							}
+							for(var index in need){
+								var x = -1;
+									for(var key in materialAttr){
+										if(materialAttr[key].no == need[index])
+											x = key;
+									}
+									if(x != -1){
+										var needQty = $("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text();
+										var total = $("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text();
+										total++;
+										needQty--;
+										$("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text(needQty);
+										$("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text(total);
+									}
+							}
+						}
 					})
 				).append(" ");
 			if(no in evolution && evolution[no].status != "n")
@@ -119,13 +155,33 @@
 								addMonster(result,1,box);
 							string = JSON.stringify(box);
 							window.localStorage.box = string;
+							for(var index in need){
+								var i = 0;
+								while(material[i].no != parseInt(need[index]) && i<45){
+									i++;
+								}
+								if(material[45].no != parseInt(need[index]) && i==45)
+									i++;
+								if(i<46){
+									var x = -1;
+									for(var key in materialAttr){
+										if(materialAttr[key].no == evolution[no].need[index])
+											x = key;
+									}
+									if(x != -1){
+										var available = $("#material span[data-id='" + x + "']").parent().parent().children().eq(3).text();
+										var need = $("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text();
+										available--;
+										need--;
+										$("#material span[data-id='" + x + "']").parent().parent().children().eq(3).text(available);
+										$("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text(need);
+									}
+								}
+							}
 							var resort = true;
 							$("#mainTable table #" + id).remove();
 							$("#mainTable table").trigger("update", [resort]);
 						}else if(error == 0){
-							var resort = true;
-							$("#mainTable table #" + id).remove();
-							$("#mainTable table").trigger("update", [resort]);
 						}
 						if(error == 2){
 							alert(notHave + "不存在\n無法進化");
@@ -176,6 +232,7 @@ function boxDisplay( box )
 		if(!(window.localStorage.getItem("evolution") === null && window.localStorage.getItem("ultimate") === null)){
 			var evolution = JSON.parse(window.localStorage.evolution);
 			var ultimate = JSON.parse(window.localStorage.ultimate);
+			var name = JSON.parse(window.localStorage.name);
 			var allNeed = [];
 			var choice = $( this ).parent().attr('data-choice');
 			if(no in evolution){
@@ -571,15 +628,18 @@ function minusMaterial( id )
 function addMonster(no,times,box)
 {
 	var name = JSON.parse(window.localStorage.name);
+	var evolution = JSON.parse(window.localStorage.evolution);
+	var ultimate = JSON.parse(window.localStorage.ultimate);
 	var mon = {};
 	var i = 0;
 	var resort = true;
+	var choice = 0;
 	for(i=0;i<times;i++){
 		mon["id"] = window.localStorage.boxid;
 		mon["no"] = no;
 		box.push(mon);
 		window.localStorage.boxid ++;
-		$row = $("<tr>")
+		$row = $("<tr>").attr("id",mon["id"]).attr("data-choice",0)
 				.append($("<td>").text(no))
 				.append($("<td>").addIcon(no))
 				.append($("<td>").text(name[no].chinese))
@@ -587,6 +647,50 @@ function addMonster(no,times,box)
 				.append($("<td>").showNeedMaterial(no))
 				.append($("<td>").showAction(no));
 		$("#mainTable table").find('tbody').append($row).trigger("addRows", [$row, resort]);
+		if(no in evolution){
+			if(evolution[no].status == 'y'){
+				for(var key in evolution[no].need){
+					var x = -1;
+					for(var index in materialAttr){
+						if(materialAttr[index].no == evolution[no].need[key])
+							x = index;
+					}
+					if(x != -1){
+						var need = $("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text();
+						var total = $("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text();
+						need++;
+						total--;
+						$("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text(need);
+						$("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text(total);
+					}
+				}
+			}
+			else if(evolution[no].status == 'u'){
+				if(choice > 0){
+					var i = 1;
+					var ultimateNeed = ultimate[i].need;
+					while(ultimate[i].result!=choice){
+						i++;
+						ultimateNeed = ultimate[i].need;
+					}
+					for(var key in ultimateNeed){
+						var x = -1;
+						for(var index in materialAttr){
+							if(materialAttr[index].no == ultimateNeed[key])
+								x = index;
+						}
+						if(x != -1){
+							var need = $("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text();
+							var total = $("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text();
+							need++;
+							total--;
+							$("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text(need);
+							$("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text(total);
+						}
+					}
+				}
+			}
+		}
 	}
 	var string = JSON.stringify(box);
 	window.localStorage.box = string;
