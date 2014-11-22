@@ -1,3 +1,5 @@
+var deleted = [];
+
 (function( $ ) {
 	$.fn.addIcon = function( no ) {
 		if(!(window.localStorage.getItem("name") === null)){
@@ -31,12 +33,18 @@
 						var choice = $("#mainTable table #" + id).attr("data-choice");
 						var need = [];
 						var text = $("#mainTable table #" + id).children().eq(0).text();
-						deleteMonster(id,box);
+						var diff = 0;
+						for(var i in deleted){
+							if(deleted[i] < id)
+								diff++;
+						}
+						deleteMonster((id-diff),box);
 						var string = JSON.stringify(box);
 						window.localStorage.box = string;
 						var resort = true;
 						$("#mainTable table #" + id).remove();
 						$("#mainTable table").trigger("update", [resort]);
+						deleted.push(id);
 						if(text in evolution){
 							if(evolution[text].status == 'y'){
 								need = evolution[text].need;
@@ -74,7 +82,7 @@
 				$( this ).append($("<span>")
 					.addClass("glyphicon glyphicon-forward")
 					.attr("title","進化")
-					.click(function(){
+					.click(no,function(){
 						var text = $( this ).parent().parent().children().first().text();
 						var id = $( this ).parent().parent().attr("id");
 						var evolution = JSON.parse(window.localStorage.evolution);
@@ -86,6 +94,7 @@
 						var result = 0;
 						var notIn = [];
 						var error = 0;
+						var choice = $( this ).parent().parent().attr("data-choice");
 						if(text in evolution){
 							if(evolution[text].status == 'y'){
 								need = evolution[text].need;
@@ -99,6 +108,7 @@
 									while(ultimate[i].result!=choice){
 										i++;
 										ultimateNeed = ultimate[i].need;
+										result = ultimate[i].result;
 									}
 									need = ultimateNeed;
 								}
@@ -150,32 +160,30 @@
 						if(error == 0 && accept == true){
 							var string = JSON.stringify(material);
 							window.localStorage.material = string;
-							deleteMonster(id,box);
+							var diff = 0;
+							for(var i in deleted){
+								if(deleted[i] < id)
+									diff++;
+							}
+							deleteMonster((id-diff),box);
 							if(result != 0 && window.localStorage.settingA == 1)
 								addMonster(result,1,box);
 							string = JSON.stringify(box);
 							window.localStorage.box = string;
+							deleted.push(id);
 							for(var index in need){
-								var i = 0;
-								while(material[i].no != parseInt(need[index]) && i<45){
-									i++;
+								var x = -1;
+								for(var key in materialAttr){
+									if(materialAttr[key].no == need[index])
+										x = key;
 								}
-								if(material[45].no != parseInt(need[index]) && i==45)
-									i++;
-								if(i<46){
-									var x = -1;
-									for(var key in materialAttr){
-										if(materialAttr[key].no == evolution[no].need[index])
-											x = key;
-									}
-									if(x != -1){
-										var available = $("#material span[data-id='" + x + "']").parent().parent().children().eq(3).text();
-										var need = $("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text();
-										available--;
-										need--;
-										$("#material span[data-id='" + x + "']").parent().parent().children().eq(3).text(available);
-										$("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text(need);
-									}
+								if(x != -1){
+									var available = $("#material span[data-id='" + x + "']").parent().parent().children().eq(3).text();
+									var needQty = $("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text();
+									available--;
+									needQty--;
+									$("#material span[data-id='" + x + "']").parent().parent().children().eq(3).text(available);
+									$("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text(needQty);
 								}
 							}
 							var resort = true;
@@ -228,13 +236,12 @@ function boxDisplay( box )
 }
 
 (function( $ ) {
-	$.fn.showNeedMaterial = function( no ) {
+	$.fn.showNeedMaterial = function( no , id , choice ) {
 		if(!(window.localStorage.getItem("evolution") === null && window.localStorage.getItem("ultimate") === null)){
 			var evolution = JSON.parse(window.localStorage.evolution);
 			var ultimate = JSON.parse(window.localStorage.ultimate);
 			var name = JSON.parse(window.localStorage.name);
 			var allNeed = [];
-			var choice = $( this ).parent().attr('data-choice');
 			if(no in evolution){
 				if(evolution[no].status == 'y'){
 					for(var key in evolution[no].need){
@@ -271,7 +278,6 @@ function boxDisplay( box )
 						}
 					}
 					else{
-						var id  = $(this).parent().attr('id');
 						$( this ).append($("<button>")
 								.text("請選取究極進化分支")
 								.addClass("btn btn-warning")
@@ -494,6 +500,7 @@ function internalLoad( load_times )
 		$("#mainTable tbody tr").each(function() {
 			var text = $( this ).children().text();
 			var choice = $( this ).attr('data-choice');
+			var id  = $(this).attr('id');
 			//顯示圖片
 			$( this ).append($("<td>").addIcon(text));
 			//顯示中文名
@@ -504,7 +511,7 @@ function internalLoad( load_times )
 			}else
 				$( this ).append($("<td>")).append($("<td>"));
 			//顯示進化素材
-			$( this ).append($("<td>").showNeedMaterial(text));
+			$( this ).append($("<td>").showNeedMaterial(text,id,choice));
 			if(text in evolution){
 				if(evolution[text].status == 'y'){
 					var j = 0;
@@ -639,12 +646,12 @@ function addMonster(no,times,box)
 		mon["no"] = no;
 		box.push(mon);
 		window.localStorage.boxid ++;
-		$row = $("<tr>").attr("id",mon["id"]).attr("data-choice",0)
+		$row = $("<tr>").attr("id",box.length+deleted.length-1).attr("data-choice",0)
 				.append($("<td>").text(no))
 				.append($("<td>").addIcon(no))
 				.append($("<td>").text(name[no].chinese))
 				.append($("<td>").text(name[no].japanese))
-				.append($("<td>").showNeedMaterial(no))
+				.append($("<td>").showNeedMaterial(no,box.length-1,0))
 				.append($("<td>").showAction(no));
 		$("#mainTable table").find('tbody').append($row).trigger("addRows", [$row, resort]);
 		if(no in evolution){
@@ -696,6 +703,7 @@ function addMonster(no,times,box)
 	window.localStorage.box = string;
 	$("#add input[name='no']").val("");
 	$("#add input[name='quantity']").val("1");
+	$(".material-display").tooltipster(); //active tooltipster
 } 
 
 $(document).ready(function() {
@@ -713,11 +721,42 @@ $(document).ready(function() {
 		var branchChoice = $("input[type='radio']:checked", "#ultimateBranch").val();
 		var id = $("input[type='radio']:checked", "#ultimateBranch").attr("data-id");
 		var box = dataLoad("box");
-		box[id].choice = branchChoice;
+		var ultimate = JSON.parse(window.localStorage.ultimate);
+		var diff = 0;
+		for(var i in deleted)
+			if(deleted[i] < id)
+				diff++;
+		box[id-diff].choice = branchChoice;
 		var string = JSON.stringify(box);
 		window.localStorage.box = string;
-		boxReset();
-		internalLoad();
+		//boxReset();
+		//internalLoad();
+		$("#mainTable table tr[id='"+ id +"']").children().eq(4).empty().showNeedMaterial(box[id-diff].no,id,branchChoice);
+		$("#mainTable table tr[id='"+ id +"']").attr("data-choice",branchChoice);
+		$(".material-display").tooltipster(); //active tooltipster
+		var i = 1;
+		var ultimateNeed = ultimate[i].need;
+		var choice = branchChoice;
+		while(ultimate[i].result!=choice){
+			i++;
+			ultimateNeed = ultimate[i].need;
+		}
+		for(j=0;j<ultimateNeed.length;j++){
+			var x = -1;
+			for(var index in materialAttr){
+				if(materialAttr[index].no == ultimateNeed[j])
+					x = index;
+			}
+			if(x != -1){
+				var need = $("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text();
+				var total = $("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text();
+				need++;
+				total--;
+				$("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text(need);
+				$("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text(total);
+			}
+		}
+		
 		$('#ultimateBranch').modal('hide');
 	});
 	$('#ultimateBranch').on('hidden.bs.modal', function (e) {
