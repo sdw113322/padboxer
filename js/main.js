@@ -913,4 +913,5 @@ $(document).ready(function() {
 			window.localStorage.settingA = 0;
 		}
 	});
+	$(".version").append(version);
 });
