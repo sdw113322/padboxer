@@ -1,5 +1,4 @@
 var deleted = [];
-
 (function( $ ) {
 	$.fn.addIcon = function( no ) {
 		if(!(window.localStorage.getItem("name") === null)){
@@ -590,9 +589,9 @@ function externalLoad()
 {
 	$.ajax({
 		dataType: 'jsonp',
-		url: "https://api.github.com/repos/sdw113322/padboxer/contents/name.json?ref=data-source", 
+		url: "http://bug.22web.org/generator/source3.php", 
 		success: function(data){
-			var string = atob(data.data.content);
+			var string = JSON.stringify(data);
 			window.localStorage.name = string;
 		},
 		error: function(request,error) 
@@ -602,9 +601,9 @@ function externalLoad()
 	});
 	$.ajax({
 		dataType: 'jsonp',
-		url: "https://api.github.com/repos/sdw113322/padboxer/contents/evolution.json?ref=data-source", 
+		url: "http://bug.22web.org/generator/source1.php", 
 		success: function(data){
-			var string = atob(data.data.content);
+			var string = JSON.stringify(data);
 			window.localStorage.evolution = string;
 		},
 		error: function(request,error) 
@@ -614,9 +613,9 @@ function externalLoad()
 	});
 	$.ajax({
 		dataType: 'jsonp',
-		url: "https://api.github.com/repos/sdw113322/padboxer/contents/ultimate.json?ref=data-source", 
+		url: "http://bug.22web.org/generator/source2.php", 
 		success: function(data){
-			var string = atob(data.data.content);
+			var string = JSON.stringify(data);
 			window.localStorage.ultimate = string;
 		},
 		error: function(request,error) 
@@ -740,7 +739,7 @@ function addMonster(no,times,box)
 $(document).ready(function() {
 	if(internalLoad(0) == false){
 		externalLoad();
-		window.setTimeout("internalLoad(1);",5000);
+		window.setTimeout("internalLoad(1);",18000);
 	}
 	$("#add #btn-add-enter").click(function(){
 		var box = dataLoad("box");
