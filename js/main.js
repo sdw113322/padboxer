@@ -208,12 +208,19 @@ function dataLoad( target )
 	if(!(window.localStorage.getItem(target) === null)){
 		var string = window.localStorage.getItem(target);
 		result = JSON.parse(string);
+		if(target == "material" && result.length==46){
+			result[46] = JSON.parse("{\"no\":1325,\"quantity\":0}");
+			result[47] = JSON.parse("{\"no\":1326,\"quantity\":0}");
+			result[48] = JSON.parse("{\"no\":1327,\"quantity\":0}");
+			result[49] = JSON.parse("{\"no\":1328,\"quantity\":0}");
+			result[50] = JSON.parse("{\"no\":1329,\"quantity\":0}");
+		}
 		return result;
 	}else{
 		if(target == "box")
 			window.localStorage.boxid = 0;
 		else if(target == "material"){
-			var string = "[{\"no\":147,\"quantity\":\"0\"},{\"no\":148,\"quantity\":0},{\"no\":149,\"quantity\":0},{\"no\":150,\"quantity\":0},{\"no\":151,\"quantity\":0},{\"no\":321,\"quantity\":0},{\"no\":1176,\"quantity\":0},{\"no\":161,\"quantity\":0},{\"no\":171,\"quantity\":0},{\"no\":166,\"quantity\":0},{\"no\":162,\"quantity\":0},{\"no\":172,\"quantity\":0},{\"no\":167,\"quantity\":0},{\"no\":1294,\"quantity\":0},{\"no\":163,\"quantity\":0},{\"no\":173,\"quantity\":0},{\"no\":168,\"quantity\":0},{\"no\":1295,\"quantity\":0},{\"no\":164,\"quantity\":0},{\"no\":174,\"quantity\":0},{\"no\":169,\"quantity\":0},{\"no\":165,\"quantity\":0},{\"no\":175,\"quantity\":0},{\"no\":170,\"quantity\":0},{\"no\":234,\"quantity\":0},{\"no\":152,\"quantity\":0},{\"no\":153,\"quantity\":0},{\"no\":154,\"quantity\":0},{\"no\":227,\"quantity\":0},{\"no\":1085,\"quantity\":0},{\"no\":1086,\"quantity\":0},{\"no\":1087,\"quantity\":0},{\"no\":155,\"quantity\":0},{\"no\":156,\"quantity\":0},{\"no\":157,\"quantity\":0},{\"no\":158,\"quantity\":0},{\"no\":159,\"quantity\":0},{\"no\":160,\"quantity\":0},{\"no\":246,\"quantity\":0},{\"no\":247,\"quantity\":0},{\"no\":248,\"quantity\":0},{\"no\":249,\"quantity\":0},{\"no\":250,\"quantity\":0},{\"no\":251,\"quantity\":0},{\"no\":915,\"quantity\":0},{\"no\":916,\"quantity\":0}]";
+			var string = "[{\"no\":147,\"quantity\":\"0\"},{\"no\":148,\"quantity\":0},{\"no\":149,\"quantity\":0},{\"no\":150,\"quantity\":0},{\"no\":151,\"quantity\":0},{\"no\":321,\"quantity\":0},{\"no\":1176,\"quantity\":0},{\"no\":161,\"quantity\":0},{\"no\":171,\"quantity\":0},{\"no\":166,\"quantity\":0},{\"no\":162,\"quantity\":0},{\"no\":172,\"quantity\":0},{\"no\":167,\"quantity\":0},{\"no\":1294,\"quantity\":0},{\"no\":163,\"quantity\":0},{\"no\":173,\"quantity\":0},{\"no\":168,\"quantity\":0},{\"no\":1295,\"quantity\":0},{\"no\":164,\"quantity\":0},{\"no\":174,\"quantity\":0},{\"no\":169,\"quantity\":0},{\"no\":165,\"quantity\":0},{\"no\":175,\"quantity\":0},{\"no\":170,\"quantity\":0},{\"no\":234,\"quantity\":0},{\"no\":152,\"quantity\":0},{\"no\":153,\"quantity\":0},{\"no\":154,\"quantity\":0},{\"no\":227,\"quantity\":0},{\"no\":1085,\"quantity\":0},{\"no\":1086,\"quantity\":0},{\"no\":1087,\"quantity\":0},{\"no\":155,\"quantity\":0},{\"no\":156,\"quantity\":0},{\"no\":157,\"quantity\":0},{\"no\":158,\"quantity\":0},{\"no\":159,\"quantity\":0},{\"no\":160,\"quantity\":0},{\"no\":246,\"quantity\":0},{\"no\":247,\"quantity\":0},{\"no\":248,\"quantity\":0},{\"no\":249,\"quantity\":0},{\"no\":250,\"quantity\":0},{\"no\":251,\"quantity\":0},{\"no\":915,\"quantity\":0},{\"no\":916,\"quantity\":0},{\"no\":1325,\"quantity\":0},{\"no\":1326,\"quantity\":0},{\"no\":1327,\"quantity\":0},{\"no\":1328,\"quantity\":0},{\"no\":1329,\"quantity\":0}]";
 			window.localStorage.material = string;
 			result = JSON.parse(string);
 		}
@@ -411,8 +418,32 @@ function materialDisplay( material )
 				)
 			).append($("<tbody>"))
 		)
+	).append(
+		$("<div>").addClass("col-md-7 mainTable").append(
+			$("<h2>").text("寶玉")
+		).append(
+			$("<table>").attr("id","jewel").append(
+				$("<thead>").append(
+					$("<tr>").append(
+						$("<th>").text("No.")
+					).append(
+						$("<th>")
+					).append(
+						$("<th>").text("名稱")
+					).append(
+						$("<th>").text("現有")
+					).append(
+						$("<th>").text("需要")
+					).append(
+						$("<th>").text("總計")
+					).append(
+						$("<th>").text("動作")
+					)
+				)
+			).append($("<tbody>"))
+		)
 	);
-	var day = ["tue","wed","thu","fri"];
+	var day = ["tue","wed","thu","fri","jewel"];
 	for(var key1 in materialTemplate[0]){
 		for(var key2 in materialTemplate[0][key1]){
 			$("#" + day[key1] + " tbody").append(
