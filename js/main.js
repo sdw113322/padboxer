@@ -809,13 +809,14 @@ $(document).ready(function() {
 		if(evolution[no].status == "y"){
 			$("#preview-modal #preview-status").text("可以進化")
 			$("#preview-modal .modal-body").append($("<h5>").text( "進化為 " + evolution[no].result +" - "+name[evolution[no].result].chinese + "需要：" ));
-			$("#preview-modal .modal-body").append($("<table>").addClass("table table-bordered").append($("<thead>").append($("<tr>").append($("<th>").text("名稱")).append($("<th>").text("現有")).append($("<th>").text("總共")))));
+			$("#preview-modal .modal-body").append($("<table>").addClass("table table-bordered").append($("<thead>").append($("<tr>").append($("<th>")).append($("<th>").text("名稱")).append($("<th>").text("現有")).append($("<th>").text("總共")))));
 			for(var key in evolution[no].need){
 				
 				$("#preview-modal .modal-body table").append($("<tr>")
+					.append($("<td>").addIcon(evolution[no].need[key]))
 					.append($("<td>").text(evolution[no].need[key] + " - " + name[evolution[no].need[key]].chinese))
-					.append($("<td>").text($("#material table tr td:first-child:contains('" + evolution[no].need[key] + "')").next().next().text()))
-					.append($("<td>").text($("#material table tr td:first-child:contains('" + evolution[no].need[key] + "')").next().next().next().next().text()))
+					.append($("<td>").text($("#material table tr td:first-child:contains('" + evolution[no].need[key] + "')").next().next().next().text()))
+					.append($("<td>").text($("#material table tr td:first-child:contains('" + evolution[no].need[key] + "')").next().next().next().next().next().text()))
 				);
 			}
 		}else if(evolution[no].status == "u"){
@@ -831,12 +832,13 @@ $(document).ready(function() {
 			}
 			$.each(ultimateResult,function(index,value){
 				$("#preview-modal .modal-body").append($("<h5>").text( "進化為 " + value.result +" - "+name[value.result].chinese + "需要：" ));
-				$("#preview-modal .modal-body").append($("<table>").addClass("table table-bordered").attr("data-number",index).append($("<thead>").append($("<tr>").append($("<th>").text("名稱")).append($("<th>").text("現有")).append($("<th>").text("總共")))));
+				$("#preview-modal .modal-body").append($("<table>").addClass("table table-bordered").attr("data-number",index).append($("<thead>").append($("<tr>").append($("<th>")).append($("<th>").text("名稱")).append($("<th>").text("現有")).append($("<th>").text("總共")))));
 				for(var key in value.need){
 					$("#preview-modal .modal-body table[data-number='"+ index +"']").append($("<tr>")
+						.append($("<td>").addIcon(value.need[key]))
 						.append($("<td>").text(value.need[key] + " - " + name[value.need[key]].chinese))
-						.append($("<td>").text($("#material table tr td:first-child:contains('" + value.need[key] + "')").next().next().text()))
-						.append($("<td>").text($("#material table tr td:first-child:contains('" + value.need[key] + "')").next().next().next().next().text()))
+						.append($("<td>").text($("#material table tr td:first-child:contains('" + value.need[key] + "')").next().next().next().text()))
+						.append($("<td>").text($("#material table tr td:first-child:contains('" + value.need[key] + "')").next().next().next().next().next().text()))
 					);
 				}
 			});
