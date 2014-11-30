@@ -1,4 +1,4 @@
-var version = "1.2";
+var version = "1.3 development";
 //素材資料 (編號,屬性,名稱)
 function material(no,element,name){
 	this.no = no;
@@ -52,6 +52,11 @@ materialAttr[42] = new material(250,"purple","雙倍暗精");
 materialAttr[43] = new material(251,"purple","雙倍彩精");
 materialAttr[44] = new material(915,"yellow","光魚蛋");
 materialAttr[45] = new material(916,"purple","暗魚蛋");
+materialAttr[46] = new material(1325,"red","火寶玉");
+materialAttr[47] = new material(1326,"blue","水寶玉");
+materialAttr[48] = new material(1327,"green","木寶玉");
+materialAttr[49] = new material(1328,"yellow","光寶玉");
+materialAttr[50] = new material(1329,"purple","暗寶玉");
 //素材分類模板
 var materialTemplate = new Array();
-materialTemplate[0] = [[0,1,2,3,4,5,6],[7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24],[25,26,27,28,29,30,31],[32,33,34,35,36,37,38,39,40,41,42,43,44,45]];
+materialTemplate[0] = [[0,1,2,3,4,5,6],[7,9,8,10,12,11,13,14,16,15,17,18,20,19,21,23,22,24],[25,26,27,28,29,30,31],[32,33,34,35,36,37,38,39,40,41,42,43,44,45],[46,47,48,49,50]];
