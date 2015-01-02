@@ -1,4 +1,3 @@
-var deleted = [];
 (function( $ ) {
 	$.fn.addIcon = function( no ) {
 		if(!(window.localStorage.getItem("name") === null)){
@@ -32,18 +31,17 @@ var deleted = [];
 						var choice = $("#mainTable table #" + id).attr("data-choice");
 						var need = [];
 						var text = $("#mainTable table #" + id).children().eq(0).text();
-						var diff = 0;
-						for(var i in deleted){
-							if(deleted[i] < id)
-								diff++;
+						var offset = 0;
+						for(var i in box){
+							if(box[i].id == id)
+								offset = i;
 						}
-						deleteMonster((id-diff),box);
+						deleteMonster(offset,box);
 						var string = JSON.stringify(box);
 						window.localStorage.box = string;
 						var resort = true;
 						$("#mainTable table #" + id).remove();
 						$("#mainTable table").trigger("update", [resort]);
-						deleted.push(id);
 						if(text in evolution){
 							if(evolution[text].status == 'y'){
 								need = evolution[text].need;
@@ -127,12 +125,12 @@ var deleted = [];
 						if(error == 0){
 							for(var index in need){
 								var i = 0;
-								while(material[i].no != parseInt(need[index]) && i<45){
+								while(material[i].no != parseInt(need[index]) && i<50){
 									i++;
 								}
-								if(material[45].no != parseInt(need[index]) && i==45)
+								if(material[50].no != parseInt(need[index]) && i==50)
 									i++;
-								if(i<46){
+								if(i<51){
 									material[i].quantity --;
 									if(material[i].quantity < 0){
 										error = 2;
@@ -159,17 +157,16 @@ var deleted = [];
 						if(error == 0 && accept == true){
 							var string = JSON.stringify(material);
 							window.localStorage.material = string;
-							var diff = 0;
-							for(var i in deleted){
-								if(deleted[i] < id)
-									diff++;
+							var offset = 0;
+							for(var i in box){
+								if(box[i].id == id)
+									offset = i;
 							}
-							deleteMonster((id-diff),box);
+							deleteMonster(offset,box);
 							if(result != 0 && window.localStorage.settingA == 1)
 								addMonster(result,1,box);
 							string = JSON.stringify(box);
 							window.localStorage.box = string;
-							deleted.push(id);
 							for(var index in need){
 								var x = -1;
 								for(var key in materialAttr){
@@ -236,7 +233,7 @@ function boxDisplay( box )
 			choice = box[i].choice;
 		else
 			choice = 0;
-		$("#mainTable tbody").append( $(" <tr> ").attr( 'id' , i ).attr( 'data-choice' , choice )
+		$("#mainTable tbody").append( $(" <tr> ").attr( 'id' , box[i].id ).attr( 'data-choice' , choice )
 						.append( $(" <td> ").text( box[i].no )));
 	}	
 }
@@ -667,21 +664,22 @@ function addMonster(no,times,box)
 	var name = JSON.parse(window.localStorage.name);
 	var evolution = JSON.parse(window.localStorage.evolution);
 	var ultimate = JSON.parse(window.localStorage.ultimate);
-	var mon = {};
+	var mon = new Array(times);
 	var i = 0;
 	var resort = true;
 	var choice = 0;
 	for(i=0;i<times;i++){
-		mon["id"] = window.localStorage.boxid;
-		mon["no"] = no;
-		box.push(mon);
+		mon[i] = {};
+		mon[i]["id"] = window.localStorage.boxid;
+		mon[i]["no"] = no;
+		box.push(mon[i]);
 		window.localStorage.boxid ++;
-		$row = $("<tr>").attr("id",box.length+deleted.length-1).attr("data-choice",0)
+		$row = $("<tr>").attr("id",mon[i]["id"]).attr("data-choice",0)
 				.append($("<td>").text(no))
 				.append($("<td>").addIcon(no))
 				.append($("<td>").text(name[no].chinese))
 				.append($("<td>").text(name[no].japanese))
-				.append($("<td>").showNeedMaterial(no,box.length-1,0))
+				.append($("<td>").showNeedMaterial(no,mon[i]["id"],0))
 				.append($("<td>").showAction(no));
 		$("#mainTable table").find('tbody').append($row).trigger("addRows", [$row, resort]);
 		if(no in evolution){
@@ -752,16 +750,17 @@ $(document).ready(function() {
 		var id = $("input[type='radio']:checked", "#ultimateBranch").attr("data-id");
 		var box = dataLoad("box");
 		var ultimate = JSON.parse(window.localStorage.ultimate);
-		var diff = 0;
-		for(var i in deleted)
-			if(deleted[i] < id)
-				diff++;
-		box[id-diff].choice = branchChoice;
+		var offset = 0;
+			for(var i in box){
+				if(box[i].id == id)
+					offset = i;
+			}
+		box[offset].choice = branchChoice;
 		var string = JSON.stringify(box);
 		window.localStorage.box = string;
 		//boxReset();
 		//internalLoad();
-		$("#mainTable table tr[id='"+ id +"']").children().eq(4).empty().showNeedMaterial(box[id-diff].no,id,branchChoice);
+		$("#mainTable table tr[id='"+ id +"']").children().eq(4).empty().showNeedMaterial(box[offset].no,id,branchChoice);
 		$("#mainTable table tr[id='"+ id +"']").attr("data-choice",branchChoice);
 		$(".material-display").tooltipster(); //active tooltipster
 		var i = 1;
