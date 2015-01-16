@@ -923,7 +923,7 @@ $(document).ready(function() {
 		$("#btn-add").removeClass("active");
 	});	
 	$("#add input").keyup(function(event){
-		if(event.keyCode == 13){
+		if(event.keyCode == 13 && $("#add").is(":visible")){
 			$("#add #btn-add-enter").click();
 		}
 	});
