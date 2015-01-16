@@ -506,7 +506,6 @@ function internalLoad( load_times )
 		var date2 = new Date();
 		var delta = date2 - date1;
 		if(delta > (86400000 * 7) && load_times < 1){
-			window.localStorage.time = date2;
 			return false;
 		}
 		var data_date = new Date(evolution[0].time);
@@ -620,6 +619,7 @@ function externalLoad()
 		 alert ( "錯誤: " + error );
 		}
 	});
+	window.localStorage.time = new Date();
 }
 
 function deleteMonster(id,box)//不是 property 裡的 id，是指索引值
@@ -733,11 +733,49 @@ function addMonster(no,times,box)
 	$("#add input[name='quantity']").val("1");
 	$(".material-display").tooltipster(); //active tooltipster
 } 
+function adjustModalMaxHeightAndPosition(){
+    $('.modal').each(function(){
+        if($(this).hasClass('in') == false){
+            $(this).show(); /* Need this to get modal dimensions */
+        };
+        var contentHeight = $(window).height() - 60;
+        var headerHeight = $(this).find('.modal-header').outerHeight() || 2;
+        var footerHeight = $(this).find('.modal-footer').outerHeight() || 2;
 
+        $(this).find('.modal-content').css({
+            'max-height': function () {
+                return contentHeight;
+            }
+        });
+
+        $(this).find('.modal-body').css({
+            'max-height': function () {
+                return (contentHeight - (headerHeight + footerHeight));
+            }
+        });
+
+        $(this).find('.modal-dialog').addClass('modal-dialog-center').css({
+            'margin-top': function () {
+                return -($(this).outerHeight() / 2);
+            },
+            'margin-left': function () {
+                return -($(this).outerWidth() / 2);
+            }
+        });
+        if($(this).hasClass('in') == false){
+            $(this).hide(); /* Hide modal */
+        };
+    });
+};
 $(document).ready(function() {
+	if ($(window).height() >= 320){
+		$(window).resize(adjustModalMaxHeightAndPosition).trigger("resize");
+	}
 	if(internalLoad(0) == false){
 		externalLoad();
+		$('#loading-modal').modal('show');
 		window.setTimeout("internalLoad(1);",18000);
+		window.setTimeout("$('#loading-modal').modal('hide');",18000);
 	}
 	$("#add #btn-add-enter").click(function(){
 		var box = dataLoad("box");
