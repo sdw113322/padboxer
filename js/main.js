@@ -322,9 +322,10 @@ function boxDisplay( box )
 function materialDisplay( material )
 {
 	$("#material").empty();
+	$("#material").append($("<div>").addClass("row").append($("<div>").addClass("material-body col-md-8")));
 	for(var i in materialTemplate[0][0]){
-		$("#material").append(
-			$("<div>").addClass("col-md-7 mainTable").append(
+		$("#material .material-body").append(
+			$("<div>").addClass("mainTable").append(
 				$("<h2>").text(materialTemplate[0][2][i])
 			).append(
 				$("<table>").attr("id",materialTemplate[0][1][i]).append(
@@ -348,6 +349,18 @@ function materialDisplay( material )
 				).append($("<tbody>"))
 			)
 		);
+	}
+	$("#material .row").append(
+		$("<div>").addClass("col-md-4").append(
+			$("<div>").addClass("material-sidebar").append(
+				$("<div>").addClass(/*"panel panel-default"*/).append(
+					$("<div>").addClass("panel-body").append($("<div>").addClass("list-group"))
+				)
+			)
+		)
+	);
+	for(var i in materialTemplate[0][0]){
+		$("#material .panel-body div").append($("<a>").addClass("list-group-item").attr("href","#" + materialTemplate[0][1][i]).append(materialTemplate[0][2][i]));
 	}
 	for(var key1 in materialTemplate[0][0]){
 		for(var key2 in materialTemplate[0][0][key1]){
@@ -902,5 +915,35 @@ $(document).ready(function() {
 			window.localStorage.settingA = 0;
 		}
 	});
+	$(window).bind('scroll', function(){
+		var $this = $(this);
+		if($this.scrollTop() < 200)
+			$(".material-sidebar").stop().animate({
+					top: 360-$this.scrollTop()
+				}, 0);
+		else if($this.scrollTop() < 260)
+			$(".material-sidebar").stop().animate({
+					top: 360-$this.scrollTop()
+				}, 100);
+		else if($this.scrollTop() < 320)
+			$(".material-sidebar").stop().animate({
+					top: 60
+				}, 100);
+		else
+			$(".material-sidebar").stop().animate({
+					top: 60
+				}, 50);
+	}).scroll();
+	$("#material a").bind('click', function(){
+		var $this = $(window);
+		if($this.scrollTop() < 260)
+			$(".material-sidebar").stop().animate({
+					top: 360-$this.scrollTop()
+				}, 0);
+		if($this.scrollTop() > 260)
+			$(".material-sidebar").stop().animate({
+					top: 60
+				}, 0);
+	}).scroll();
 	$(".version").append(version);
 });

@@ -147,5 +147,10 @@
 	  @media (max-width: 767px) {
 		  .modal-dialog-center { /* Edited classname 10/03/2014 */
 			width: 100%;
+	    }
+	}
+	  .material-sidebar{
+			position: fixed !important;
+			width: 280px;
+			top: 320px;
 	  }
-} 
