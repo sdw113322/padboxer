@@ -927,6 +927,11 @@ $(document).ready(function() {
 			$("#add #btn-add-enter").click();
 		}
 	});
+	$("#material-modal input").keyup(function(event){
+		if(event.keyCode == 13 && $("#material-modal").is(":visible")){
+			$("#material-modal .btn-primary").click();
+		}
+	});
 	$("#clear").click(function(){
 		var accept = confirm ("真的要清空嗎？");
 		if(accept == true){
