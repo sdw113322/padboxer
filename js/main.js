@@ -322,156 +322,65 @@ function boxDisplay( box )
 function materialDisplay( material )
 {
 	$("#material").empty();
-	$("#material").append(
-		$("<div>").addClass("col-md-7 mainTable").append(
-			$("<h2>").text("火曜日　星期二")
-		).append(
-			$("<table>").attr("id","tue").append(
-				$("<thead>").append(
-					$("<tr>").append(
-						$("<th>").text("No.")
-					).append(
-						$("<th>")
-					).append(
-						$("<th>").text("名稱")
-					).append(
-						$("<th>").text("現有")
-					).append(
-						$("<th>").text("需要")
-					).append(
-						$("<th>").text("總計")
-					).append(
-						$("<th>").text("動作")
+	for(var i in materialTemplate[0][0]){
+		$("#material").append(
+			$("<div>").addClass("col-md-7 mainTable").append(
+				$("<h2>").text(materialTemplate[0][2][i])
+			).append(
+				$("<table>").attr("id",materialTemplate[0][1][i]).append(
+					$("<thead>").append(
+						$("<tr>").append(
+							$("<th>").text("No.")
+						).append(
+							$("<th>")
+						).append(
+							$("<th>").text("名稱")
+						).append(
+							$("<th>").text("現有")
+						).append(
+							$("<th>").text("需要")
+						).append(
+							$("<th>").text("總計")
+						).append(
+							$("<th>").text("動作")
+						)
 					)
-				)
-			).append($("<tbody>"))
-		).append(
-			$("<h2>").text("水曜日　星期三")
-		).append(
-			$("<table>").attr("id","wed").append(
-				$("<thead>").append(
-					$("<tr>").append(
-						$("<th>").text("No.")
-					).append(
-						$("<th>")
-					).append(
-						$("<th>").text("名稱")
-					).append(
-						$("<th>").text("現有")
-					).append(
-						$("<th>").text("需要")
-					).append(
-						$("<th>").text("總計")
-					).append(
-						$("<th>").text("動作")
-					)
-				)
-			).append($("<tbody>"))
-		)
-	).append(
-		$("<div>").addClass("col-md-7 mainTable").append(
-			$("<h2>").text("木曜日　星期四")
-		).append(
-			$("<table>").attr("id","thu").append(
-				$("<thead>").append(
-					$("<tr>").append(
-						$("<th>").text("No.")
-					).append(
-						$("<th>")
-					).append(
-						$("<th>").text("名稱")
-					).append(
-						$("<th>").text("現有")
-					).append(
-						$("<th>").text("需要")
-					).append(
-						$("<th>").text("總計")
-					).append(
-						$("<th>").text("動作")
-					)
-				)
-			).append($("<tbody>"))
-		).append(
-			$("<h2>").text("金曜日　星期五")
-		).append(
-			$("<table>").attr("id","fri").append(
-				$("<thead>").append(
-					$("<tr>").append(
-						$("<th>").text("No.")
-					).append(
-						$("<th>")
-					).append(
-						$("<th>").text("名稱")
-					).append(
-						$("<th>").text("現有")
-					).append(
-						$("<th>").text("需要")
-					).append(
-						$("<th>").text("總計")
-					).append(
-						$("<th>").text("動作")
-					)
-				)
-			).append($("<tbody>"))
-		)
-	).append(
-		$("<div>").addClass("col-md-7 mainTable").append(
-			$("<h2>").text("寶玉")
-		).append(
-			$("<table>").attr("id","jewel").append(
-				$("<thead>").append(
-					$("<tr>").append(
-						$("<th>").text("No.")
-					).append(
-						$("<th>")
-					).append(
-						$("<th>").text("名稱")
-					).append(
-						$("<th>").text("現有")
-					).append(
-						$("<th>").text("需要")
-					).append(
-						$("<th>").text("總計")
-					).append(
-						$("<th>").text("動作")
-					)
-				)
-			).append($("<tbody>"))
-		)
-	);
-	var day = ["tue","wed","thu","fri","jewel"];
-	for(var key1 in materialTemplate[0]){
-		for(var key2 in materialTemplate[0][key1]){
-			$("#" + day[key1] + " tbody").append(
-				$("<tr>").addClass(materialAttr[materialTemplate[0][key1][key2]].element).append(
-					$("<td>").text(materialAttr[materialTemplate[0][key1][key2]].no)
+				).append($("<tbody>"))
+			)
+		);
+	}
+	for(var key1 in materialTemplate[0][0]){
+		for(var key2 in materialTemplate[0][0][key1]){
+			$("#" + materialTemplate[0][1][key1] + " tbody").append(
+				$("<tr>").addClass(materialAttr[materialTemplate[0][0][key1][key2]].element).append(
+					$("<td>").text(materialAttr[materialTemplate[0][0][key1][key2]].no)
 				).append(
-					$("<td>").addIcon(materialAttr[materialTemplate[0][key1][key2]].no)
+					$("<td>").addIcon(materialAttr[materialTemplate[0][0][key1][key2]].no)
 				).append(
-					$("<td>").text(materialAttr[materialTemplate[0][key1][key2]].name)
+					$("<td>").text(materialAttr[materialTemplate[0][0][key1][key2]].name)
 				).append(
-					$("<td>").text(material[materialTemplate[0][key1][key2]].quantity)
+					$("<td>").text(material[materialTemplate[0][0][key1][key2]].quantity)
 				).append(
 					$("<td>").text("0")
 				).append(
 					$("<td>").text("0")
 				).append(
 					$("<td>").append(
-						$("<span>").addClass("glyphicon glyphicon-plus add-material").attr("title","+1").attr("data-id",materialTemplate[0][key1][key2])
+						$("<span>").addClass("glyphicon glyphicon-plus add-material").attr("title","+1").attr("data-id",materialTemplate[0][0][key1][key2])
 						.click(function(){
 							var id = $(this).attr('data-id');
 							$.debounce( 250, addMaterial(id) );
 						})
 					).append(" ")
 					.append(
-						$("<span>").addClass("glyphicon glyphicon-minus minus-material").attr("title","-1").attr("data-id",materialTemplate[0][key1][key2])
+						$("<span>").addClass("glyphicon glyphicon-minus minus-material").attr("title","-1").attr("data-id",materialTemplate[0][0][key1][key2])
 						.click(function(){
 							var id = $(this).attr('data-id');
 							$.debounce( 250, minusMaterial(id) );
 						})
 					).append(" ")
 					.append(
-						$("<span>").addClass("glyphicon glyphicon-pencil edit-material").attr("title","修改").attr("data-id",materialTemplate[0][key1][key2])
+						$("<span>").addClass("glyphicon glyphicon-pencil edit-material").attr("title","修改").attr("data-id",materialTemplate[0][0][key1][key2])
 						//.attr("data-toggle","modal")
 						//.attr("data-target","#material-modal")
 						.click(function(){
