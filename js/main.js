@@ -774,6 +774,9 @@ $(document).ready(function() {
 	if(internalLoad(0) == false){
 		externalLoad();
 		$('#loading-modal').modal('show');
+		$("#progressTimer").progressTimer({
+			timeLimit: 18
+		});
 		window.setTimeout("internalLoad(1);",18000);
 		window.setTimeout("$('#loading-modal').modal('hide');",18000);
 	}

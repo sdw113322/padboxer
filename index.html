@@ -11,6 +11,7 @@
 	<script type="text/javascript" src="./js/jquery.tablesorter.js"></script>
     <script type="text/javascript" src="./js/jquery.tooltipster.min.js"></script>
 	<script type="text/javascript" src="./js/jquery.ba-throttle-debounce.min.js"></script>
+	<script type="text/javascript" src="./js/jquery.progressTimer.min.js"></script>
 	<script type="text/javascript" src="./js/const.js"></script>
 	<script type="text/javascript" src="./js/main.js"></script>
   </head>
@@ -178,9 +179,7 @@
       <div class="modal-body">
         <h3>資料更新中...</h3>
 		<div class="progress">
-		  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
-			<span class="sr-only">60% Complete</span>
-		  </div>
+		  <div id="progressTimer"></div>
 		</div>
       </div>
     </div><!-- /.modal-content -->
