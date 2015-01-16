@@ -960,7 +960,7 @@ $(document).ready(function() {
 		window.localStorage.material = splits[2];
 		boxReset();
 		internalLoad();
-		$("#import-modal .modal-body textarea").val();
+		$("#import-modal .modal-body textarea").val("");
 		$('#import-modal').modal('hide');
 	});
 	$("#update").click(function(){
