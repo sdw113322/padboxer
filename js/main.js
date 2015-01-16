@@ -472,13 +472,15 @@ function materialDisplay( material )
 					).append(" ")
 					.append(
 						$("<span>").addClass("glyphicon glyphicon-pencil edit-material").attr("title","修改").attr("data-id",materialTemplate[0][key1][key2])
-						.attr("data-toggle","modal")
-						.attr("data-target","#material-modal")
+						//.attr("data-toggle","modal")
+						//.attr("data-target","#material-modal")
 						.click(function(){
 							var id = $(this).attr('data-id');
 							var material = dataLoad("material");
-							$("#material-modal .modal-body form input").val(material[id].quantity);
-							$("#material-modal .modal-body form input").attr("data-id",id);
+							$("#material-modal").modal('show');
+							$("#material-modal input").val(material[id].quantity);
+							$("#material-modal input").attr("data-id",id);
+							setTimeout(function(){$("#material-modal input").focus();},500);
 						})
 					)
 				)
@@ -836,6 +838,7 @@ $(document).ready(function() {
 	$("#btn-add").click(function(){
 		$("#add").show( 400 );
 		$("#btn-add").addClass("active");
+		$( "#add input[name='no']" ).focus();
 	});
 	$("#btn-add-preview").click(function(){
 		var name = JSON.parse(window.localStorage.name);
