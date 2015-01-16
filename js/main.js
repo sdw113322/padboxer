@@ -917,33 +917,14 @@ $(document).ready(function() {
 	});
 	$(window).bind('scroll', function(){
 		var $this = $(this);
-		if($this.scrollTop() < 200)
-			$(".material-sidebar").stop().animate({
-					top: 360-$this.scrollTop()
-				}, 0);
-		else if($this.scrollTop() < 260)
-			$(".material-sidebar").stop().animate({
-					top: 360-$this.scrollTop()
-				}, 100);
-		else if($this.scrollTop() < 320)
-			$(".material-sidebar").stop().animate({
-					top: 60
-				}, 100);
-		else
-			$(".material-sidebar").stop().animate({
-					top: 60
-				}, 50);
-	}).scroll();
-	$("#material a").bind('click', function(){
-		var $this = $(window);
 		if($this.scrollTop() < 260)
-			$(".material-sidebar").stop().animate({
+			$(".material-sidebar").css({
 					top: 360-$this.scrollTop()
-				}, 0);
-		if($this.scrollTop() > 260)
-			$(".material-sidebar").stop().animate({
+				});
+		else
+			$(".material-sidebar").css({
 					top: 60
-				}, 0);
-	}).scroll();
+				});
+	});
 	$(".version").append(version);
 });
