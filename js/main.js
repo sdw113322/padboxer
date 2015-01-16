@@ -917,7 +917,7 @@ $(document).ready(function() {
 	});
 	$(window).bind('scroll', function(){
 		var $this = $(this);
-		if($this.scrollTop() < 260)
+		if($this.scrollTop() < 300)
 			$(".material-sidebar").css({
 					top: 360-$this.scrollTop()
 				});
