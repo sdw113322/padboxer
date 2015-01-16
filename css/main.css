@@ -144,8 +144,8 @@
 		top: 50%;
 		left: 50%;
 	  }
-	@media (max-width: 767px) {
-	  .modal-dialog-center { /* Edited classname 10/03/2014 */
-		width: 100%;
+	  @media (max-width: 767px) {
+		  .modal-dialog-center { /* Edited classname 10/03/2014 */
+			width: 100%;
 	  }
 } 
