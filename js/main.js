@@ -1,5 +1,5 @@
 (function( $ ) {
-	$.fn.addIcon = function( qty_notification , no ) {
+	$.fn.addIcon = function( qty_notification , outter_link , no ) {
 		if(!(window.localStorage.getItem("name") === null)){
 			var name = JSON.parse(window.localStorage.name);
 			if(no in name)
@@ -17,29 +17,65 @@
 						status = "badge-warning";
 					else
 						status = "badge-important";
-					this.append(
-					$("<div>").addClass("icon").append(
+					if(outter_link == null)
+						this.append(
+						$("<div>").addClass("icon").append(
+							$("<img>")
+								.attr("src","icon/"+ no +".png")
+								.attr("width",36)
+								.attr("height",36)
+								.attr("class","material-display")//tootipster has been used
+								.attr("title",name[no].chinese)
+							).append(
+							$("<span>")
+								.addClass("badge " + status)
+								.text(available)
+							)
+						);
+					else
+						this.append(
+						$("<div>").addClass("icon").append(
+							$("<a>")
+							.attr("href",outter_link + no)
+							.attr("target","_blank")
+							.append(
+								$("<img>")
+									.attr("src","icon/"+ no +".png")
+									.attr("width",36)
+									.attr("height",36)
+									.attr("class","material-display")//tootipster has been used
+									.attr("title",name[no].chinese)
+								)
+							).append(
+							$("<span>")
+								.addClass("badge " + status)
+								.text(available)
+							)
+						);
+				}else
+					if(outter_link == null)
+						this.append(
 						$("<img>")
 							.attr("src","icon/"+ no +".png")
 							.attr("width",36)
 							.attr("height",36)
 							.attr("class","material-display")//tootipster has been used
 							.attr("title",name[no].chinese)
-						).append(
-						$("<span>")
-							.addClass("badge " + status)
-							.text(available)
-						)
-					);
-				}else
-					this.append(
-					$("<img>")
-						.attr("src","icon/"+ no +".png")
-						.attr("width",36)
-						.attr("height",36)
-						.attr("class","material-display")//tootipster has been used
-						.attr("title",name[no].chinese)
-					);
+						);
+					else
+						this.append(
+							$("<a>")
+							.attr("href",outter_link + no)
+							.attr("target","_blank")
+							.append(
+								$("<img>")
+									.attr("src","icon/"+ no +".png")
+									.attr("width",36)
+									.attr("height",36)
+									.attr("class","material-display")//tootipster has been used
+									.attr("title",name[no].chinese)
+							)
+						);
 		}
 		return this;
 	};
@@ -272,7 +308,7 @@ function boxDisplay( box )
 			if(no in evolution){
 				if(evolution[no].status == 'y'){
 					for(var key in evolution[no].need){
-						$( this ).addIcon(setting[1],evolution[no].need[key]);
+						$( this ).addIcon(setting[1],setting[2],evolution[no].need[key]);
 						if(key < evolution[no].need.length - 1)
 							$( this ).append(" ");
 					}
@@ -293,7 +329,7 @@ function boxDisplay( box )
 							ultimateNeed = ultimate[i].need;
 						}
 						for(var key in ultimateNeed){
-							$( this ).addIcon(setting[1],ultimateNeed[key]);
+							$( this ).addIcon(setting[1],setting[2],ultimateNeed[key]);
 							if(key < ultimateNeed.length - 1)
 								$( this ).append(" ");
 						}
@@ -345,6 +381,7 @@ function boxDisplay( box )
 
 function materialDisplay( material )
 {
+	var setting = JSON.parse(window.localStorage.setting);
 	$("#material").empty();
 	$("#material").append($("<div>").addClass("row").append($("<div>").addClass("material-body col-md-8")));
 	for(var i in materialTemplate[0][0]){
@@ -392,7 +429,7 @@ function materialDisplay( material )
 				$("<tr>").addClass(materialAttr[materialTemplate[0][0][key1][key2]].element).append(
 					$("<td>").text(materialAttr[materialTemplate[0][0][key1][key2]].no)
 				).append(
-					$("<td>").addIcon(false,materialAttr[materialTemplate[0][0][key1][key2]].no)
+					$("<td>").addIcon(false,setting[2],materialAttr[materialTemplate[0][0][key1][key2]].no)
 				).append(
 					$("<td>").text(materialAttr[materialTemplate[0][0][key1][key2]].name)
 				).append(
@@ -469,6 +506,7 @@ function internalLoad( load_times )
 		var box = dataLoad("box");
 		var material = dataLoad("material");
 		var allNeed = [];
+		var setting = JSON.parse(window.localStorage.setting);
 		boxDisplay(box);
 		materialDisplay(material);
 		$("#mainTable tbody tr").each(function() {
@@ -476,7 +514,7 @@ function internalLoad( load_times )
 			var choice = $( this ).attr('data-choice');
 			var id  = $(this).attr('id');
 			//顯示圖片
-			$( this ).append($("<td>").addIcon(false,text));
+			$( this ).append($("<td>").addIcon(false,setting[2],text));
 			//顯示中文名
 			if(text in name){
 				$( this ).append($("<td>").text(name[text].chinese));
@@ -616,6 +654,7 @@ function addMonster(no,times,box)
 	var i = 0;
 	var resort = true;
 	var choice = 0;
+	var setting = JSON.parse(window.localStorage.setting);
 	for(i=0;i<times;i++){
 		mon[i] = {};
 		mon[i]["id"] = window.localStorage.boxid;
@@ -624,7 +663,7 @@ function addMonster(no,times,box)
 		window.localStorage.boxid ++;
 		$row = $("<tr>").attr("id",mon[i]["id"]).attr("data-choice",0)
 				.append($("<td>").text(no))
-				.append($("<td>").addIcon(false,no))
+				.append($("<td>").addIcon(false,setting[2],no))
 				.append($("<td>").text(name[no].chinese))
 				.append($("<td>").text(name[no].japanese))
 				.append($("<td>").showNeedMaterial(no,mon[i]["id"],0))
@@ -725,12 +764,16 @@ $(document).ready(function() {
 		var setting = new Array();
 		setting[0] = false;
 		setting[1] = false;
-		setting[2] = false;
+		setting[2] = null;
 		window.localStorage.setting = JSON.stringify(setting);
 	}else{
 		var setting = JSON.parse(window.localStorage.setting);
 		$("#setting0").prop("checked" , setting[0]);
 		$("#setting1").prop("checked" , setting[1]);
+		if(setting[2] === null)
+			$("#setting2").val("NULL");
+		else
+			$("#setting2").val(setting[2]);
 	}
 	if(internalLoad(0) == false){
 		externalLoad();
@@ -805,6 +848,7 @@ $(document).ready(function() {
 		var ultimate = JSON.parse(window.localStorage.ultimate);
 		var no = $("#add input[name='no']").val();
 		var qty = $("#add input[name='quantity']").val();
+		var setting = JSON.parse(window.localStorage.setting);
 		$("#preview-modal .modal-body").empty().append($("<span>").attr("id","preview-status"));
 		$("#preview-modal h4").text(no + " - " + name[no].chinese);
 		if(evolution[no].status == "y"){
@@ -814,7 +858,7 @@ $(document).ready(function() {
 			for(var key in evolution[no].need){
 				
 				$("#preview-modal .modal-body table").append($("<tr>")
-					.append($("<td>").addIcon(false,evolution[no].need[key]))
+					.append($("<td>").addIcon(false,setting[2],evolution[no].need[key]))
 					.append($("<td>").text(evolution[no].need[key] + " - " + name[evolution[no].need[key]].chinese))
 					.append($("<td>").text($("#material table tr td:first-child:contains('" + evolution[no].need[key] + "')").next().next().next().text()))
 					.append($("<td>").text($("#material table tr td:first-child:contains('" + evolution[no].need[key] + "')").next().next().next().next().next().text()))
@@ -957,6 +1001,15 @@ $(document).ready(function() {
 		}else{
 			setting[1] = false;
 		}
+		window.localStorage.setting = JSON.stringify(setting);
+	});
+	$( "#setting2" ).change(function() {
+		var setting = JSON.parse(window.localStorage.setting);
+		var val = $( "#setting2 option:selected" ).val();
+		if(val === "NULL")
+			setting[2] = null;
+		else
+			setting[2] = val;
 		window.localStorage.setting = JSON.stringify(setting);
 	});
 	$(window).bind('scroll', function(){
