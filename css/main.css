@@ -154,3 +154,17 @@
 			width: 280px;
 			top: 320px;
 	  }
+	.icon span.badge {
+			//position: relative;
+		    position:absolute;
+			//top: -10px;
+			left: 25px;
+		}
+	div.icon{
+			position: relative;
+			float:left;
+			width: 50px;
+	}
+	.badge-important{background-color:#b94a48 !important;}
+	.badge-warning{background-color:#f89406 !important;}
+	.badge-success{background-color:#468847 !important;}

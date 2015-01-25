@@ -1,23 +1,88 @@
 (function( $ ) {
-	$.fn.addIcon = function( no ) {
+	$.fn.addIcon = function( qty_notification , outter_link , no ) {
 		if(!(window.localStorage.getItem("name") === null)){
 			var name = JSON.parse(window.localStorage.name);
 			if(no in name)
-				this.append(
-				$("<img>")
-					.attr("src","icon/"+ no +".png")
-					.attr("width",36)
-					.attr("height",36)
-					.attr("class","material-display")//tootipster has been used
-					.attr("title",name[no].chinese)
-				);
+				if(qty_notification == true){
+					for(var key in materialAttr){
+						if(materialAttr[key].no == no)
+							var x = key;
+					}
+					var available = $("#material span[data-id='" + x + "']").parent().parent().children().eq(3).text();
+					var total = $("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text();
+					var status;
+					if(total > 0)
+						status = "badge-success";
+					else if(total <= 0 && available > 0)
+						status = "badge-warning";
+					else
+						status = "badge-important";
+					if(outter_link == null)
+						this.append(
+						$("<div>").addClass("icon").append(
+							$("<img>")
+								.attr("src","icon/"+ no +".png")
+								.attr("width",36)
+								.attr("height",36)
+								.attr("class","material-display")//tootipster has been used
+								.attr("title",name[no].chinese)
+							).append(
+							$("<span>")
+								.addClass("badge " + status)
+								.text(available)
+							)
+						);
+					else
+						this.append(
+						$("<div>").addClass("icon").append(
+							$("<a>")
+							.attr("href",outter_link + no)
+							.attr("target","_blank")
+							.append(
+								$("<img>")
+									.attr("src","icon/"+ no +".png")
+									.attr("width",36)
+									.attr("height",36)
+									.attr("class","material-display")//tootipster has been used
+									.attr("title",name[no].chinese)
+								)
+							).append(
+							$("<span>")
+								.addClass("badge " + status)
+								.text(available)
+							)
+						);
+				}else
+					if(outter_link == null)
+						this.append(
+						$("<img>")
+							.attr("src","icon/"+ no +".png")
+							.attr("width",36)
+							.attr("height",36)
+							.attr("class","material-display")//tootipster has been used
+							.attr("title",name[no].chinese)
+						);
+					else
+						this.append(
+							$("<a>")
+							.attr("href",outter_link + no)
+							.attr("target","_blank")
+							.append(
+								$("<img>")
+									.attr("src","icon/"+ no +".png")
+									.attr("width",36)
+									.attr("height",36)
+									.attr("class","material-display")//tootipster has been used
+									.attr("title",name[no].chinese)
+							)
+						);
 		}
 		return this;
 	};
 }( jQuery ));
 
 (function( $ ) {
-	$.fn.showAction = function( no ) {
+	$.fn.showAction = function( priority , no ) {
 		if(!(window.localStorage.getItem("evolution") === null)){
 			var evolution = JSON.parse(window.localStorage.evolution);
 			$( this ).append($("<span>")
@@ -146,13 +211,6 @@
 								var accept = confirm ("真的要進化嗎？");
 							else
 								var accept = confirm ("沒有統計" + notIn + "\n真的要進化嗎？");
-							if(window.localStorage.getItem("settingA") === null){
-								var settingA = confirm ("要自動將以進化的寵物加至box中嗎？\n設定可在\"關於\"分頁中修改");
-								if(settingA == true)
-									window.localStorage.settingA = 1;
-								else
-									window.localStorage.settingA = 0;
-							}
 						}
 						if(error == 0 && accept == true){
 							var string = JSON.stringify(material);
@@ -163,7 +221,8 @@
 									offset = i;
 							}
 							deleteMonster(offset,box);
-							if(result != 0 && window.localStorage.settingA == 1)
+							var setting = JSON.parse(window.localStorage.setting);
+							if(result != 0 && setting[0])
 								addMonster(result,1,box);
 							string = JSON.stringify(box);
 							window.localStorage.box = string;
@@ -192,6 +251,54 @@
 						
 						}
 					})
+				).append(" ");
+			if(priority == 0)
+				$( this ).append($("<span>")
+					.addClass("glyphicon glyphicon-star-empty")
+					.attr("title",/*"設為優先進化對象"*/"Star")
+					.click(no,function(){
+						var box = dataLoad("box");
+						var id = $( this ).parent().parent().attr("id");
+						var priority2 = $( this ).parent().parent().attr("data-priority");
+						for(var i in box){
+							if(box[i].id == id)
+								if(priority2 == 0){
+									box[i].priority = 1;
+									$( this ).parent().parent().attr("data-priority",1);
+									$( this ).attr("class","glyphicon glyphicon-star").attr("title",/*"設為一般進化對象"*/"Unstar");
+								}else{
+									box[i].priority = 0;
+									$( this ).parent().parent().attr("data-priority",0);
+									$( this ).attr("class","glyphicon glyphicon-star-empty").attr("title",/*"設為優先進化對象"*/"Star");
+								}
+						}
+						var string = JSON.stringify(box);
+						window.localStorage.box = string;
+					})
+				);
+			else
+				$( this ).append($("<span>")
+					.addClass("glyphicon glyphicon-star")
+					.attr("title","設為一般進化對象")
+					.click(no,function(){
+						var box = dataLoad("box");
+						var id = $( this ).parent().parent().attr("id");
+						var priority2 = $( this ).parent().parent().attr("data-priority");
+						for(var i in box){
+							if(box[i].id == id)
+								if(priority2 == 0){
+									box[i].priority = 1;
+									$( this ).parent().parent().attr("data-priority",1);
+									$( this ).attr("class","glyphicon glyphicon-star").attr("title",/*"設為一般進化對象"*/"Unstar");
+								}else{
+									box[i].priority = 0;
+									$( this ).parent().parent().attr("data-priority",0);
+									$( this ).attr("class","glyphicon glyphicon-star-empty").attr("title",/*"設為優先進化對象"*/"Star");
+								}
+						}
+						var string = JSON.stringify(box);
+						window.localStorage.box = string;
+					})
 				);
 		}
 		return this;
@@ -210,6 +317,10 @@ function dataLoad( target )
 			result[48] = JSON.parse("{\"no\":1327,\"quantity\":0}");
 			result[49] = JSON.parse("{\"no\":1328,\"quantity\":0}");
 			result[50] = JSON.parse("{\"no\":1329,\"quantity\":0}");
+		}
+		if(target == "box" && result[0].hasOwnProperty('priority') == false){
+			for(var i in result)
+				result[i].priority = 0;
 		}
 		return result;
 	}else{
@@ -233,7 +344,7 @@ function boxDisplay( box )
 			choice = box[i].choice;
 		else
 			choice = 0;
-		$("#mainTable tbody").append( $(" <tr> ").attr( 'id' , box[i].id ).attr( 'data-choice' , choice )
+		$("#mainTable tbody").append( $(" <tr> ").attr( 'id' , box[i].id ).attr( 'data-choice' , choice ).attr( 'data-priority' , box[i].priority )
 						.append( $(" <td> ").text( box[i].no )));
 	}	
 }
@@ -244,20 +355,13 @@ function boxDisplay( box )
 			var evolution = JSON.parse(window.localStorage.evolution);
 			var ultimate = JSON.parse(window.localStorage.ultimate);
 			var name = JSON.parse(window.localStorage.name);
-			var allNeed = [];
+			var setting = JSON.parse(window.localStorage.setting);
 			if(no in evolution){
 				if(evolution[no].status == 'y'){
 					for(var key in evolution[no].need){
-						$( this ).addIcon(evolution[no].need[key]);
+						$( this ).addIcon(setting[1],setting[2],evolution[no].need[key]);
 						if(key < evolution[no].need.length - 1)
 							$( this ).append(" ");
-					}
-					var j = 0;
-					for(j=0;j<evolution[no].need.length;j++){
-						if(evolution[no].need[j] in allNeed)
-							allNeed[evolution[no].need[j]] ++;
-						else
-							allNeed[evolution[no].need[j]] = 1;
 					}
 				}
 				else if(evolution[no].status == 'u'){
@@ -269,15 +373,9 @@ function boxDisplay( box )
 							ultimateNeed = ultimate[i].need;
 						}
 						for(var key in ultimateNeed){
-							$( this ).addIcon(ultimateNeed[key]);
+							$( this ).addIcon(setting[1],setting[2],ultimateNeed[key]);
 							if(key < ultimateNeed.length - 1)
 								$( this ).append(" ");
-						}
-						for(j=0;j<ultimateNeed.length;j++){
-							if(ultimateNeed[j] in allNeed)
-								allNeed[ultimateNeed[j]] ++;
-							else
-								allNeed[ultimateNeed[j]] = 1;
 						}
 					}
 					else{
@@ -321,6 +419,7 @@ function boxDisplay( box )
 
 function materialDisplay( material )
 {
+	var setting = JSON.parse(window.localStorage.setting);
 	$("#material").empty();
 	$("#material").append($("<div>").addClass("row").append($("<div>").addClass("material-body col-md-8")));
 	for(var i in materialTemplate[0][0]){
@@ -368,7 +467,7 @@ function materialDisplay( material )
 				$("<tr>").addClass(materialAttr[materialTemplate[0][0][key1][key2]].element).append(
 					$("<td>").text(materialAttr[materialTemplate[0][0][key1][key2]].no)
 				).append(
-					$("<td>").addIcon(materialAttr[materialTemplate[0][0][key1][key2]].no)
+					$("<td>").addIcon(false,setting[2],materialAttr[materialTemplate[0][0][key1][key2]].no)
 				).append(
 					$("<td>").text(materialAttr[materialTemplate[0][0][key1][key2]].name)
 				).append(
@@ -445,6 +544,7 @@ function internalLoad( load_times )
 		var box = dataLoad("box");
 		var material = dataLoad("material");
 		var allNeed = [];
+		var setting = JSON.parse(window.localStorage.setting);
 		boxDisplay(box);
 		materialDisplay(material);
 		$("#mainTable tbody tr").each(function() {
@@ -452,7 +552,7 @@ function internalLoad( load_times )
 			var choice = $( this ).attr('data-choice');
 			var id  = $(this).attr('id');
 			//顯示圖片
-			$( this ).append($("<td>").addIcon(text));
+			$( this ).append($("<td>").addIcon(false,setting[2],text));
 			//顯示中文名
 			if(text in name){
 				$( this ).append($("<td>").text(name[text].chinese));
@@ -490,7 +590,7 @@ function internalLoad( load_times )
 				}
 			}
 			//顯示動作
-			$( this ).append($("<td>").showAction(text));
+			$( this ).append($("<td>").showAction($( this ).attr("data-priority"),text));
 			
 		});
 		$(".material-display").tooltipster(); //active tooltipster
@@ -592,6 +692,7 @@ function addMonster(no,times,box)
 	var i = 0;
 	var resort = true;
 	var choice = 0;
+	var setting = JSON.parse(window.localStorage.setting);
 	for(i=0;i<times;i++){
 		mon[i] = {};
 		mon[i]["id"] = window.localStorage.boxid;
@@ -600,11 +701,11 @@ function addMonster(no,times,box)
 		window.localStorage.boxid ++;
 		$row = $("<tr>").attr("id",mon[i]["id"]).attr("data-choice",0)
 				.append($("<td>").text(no))
-				.append($("<td>").addIcon(no))
+				.append($("<td>").addIcon(false,setting[2],no))
 				.append($("<td>").text(name[no].chinese))
 				.append($("<td>").text(name[no].japanese))
 				.append($("<td>").showNeedMaterial(no,mon[i]["id"],0))
-				.append($("<td>").showAction(no));
+				.append($("<td>").showAction(0,no));
 		$("#mainTable table").find('tbody').append($row).trigger("addRows", [$row, resort]);
 		if(no in evolution){
 			if(evolution[no].status == 'y'){
@@ -695,6 +796,23 @@ $(document).ready(function() {
 	if ($(window).height() >= 320){
 		$(window).resize(adjustModalMaxHeightAndPosition).trigger("resize");
 	}
+	window.localStorage.removeItem("settingA");
+	if(window.localStorage.getItem("setting") === null){
+		var setting = new Array();
+		setting[0] = false;
+		setting[1] = false;
+		setting[2] = null;
+		window.localStorage.setting = JSON.stringify(setting);
+		window.localStorage.removeItem("settingA");
+	}else{
+		var setting = JSON.parse(window.localStorage.setting);
+		$("#setting0").prop("checked" , setting[0]);
+		$("#setting1").prop("checked" , setting[1]);
+		if(setting[2] === null)
+			$("#setting2").val("NULL");
+		else
+			$("#setting2").val(setting[2]);
+	}
 	if(internalLoad(0) == false){
 		externalLoad();
 		$('#loading-modal').modal('show');
@@ -768,6 +886,7 @@ $(document).ready(function() {
 		var ultimate = JSON.parse(window.localStorage.ultimate);
 		var no = $("#add input[name='no']").val();
 		var qty = $("#add input[name='quantity']").val();
+		var setting = JSON.parse(window.localStorage.setting);
 		$("#preview-modal .modal-body").empty().append($("<span>").attr("id","preview-status"));
 		$("#preview-modal h4").text(no + " - " + name[no].chinese);
 		if(evolution[no].status == "y"){
@@ -777,7 +896,7 @@ $(document).ready(function() {
 			for(var key in evolution[no].need){
 				
 				$("#preview-modal .modal-body table").append($("<tr>")
-					.append($("<td>").addIcon(evolution[no].need[key]))
+					.append($("<td>").addIcon(false,setting[2],evolution[no].need[key]))
 					.append($("<td>").text(evolution[no].need[key] + " - " + name[evolution[no].need[key]].chinese))
 					.append($("<td>").text($("#material table tr td:first-child:contains('" + evolution[no].need[key] + "')").next().next().next().text()))
 					.append($("<td>").text($("#material table tr td:first-child:contains('" + evolution[no].need[key] + "')").next().next().next().next().next().text()))
@@ -799,7 +918,7 @@ $(document).ready(function() {
 				$("#preview-modal .modal-body").append($("<table>").addClass("table table-bordered").attr("data-number",index).append($("<thead>").append($("<tr>").append($("<th>")).append($("<th>").text("名稱")).append($("<th>").text("現有")).append($("<th>").text("總共")))));
 				for(var key in value.need){
 					$("#preview-modal .modal-body table[data-number='"+ index +"']").append($("<tr>")
-						.append($("<td>").addIcon(value.need[key]))
+						.append($("<td>").addIcon(false,value.need[key]))
 						.append($("<td>").text(value.need[key] + " - " + name[value.need[key]].chinese))
 						.append($("<td>").text($("#material table tr td:first-child:contains('" + value.need[key] + "')").next().next().next().text()))
 						.append($("<td>").text($("#material table tr td:first-child:contains('" + value.need[key] + "')").next().next().next().next().next().text()))
@@ -862,7 +981,7 @@ $(document).ready(function() {
 		}
 	});
 	$("#backup").click(function(){
-		var backup = window.localStorage.boxid + "      " + window.localStorage.box + "      " + window.localStorage.material;
+		var backup = window.localStorage.boxid + "      " + window.localStorage.box + "      " + window.localStorage.material + "      " + window.localStorage.setting;
 		$("#backup-modal .modal-body textarea").val(backup);
 	});
 	$("#material-modal .btn-primary").click(function(){
@@ -888,6 +1007,7 @@ $(document).ready(function() {
 		window.localStorage.boxid = splits[0];
 		window.localStorage.box = splits[1];
 		window.localStorage.material = splits[2];
+		window.localStorage.setting = splits[3];
 		boxReset();
 		internalLoad();
 		$("#import-modal .modal-body textarea").val("");
@@ -904,16 +1024,32 @@ $(document).ready(function() {
 		var box = dataLoad("box");
 		$.debounce( 250, addMonster(no,qty,box) );
 	});
-	if(window.localStorage.settingA == 0 || window.localStorage.getItem("settingA") === null)
-		$("#settingA").prop('checked',false);
-	else
-		$("#settingA").prop('checked',true);
-	$("#settingA").click(function(){
-		if($("#settingA").prop( "checked" )){
-			window.localStorage.settingA = 1;		
+	$("#setting0").click(function(){
+		var setting = JSON.parse(window.localStorage.setting);
+		if($("#setting0").prop( "checked" )){
+			setting[0] = true;		
 		}else{
-			window.localStorage.settingA = 0;
+			setting[0] = false;
 		}
+		window.localStorage.setting = JSON.stringify(setting);
+	});
+	$("#setting1").click(function(){
+		var setting = JSON.parse(window.localStorage.setting);
+		if($("#setting1").prop( "checked" )){
+			setting[1] = true;		
+		}else{
+			setting[1] = false;
+		}
+		window.localStorage.setting = JSON.stringify(setting);
+	});
+	$( "#setting2" ).change(function() {
+		var setting = JSON.parse(window.localStorage.setting);
+		var val = $( "#setting2 option:selected" ).val();
+		if(val === "NULL")
+			setting[2] = null;
+		else
+			setting[2] = val;
+		window.localStorage.setting = JSON.stringify(setting);
 	});
 	$(window).bind('scroll', function(){
 		var $this = $(this);
