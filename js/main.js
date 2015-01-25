@@ -1,16 +1,34 @@
+var setting = new Array();
+setting[1] = true;
 (function( $ ) {
-	$.fn.addIcon = function( no ) {
+	$.fn.addIcon = function( qty_notification , no ) {
 		if(!(window.localStorage.getItem("name") === null)){
 			var name = JSON.parse(window.localStorage.name);
 			if(no in name)
-				this.append(
-				$("<img>")
-					.attr("src","icon/"+ no +".png")
-					.attr("width",36)
-					.attr("height",36)
-					.attr("class","material-display")//tootipster has been used
-					.attr("title",name[no].chinese)
-				);
+				if(qty_notification == true)
+					this.append(
+					$("<div>").addClass("icon").append(
+						$("<img>")
+							.attr("src","icon/"+ no +".png")
+							.attr("width",36)
+							.attr("height",36)
+							.attr("class","material-display")//tootipster has been used
+							.attr("title",name[no].chinese)
+						).append(
+						$("<span>")
+							.addClass("badge")
+							.text("123")
+						)
+					);
+				else
+					this.append(
+					$("<img>")
+						.attr("src","icon/"+ no +".png")
+						.attr("width",36)
+						.attr("height",36)
+						.attr("class","material-display")//tootipster has been used
+						.attr("title",name[no].chinese)
+					);
 		}
 		return this;
 	};
@@ -248,7 +266,7 @@ function boxDisplay( box )
 			if(no in evolution){
 				if(evolution[no].status == 'y'){
 					for(var key in evolution[no].need){
-						$( this ).addIcon(evolution[no].need[key]);
+						$( this ).addIcon(setting[1],evolution[no].need[key]);
 						if(key < evolution[no].need.length - 1)
 							$( this ).append(" ");
 					}
@@ -269,7 +287,7 @@ function boxDisplay( box )
 							ultimateNeed = ultimate[i].need;
 						}
 						for(var key in ultimateNeed){
-							$( this ).addIcon(ultimateNeed[key]);
+							$( this ).addIcon(setting[1],ultimateNeed[key]);
 							if(key < ultimateNeed.length - 1)
 								$( this ).append(" ");
 						}
@@ -368,7 +386,7 @@ function materialDisplay( material )
 				$("<tr>").addClass(materialAttr[materialTemplate[0][0][key1][key2]].element).append(
 					$("<td>").text(materialAttr[materialTemplate[0][0][key1][key2]].no)
 				).append(
-					$("<td>").addIcon(materialAttr[materialTemplate[0][0][key1][key2]].no)
+					$("<td>").addIcon(false,materialAttr[materialTemplate[0][0][key1][key2]].no)
 				).append(
 					$("<td>").text(materialAttr[materialTemplate[0][0][key1][key2]].name)
 				).append(
@@ -452,7 +470,7 @@ function internalLoad( load_times )
 			var choice = $( this ).attr('data-choice');
 			var id  = $(this).attr('id');
 			//顯示圖片
-			$( this ).append($("<td>").addIcon(text));
+			$( this ).append($("<td>").addIcon(false,text));
 			//顯示中文名
 			if(text in name){
 				$( this ).append($("<td>").text(name[text].chinese));
@@ -600,7 +618,7 @@ function addMonster(no,times,box)
 		window.localStorage.boxid ++;
 		$row = $("<tr>").attr("id",mon[i]["id"]).attr("data-choice",0)
 				.append($("<td>").text(no))
-				.append($("<td>").addIcon(no))
+				.append($("<td>").addIcon(false,no))
 				.append($("<td>").text(name[no].chinese))
 				.append($("<td>").text(name[no].japanese))
 				.append($("<td>").showNeedMaterial(no,mon[i]["id"],0))
@@ -777,7 +795,7 @@ $(document).ready(function() {
 			for(var key in evolution[no].need){
 				
 				$("#preview-modal .modal-body table").append($("<tr>")
-					.append($("<td>").addIcon(evolution[no].need[key]))
+					.append($("<td>").addIcon(false,evolution[no].need[key]))
 					.append($("<td>").text(evolution[no].need[key] + " - " + name[evolution[no].need[key]].chinese))
 					.append($("<td>").text($("#material table tr td:first-child:contains('" + evolution[no].need[key] + "')").next().next().next().text()))
 					.append($("<td>").text($("#material table tr td:first-child:contains('" + evolution[no].need[key] + "')").next().next().next().next().next().text()))
@@ -799,7 +817,7 @@ $(document).ready(function() {
 				$("#preview-modal .modal-body").append($("<table>").addClass("table table-bordered").attr("data-number",index).append($("<thead>").append($("<tr>").append($("<th>")).append($("<th>").text("名稱")).append($("<th>").text("現有")).append($("<th>").text("總共")))));
 				for(var key in value.need){
 					$("#preview-modal .modal-body table[data-number='"+ index +"']").append($("<tr>")
-						.append($("<td>").addIcon(value.need[key]))
+						.append($("<td>").addIcon(false,value.need[key]))
 						.append($("<td>").text(value.need[key] + " - " + name[value.need[key]].chinese))
 						.append($("<td>").text($("#material table tr td:first-child:contains('" + value.need[key] + "')").next().next().next().text()))
 						.append($("<td>").text($("#material table tr td:first-child:contains('" + value.need[key] + "')").next().next().next().next().next().text()))
