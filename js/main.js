@@ -303,7 +303,6 @@ function boxDisplay( box )
 			var evolution = JSON.parse(window.localStorage.evolution);
 			var ultimate = JSON.parse(window.localStorage.ultimate);
 			var name = JSON.parse(window.localStorage.name);
-			var allNeed = [];
 			var setting = JSON.parse(window.localStorage.setting);
 			if(no in evolution){
 				if(evolution[no].status == 'y'){
@@ -311,13 +310,6 @@ function boxDisplay( box )
 						$( this ).addIcon(setting[1],setting[2],evolution[no].need[key]);
 						if(key < evolution[no].need.length - 1)
 							$( this ).append(" ");
-					}
-					var j = 0;
-					for(j=0;j<evolution[no].need.length;j++){
-						if(evolution[no].need[j] in allNeed)
-							allNeed[evolution[no].need[j]] ++;
-						else
-							allNeed[evolution[no].need[j]] = 1;
 					}
 				}
 				else if(evolution[no].status == 'u'){
@@ -332,12 +324,6 @@ function boxDisplay( box )
 							$( this ).addIcon(setting[1],setting[2],ultimateNeed[key]);
 							if(key < ultimateNeed.length - 1)
 								$( this ).append(" ");
-						}
-						for(j=0;j<ultimateNeed.length;j++){
-							if(ultimateNeed[j] in allNeed)
-								allNeed[ultimateNeed[j]] ++;
-							else
-								allNeed[ultimateNeed[j]] = 1;
 						}
 					}
 					else{
