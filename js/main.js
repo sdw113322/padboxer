@@ -82,7 +82,7 @@
 }( jQuery ));
 
 (function( $ ) {
-	$.fn.showAction = function( no ) {
+	$.fn.showAction = function( priority , no ) {
 		if(!(window.localStorage.getItem("evolution") === null)){
 			var evolution = JSON.parse(window.localStorage.evolution);
 			$( this ).append($("<span>")
@@ -251,6 +251,54 @@
 						
 						}
 					})
+				).append(" ");
+			if(priority == 0)
+				$( this ).append($("<span>")
+					.addClass("glyphicon glyphicon-star-empty")
+					.attr("title",/*"設為優先進化對象"*/"Star")
+					.click(no,function(){
+						var box = dataLoad("box");
+						var id = $( this ).parent().parent().attr("id");
+						var priority2 = $( this ).parent().parent().attr("data-priority");
+						for(var i in box){
+							if(box[i].id == id)
+								if(priority2 == 0){
+									box[i].priority = 1;
+									$( this ).parent().parent().attr("data-priority",1);
+									$( this ).attr("class","glyphicon glyphicon-star").attr("title",/*"設為一般進化對象"*/"Unstar");
+								}else{
+									box[i].priority = 0;
+									$( this ).parent().parent().attr("data-priority",0);
+									$( this ).attr("class","glyphicon glyphicon-star-empty").attr("title",/*"設為優先進化對象"*/"Star");
+								}
+						}
+						var string = JSON.stringify(box);
+						window.localStorage.box = string;
+					})
+				);
+			else
+				$( this ).append($("<span>")
+					.addClass("glyphicon glyphicon-star")
+					.attr("title","設為一般進化對象")
+					.click(no,function(){
+						var box = dataLoad("box");
+						var id = $( this ).parent().parent().attr("id");
+						var priority2 = $( this ).parent().parent().attr("data-priority");
+						for(var i in box){
+							if(box[i].id == id)
+								if(priority2 == 0){
+									box[i].priority = 1;
+									$( this ).parent().parent().attr("data-priority",1);
+									$( this ).attr("class","glyphicon glyphicon-star").attr("title",/*"設為一般進化對象"*/"Unstar");
+								}else{
+									box[i].priority = 0;
+									$( this ).parent().parent().attr("data-priority",0);
+									$( this ).attr("class","glyphicon glyphicon-star-empty").attr("title",/*"設為優先進化對象"*/"Star");
+								}
+						}
+						var string = JSON.stringify(box);
+						window.localStorage.box = string;
+					})
 				);
 		}
 		return this;
@@ -269,6 +317,10 @@ function dataLoad( target )
 			result[48] = JSON.parse("{\"no\":1327,\"quantity\":0}");
 			result[49] = JSON.parse("{\"no\":1328,\"quantity\":0}");
 			result[50] = JSON.parse("{\"no\":1329,\"quantity\":0}");
+		}
+		if(target == "box" && result[0].hasOwnProperty('priority') == false){
+			for(var i in result)
+				result[i].priority = 0;
 		}
 		return result;
 	}else{
@@ -292,7 +344,7 @@ function boxDisplay( box )
 			choice = box[i].choice;
 		else
 			choice = 0;
-		$("#mainTable tbody").append( $(" <tr> ").attr( 'id' , box[i].id ).attr( 'data-choice' , choice )
+		$("#mainTable tbody").append( $(" <tr> ").attr( 'id' , box[i].id ).attr( 'data-choice' , choice ).attr( 'data-priority' , box[i].priority )
 						.append( $(" <td> ").text( box[i].no )));
 	}	
 }
@@ -538,7 +590,7 @@ function internalLoad( load_times )
 				}
 			}
 			//顯示動作
-			$( this ).append($("<td>").showAction(text));
+			$( this ).append($("<td>").showAction($( this ).attr("data-priority"),text));
 			
 		});
 		$(".material-display").tooltipster(); //active tooltipster
@@ -653,7 +705,7 @@ function addMonster(no,times,box)
 				.append($("<td>").text(name[no].chinese))
 				.append($("<td>").text(name[no].japanese))
 				.append($("<td>").showNeedMaterial(no,mon[i]["id"],0))
-				.append($("<td>").showAction(no));
+				.append($("<td>").showAction(0,no));
 		$("#mainTable table").find('tbody').append($row).trigger("addRows", [$row, resort]);
 		if(no in evolution){
 			if(evolution[no].status == 'y'){
@@ -744,14 +796,14 @@ $(document).ready(function() {
 	if ($(window).height() >= 320){
 		$(window).resize(adjustModalMaxHeightAndPosition).trigger("resize");
 	}
-	console.log(window.localStorage.setting);
-	console.log(window.localStorage.settingA);
+	window.localStorage.removeItem("settingA");
 	if(window.localStorage.getItem("setting") === null){
 		var setting = new Array();
 		setting[0] = false;
 		setting[1] = false;
 		setting[2] = null;
 		window.localStorage.setting = JSON.stringify(setting);
+		window.localStorage.removeItem("settingA");
 	}else{
 		var setting = JSON.parse(window.localStorage.setting);
 		$("#setting0").prop("checked" , setting[0]);
