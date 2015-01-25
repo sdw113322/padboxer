@@ -1,11 +1,22 @@
-var setting = new Array();
-setting[1] = true;
 (function( $ ) {
 	$.fn.addIcon = function( qty_notification , no ) {
 		if(!(window.localStorage.getItem("name") === null)){
 			var name = JSON.parse(window.localStorage.name);
 			if(no in name)
-				if(qty_notification == true)
+				if(qty_notification == true){
+					for(var key in materialAttr){
+						if(materialAttr[key].no == no)
+							var x = key;
+					}
+					var available = $("#material span[data-id='" + x + "']").parent().parent().children().eq(3).text();
+					var total = $("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text();
+					var status;
+					if(total > 0)
+						status = "badge-success";
+					else if(total <= 0 && available > 0)
+						status = "badge-warning";
+					else
+						status = "badge-important";
 					this.append(
 					$("<div>").addClass("icon").append(
 						$("<img>")
@@ -16,11 +27,11 @@ setting[1] = true;
 							.attr("title",name[no].chinese)
 						).append(
 						$("<span>")
-							.addClass("badge")
-							.text("123")
+							.addClass("badge " + status)
+							.text(available)
 						)
 					);
-				else
+				}else
 					this.append(
 					$("<img>")
 						.attr("src","icon/"+ no +".png")
@@ -164,13 +175,6 @@ setting[1] = true;
 								var accept = confirm ("真的要進化嗎？");
 							else
 								var accept = confirm ("沒有統計" + notIn + "\n真的要進化嗎？");
-							if(window.localStorage.getItem("settingA") === null){
-								var settingA = confirm ("要自動將以進化的寵物加至box中嗎？\n設定可在\"關於\"分頁中修改");
-								if(settingA == true)
-									window.localStorage.settingA = 1;
-								else
-									window.localStorage.settingA = 0;
-							}
 						}
 						if(error == 0 && accept == true){
 							var string = JSON.stringify(material);
@@ -181,7 +185,8 @@ setting[1] = true;
 									offset = i;
 							}
 							deleteMonster(offset,box);
-							if(result != 0 && window.localStorage.settingA == 1)
+							var setting = JSON.parse(window.localStorage.setting);
+							if(result != 0 && setting[0])
 								addMonster(result,1,box);
 							string = JSON.stringify(box);
 							window.localStorage.box = string;
@@ -263,6 +268,7 @@ function boxDisplay( box )
 			var ultimate = JSON.parse(window.localStorage.ultimate);
 			var name = JSON.parse(window.localStorage.name);
 			var allNeed = [];
+			var setting = JSON.parse(window.localStorage.setting);
 			if(no in evolution){
 				if(evolution[no].status == 'y'){
 					for(var key in evolution[no].need){
@@ -713,6 +719,19 @@ $(document).ready(function() {
 	if ($(window).height() >= 320){
 		$(window).resize(adjustModalMaxHeightAndPosition).trigger("resize");
 	}
+	console.log(window.localStorage.setting);
+	console.log(window.localStorage.settingA);
+	if(window.localStorage.getItem("setting") === null){
+		var setting = new Array();
+		setting[0] = false;
+		setting[1] = false;
+		setting[2] = false;
+		window.localStorage.setting = JSON.stringify(setting);
+	}else{
+		var setting = JSON.parse(window.localStorage.setting);
+		$("#setting0").prop("checked" , setting[0]);
+		$("#setting1").prop("checked" , setting[1]);
+	}
 	if(internalLoad(0) == false){
 		externalLoad();
 		$('#loading-modal').modal('show');
@@ -922,16 +941,23 @@ $(document).ready(function() {
 		var box = dataLoad("box");
 		$.debounce( 250, addMonster(no,qty,box) );
 	});
-	if(window.localStorage.settingA == 0 || window.localStorage.getItem("settingA") === null)
-		$("#settingA").prop('checked',false);
-	else
-		$("#settingA").prop('checked',true);
-	$("#settingA").click(function(){
-		if($("#settingA").prop( "checked" )){
-			window.localStorage.settingA = 1;		
+	$("#setting0").click(function(){
+		var setting = JSON.parse(window.localStorage.setting);
+		if($("#setting0").prop( "checked" )){
+			setting[0] = true;		
 		}else{
-			window.localStorage.settingA = 0;
+			setting[0] = false;
 		}
+		window.localStorage.setting = JSON.stringify(setting);
+	});
+	$("#setting1").click(function(){
+		var setting = JSON.parse(window.localStorage.setting);
+		if($("#setting1").prop( "checked" )){
+			setting[1] = true;		
+		}else{
+			setting[1] = false;
+		}
+		window.localStorage.setting = JSON.stringify(setting);
 	});
 	$(window).bind('scroll', function(){
 		var $this = $(this);
