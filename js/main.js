@@ -981,7 +981,7 @@ $(document).ready(function() {
 		}
 	});
 	$("#backup").click(function(){
-		var backup = window.localStorage.boxid + "      " + window.localStorage.box + "      " + window.localStorage.material;
+		var backup = window.localStorage.boxid + "      " + window.localStorage.box + "      " + window.localStorage.material + "      " + window.localStorage.setting;
 		$("#backup-modal .modal-body textarea").val(backup);
 	});
 	$("#material-modal .btn-primary").click(function(){
@@ -1007,6 +1007,7 @@ $(document).ready(function() {
 		window.localStorage.boxid = splits[0];
 		window.localStorage.box = splits[1];
 		window.localStorage.material = splits[2];
+		window.localStorage.setting = splits[3];
 		boxReset();
 		internalLoad();
 		$("#import-modal .modal-body textarea").val("");
