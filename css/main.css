@@ -168,3 +168,8 @@
 	.badge-important{background-color:#b94a48 !important;}
 	.badge-warning{background-color:#f89406 !important;}
 	.badge-success{background-color:#468847 !important;}
+	.modal-vertical-centered {
+	  transform: translate(0, 50%) !important;
+	  -ms-transform: translate(0, 50%) !important; /* IE 9 */
+	  -webkit-transform: translate(0, 50%) !important; /* Safari and Chrome */
+	}
