@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+var version = "1.7 dev";
+=======
 var version = "1.6";
+>>>>>>> 903df65bfc4b9a277bbc625102591c9c4deb5443
 //素材資料 (編號,屬性,名稱)
 function material(no,element,name){
 	this.no = no;
