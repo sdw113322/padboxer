@@ -1,4 +1,4 @@
-var version = "1.7";
+var version = "1.8 dev";
 //素材資料 (編號,屬性,名稱)
 function material(no,element,name){
 	this.no = no;
