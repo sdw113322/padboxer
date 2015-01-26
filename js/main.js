@@ -758,7 +758,18 @@ function addMonster(no,times,box)
 	$("#add input[name='quantity']").val("1");
 	$(".material-display").tooltipster(); //active tooltipster
 } 
+function centerModals(){
+  $('.modal').each(function(i){
+    var $clone = $(this).clone().css('display', 'block').appendTo('body');
+    var top = Math.round(($clone.height() - $clone.find('.modal-content').height()) / 2);
+    top = top > 0 ? top : 0;
+    $clone.remove();
+    $(this).find('.modal-content').css("margin-top", top);
+  });
+}
 $(document).ready(function() {
+	$('.modal').on('show.bs.modal', centerModals);
+	$(window).on('resize', centerModals);
 	window.localStorage.removeItem("settingA");
 	if(window.localStorage.getItem("setting") === null){
 		var setting = new Array();
