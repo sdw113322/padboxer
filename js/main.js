@@ -4,19 +4,6 @@
 			var name = JSON.parse(window.localStorage.name);
 			if(no in name)
 				if(qty_notification == true){
-					for(var key in materialAttr){
-						if(materialAttr[key].no == no)
-							var x = key;
-					}
-					var available = $("#material span[data-id='" + x + "']").parent().parent().children().eq(3).text();
-					var total = $("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text();
-					var status;
-					if(total > 0)
-						status = "badge-success";
-					else if(total <= 0 && available > 0)
-						status = "badge-warning";
-					else
-						status = "badge-important";
 					if(outter_link == null)
 						this.append(
 						$("<div>").addClass("icon").append(
@@ -28,8 +15,8 @@
 								.attr("title",name[no].chinese)
 							).append(
 							$("<span>")
-								.addClass("badge " + status)
-								.text(available)
+								.addClass("badge")
+								.attr("data-no",no)
 							)
 						);
 					else
@@ -48,8 +35,8 @@
 								)
 							).append(
 							$("<span>")
-								.addClass("badge " + status)
-								.text(available)
+								.addClass("badge")
+								.attr("data-no",no)
 							)
 						);
 				}else
@@ -79,9 +66,6 @@
 		}
 		return this;
 	};
-}( jQuery ));
-
-(function( $ ) {
 	$.fn.showAction = function( priority , no ) {
 		if(!(window.localStorage.getItem("evolution") === null)){
 			var evolution = JSON.parse(window.localStorage.evolution);
@@ -279,53 +263,6 @@
 		}
 		return this;
 	};
-}( jQuery ));
-
-function dataLoad( target )
-{
-	var result = [];
-	if(!(window.localStorage.getItem(target) === null)){
-		var string = window.localStorage.getItem(target);
-		result = JSON.parse(string);
-		if(target == "material" && result.length==46){
-			result[46] = JSON.parse("{\"no\":1325,\"quantity\":0}");
-			result[47] = JSON.parse("{\"no\":1326,\"quantity\":0}");
-			result[48] = JSON.parse("{\"no\":1327,\"quantity\":0}");
-			result[49] = JSON.parse("{\"no\":1328,\"quantity\":0}");
-			result[50] = JSON.parse("{\"no\":1329,\"quantity\":0}");
-		}
-		if(target == "box" && result[0].hasOwnProperty('priority') == false){
-			for(var i in result)
-				result[i].priority = 0;
-		}
-		return result;
-	}else{
-		if(target == "box")
-			window.localStorage.boxid = 0;
-		else if(target == "material"){
-			var string = "[{\"no\":147,\"quantity\":\"0\"},{\"no\":148,\"quantity\":0},{\"no\":149,\"quantity\":0},{\"no\":150,\"quantity\":0},{\"no\":151,\"quantity\":0},{\"no\":321,\"quantity\":0},{\"no\":1176,\"quantity\":0},{\"no\":161,\"quantity\":0},{\"no\":171,\"quantity\":0},{\"no\":166,\"quantity\":0},{\"no\":162,\"quantity\":0},{\"no\":172,\"quantity\":0},{\"no\":167,\"quantity\":0},{\"no\":1294,\"quantity\":0},{\"no\":163,\"quantity\":0},{\"no\":173,\"quantity\":0},{\"no\":168,\"quantity\":0},{\"no\":1295,\"quantity\":0},{\"no\":164,\"quantity\":0},{\"no\":174,\"quantity\":0},{\"no\":169,\"quantity\":0},{\"no\":165,\"quantity\":0},{\"no\":175,\"quantity\":0},{\"no\":170,\"quantity\":0},{\"no\":234,\"quantity\":0},{\"no\":152,\"quantity\":0},{\"no\":153,\"quantity\":0},{\"no\":154,\"quantity\":0},{\"no\":227,\"quantity\":0},{\"no\":1085,\"quantity\":0},{\"no\":1086,\"quantity\":0},{\"no\":1087,\"quantity\":0},{\"no\":155,\"quantity\":0},{\"no\":156,\"quantity\":0},{\"no\":157,\"quantity\":0},{\"no\":158,\"quantity\":0},{\"no\":159,\"quantity\":0},{\"no\":160,\"quantity\":0},{\"no\":246,\"quantity\":0},{\"no\":247,\"quantity\":0},{\"no\":248,\"quantity\":0},{\"no\":249,\"quantity\":0},{\"no\":250,\"quantity\":0},{\"no\":251,\"quantity\":0},{\"no\":915,\"quantity\":0},{\"no\":916,\"quantity\":0},{\"no\":1325,\"quantity\":0},{\"no\":1326,\"quantity\":0},{\"no\":1327,\"quantity\":0},{\"no\":1328,\"quantity\":0},{\"no\":1329,\"quantity\":0}]";
-			window.localStorage.material = string;
-			result = JSON.parse(string);
-		}
-		return result;
-	}
-}
-
-function boxDisplay( box )
-{
-	var i = 0;
-	var choice;
-	for(i=0;i<box.length;i++){
-		if(box[i].hasOwnProperty('choice'))
-			choice = box[i].choice;
-		else
-			choice = 0;
-		$("#mainTable tbody").append( $(" <tr> ").attr( 'id' , box[i].id ).attr( 'data-choice' , choice ).attr( 'data-priority' , box[i].priority )
-						.append( $(" <td> ").text( box[i].no )));
-	}	
-}
-
-(function( $ ) {
 	$.fn.showNeedMaterial = function( no , id , choice ) {
 		if(!(window.localStorage.getItem("evolution") === null && window.localStorage.getItem("ultimate") === null)){
 			var evolution = JSON.parse(window.localStorage.evolution);
@@ -392,6 +329,59 @@ function boxDisplay( box )
 		return this;
 	};
 }( jQuery ));
+
+function updateMeterial()
+{
+	$("#mainTable div span").each(function(){
+		var materialNo = $( this ).attr("data-no");
+		$( this ).attr("class","badge " + materialTab.state(materialNo));
+		$( this ).text(materialTab.quantity(materialNo));
+	});
+}
+
+function dataLoad( target )
+{
+	var result = [];
+	if(!(window.localStorage.getItem(target) === null)){
+		var string = window.localStorage.getItem(target);
+		result = JSON.parse(string);
+		if(target == "material" && result.length==46){
+			result[46] = JSON.parse("{\"no\":1325,\"quantity\":0}");
+			result[47] = JSON.parse("{\"no\":1326,\"quantity\":0}");
+			result[48] = JSON.parse("{\"no\":1327,\"quantity\":0}");
+			result[49] = JSON.parse("{\"no\":1328,\"quantity\":0}");
+			result[50] = JSON.parse("{\"no\":1329,\"quantity\":0}");
+		}
+		if(target == "box" && result[0].hasOwnProperty('priority') == false){
+			for(var i in result)
+				result[i].priority = 0;
+		}
+		return result;
+	}else{
+		if(target == "box")
+			window.localStorage.boxid = 0;
+		else if(target == "material"){
+			var string = "[{\"no\":147,\"quantity\":\"0\"},{\"no\":148,\"quantity\":0},{\"no\":149,\"quantity\":0},{\"no\":150,\"quantity\":0},{\"no\":151,\"quantity\":0},{\"no\":321,\"quantity\":0},{\"no\":1176,\"quantity\":0},{\"no\":161,\"quantity\":0},{\"no\":171,\"quantity\":0},{\"no\":166,\"quantity\":0},{\"no\":162,\"quantity\":0},{\"no\":172,\"quantity\":0},{\"no\":167,\"quantity\":0},{\"no\":1294,\"quantity\":0},{\"no\":163,\"quantity\":0},{\"no\":173,\"quantity\":0},{\"no\":168,\"quantity\":0},{\"no\":1295,\"quantity\":0},{\"no\":164,\"quantity\":0},{\"no\":174,\"quantity\":0},{\"no\":169,\"quantity\":0},{\"no\":165,\"quantity\":0},{\"no\":175,\"quantity\":0},{\"no\":170,\"quantity\":0},{\"no\":234,\"quantity\":0},{\"no\":152,\"quantity\":0},{\"no\":153,\"quantity\":0},{\"no\":154,\"quantity\":0},{\"no\":227,\"quantity\":0},{\"no\":1085,\"quantity\":0},{\"no\":1086,\"quantity\":0},{\"no\":1087,\"quantity\":0},{\"no\":155,\"quantity\":0},{\"no\":156,\"quantity\":0},{\"no\":157,\"quantity\":0},{\"no\":158,\"quantity\":0},{\"no\":159,\"quantity\":0},{\"no\":160,\"quantity\":0},{\"no\":246,\"quantity\":0},{\"no\":247,\"quantity\":0},{\"no\":248,\"quantity\":0},{\"no\":249,\"quantity\":0},{\"no\":250,\"quantity\":0},{\"no\":251,\"quantity\":0},{\"no\":915,\"quantity\":0},{\"no\":916,\"quantity\":0},{\"no\":1325,\"quantity\":0},{\"no\":1326,\"quantity\":0},{\"no\":1327,\"quantity\":0},{\"no\":1328,\"quantity\":0},{\"no\":1329,\"quantity\":0}]";
+			window.localStorage.material = string;
+			result = JSON.parse(string);
+		}
+		return result;
+	}
+}
+
+function boxDisplay( box )
+{
+	var i = 0;
+	var choice;
+	for(i=0;i<box.length;i++){
+		if(box[i].hasOwnProperty('choice'))
+			choice = box[i].choice;
+		else
+			choice = 0;
+		$("#mainTable tbody").append( $(" <tr> ").attr( 'id' , box[i].id ).attr( 'data-choice' , choice ).attr( 'data-priority' , box[i].priority )
+						.append( $(" <td> ").text( box[i].no )));
+	}	
+}
 
 function materialDisplay( material )
 {
@@ -576,6 +566,7 @@ function internalLoad( load_times )
 			var total = $(this).children().eq(3).text() - $(this).children().eq(4).text();
 			$(this).children().eq(5).text(total);
 		});
+		updateMeterial();
 		$("#mainTable table").tablesorter();
 	}else
 		return false;
