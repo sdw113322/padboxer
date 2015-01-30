@@ -123,19 +123,7 @@
 								}
 							}
 							for(var index in need){
-								var x = -1;
-									for(var key in materialAttr){
-										if(materialAttr[key].no == need[index])
-											x = key;
-									}
-									if(x != -1){
-										var needQty = $("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text();
-										var total = $("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text();
-										total++;
-										needQty--;
-										$("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text(needQty);
-										$("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text(total);
-									}
+								materialTab.needMinus(need[index]);
 							}
 						}
 					})
@@ -227,19 +215,7 @@
 							string = JSON.stringify(box);
 							window.localStorage.box = string;
 							for(var index in need){
-								var x = -1;
-								for(var key in materialAttr){
-									if(materialAttr[key].no == need[index])
-										x = key;
-								}
-								if(x != -1){
-									var available = $("#material span[data-id='" + x + "']").parent().parent().children().eq(3).text();
-									var needQty = $("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text();
-									available--;
-									needQty--;
-									$("#material span[data-id='" + x + "']").parent().parent().children().eq(3).text(available);
-									$("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text(needQty);
-								}
+								materialTab.evolution(need[index]);
 							}
 							var resort = true;
 							$("#mainTable table #" + id).remove();
@@ -710,19 +686,7 @@ function addMonster(no,times,box)
 		if(no in evolution){
 			if(evolution[no].status == 'y'){
 				for(var key in evolution[no].need){
-					var x = -1;
-					for(var index in materialAttr){
-						if(materialAttr[index].no == evolution[no].need[key])
-							x = index;
-					}
-					if(x != -1){
-						var need = $("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text();
-						var total = $("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text();
-						need++;
-						total--;
-						$("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text(need);
-						$("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text(total);
-					}
+					materialTab.needPlus(evolution[no].need[key]);
 				}
 			}
 			else if(evolution[no].status == 'u'){
@@ -734,19 +698,7 @@ function addMonster(no,times,box)
 						ultimateNeed = ultimate[i].need;
 					}
 					for(var key in ultimateNeed){
-						var x = -1;
-						for(var index in materialAttr){
-							if(materialAttr[index].no == ultimateNeed[key])
-								x = index;
-						}
-						if(x != -1){
-							var need = $("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text();
-							var total = $("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text();
-							need++;
-							total--;
-							$("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text(need);
-							$("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text(total);
-						}
+						materialTab.needPlus(ultimateNeed[key]);
 					}
 				}
 			}
@@ -829,19 +781,7 @@ $(document).ready(function() {
 			ultimateNeed = ultimate[i].need;
 		}
 		for(j=0;j<ultimateNeed.length;j++){
-			var x = -1;
-			for(var index in materialAttr){
-				if(materialAttr[index].no == ultimateNeed[j])
-					x = index;
-			}
-			if(x != -1){
-				var need = $("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text();
-				var total = $("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text();
-				need++;
-				total--;
-				$("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text(need);
-				$("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text(total);
-			}
+			materialTab.needPlus(ultimateNeed[j]);
 		}
 		
 		$('#ultimateBranch').modal('hide');
