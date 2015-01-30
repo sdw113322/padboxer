@@ -237,7 +237,7 @@
 			else
 				$( this ).append($("<span>")
 					.addClass("glyphicon glyphicon-star")
-					.attr("title","設為一般進化對象")
+					.attr("title",/*"設為一般進化對象"*/"Unstar")
 					.click(no,function(){
 						var box = dataLoad("box");
 						var id = $( this ).parent().parent().attr("id");
@@ -666,9 +666,10 @@ function addMonster(no,times,box)
 		mon[i] = {};
 		mon[i]["id"] = window.localStorage.boxid;
 		mon[i]["no"] = no;
+		mon[i]["priority"] = 0;
 		box.push(mon[i]);
 		window.localStorage.boxid ++;
-		$row = $("<tr>").attr("id",mon[i]["id"]).attr("data-choice",0)
+		$row = $("<tr>").attr("id",mon[i]["id"]).attr("data-choice",0).attr("data-priority",0)
 				.append($("<td>").text(no))
 				.append($("<td>").addIcon(false,setting[2],no))
 				.append($("<td>").text(name[no].chinese))
