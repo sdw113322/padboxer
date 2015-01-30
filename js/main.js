@@ -408,6 +408,10 @@ function materialDisplay( material )
 						).append(
 							$("<th>").text("總計")
 						).append(
+							$("<th>").text("需要")
+						).append(
+							$("<th>").text("總計")
+						).append(
 							$("<th>").text("動作")
 						)
 					)
@@ -438,6 +442,10 @@ function materialDisplay( material )
 					$("<td>").text(materialAttr[materialTemplate[0][0][key1][key2]].name)
 				).append(
 					$("<td>").text(material[materialTemplate[0][0][key1][key2]].quantity)
+				).append(
+					$("<td>").text("0")
+				).append(
+					$("<td>").text("0")
 				).append(
 					$("<td>").text("0")
 				).append(
@@ -510,6 +518,7 @@ function internalLoad( load_times )
 		var box = dataLoad("box");
 		var material = dataLoad("material");
 		var allNeed = [];
+		var PAllNeed = [];
 		var setting = JSON.parse(window.localStorage.setting);
 		boxDisplay(box);
 		materialDisplay(material);
@@ -532,10 +541,15 @@ function internalLoad( load_times )
 				if(evolution[text].status == 'y'){
 					var j = 0;
 					for(j=0;j<evolution[text].need.length;j++){
-						if(evolution[text].need[j] in allNeed)
+						if(evolution[text].need[j] in allNeed){
 							allNeed[evolution[text].need[j]] ++;
-						else
+							if($( this ).attr('data-priority')>0)
+								PAllNeed[evolution[text].need[j]]++;
+						}else{
 							allNeed[evolution[text].need[j]] = 1;
+							if($( this ).attr('data-priority')>0)
+								PAllNeed[evolution[text].need[j]] = 1;
+						}
 					}
 				}
 				else if(evolution[text].status == 'u'){
@@ -547,16 +561,23 @@ function internalLoad( load_times )
 							ultimateNeed = ultimate[i].need;
 						}
 						for(j=0;j<ultimateNeed.length;j++){
-							if(ultimateNeed[j] in allNeed)
+							if(ultimateNeed[j] in allNeed){
 								allNeed[ultimateNeed[j]] ++;
-							else
+								if($( this ).attr('data-priority')>0)
+									PAllNeed[ultimateNeed[j]]++;
+							}else{
 								allNeed[ultimateNeed[j]] = 1;
+								if($( this ).attr('data-priority')>0)
+									PAllNeed[ultimateNeed[j]] = 1;
+							}
 						}
 					}
 				}
+				console.log(PAllNeed[151]);
 			}
 			//顯示動作
 			$( this ).append($("<td>").showAction($( this ).attr("data-priority"),text));
+			console.log(PAllNeed[151]);
 			
 		});
 		$(".material-display").tooltipster(); //active tooltipster
@@ -565,6 +586,9 @@ function internalLoad( load_times )
 			$(this).children().eq(4).text(allNeed[no]);
 			var total = $(this).children().eq(3).text() - $(this).children().eq(4).text();
 			$(this).children().eq(5).text(total);
+			$(this).children().eq(6).text(PAllNeed[no]);
+			var Ptotal = $(this).children().eq(3).text() - $(this).children().eq(4).text();
+			$(this).children().eq(7).text(Ptotal);
 		});
 		updateMeterial();
 		$("#mainTable table").tablesorter();
