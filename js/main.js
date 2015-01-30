@@ -4,19 +4,6 @@
 			var name = JSON.parse(window.localStorage.name);
 			if(no in name)
 				if(qty_notification == true){
-					for(var key in materialAttr){
-						if(materialAttr[key].no == no)
-							var x = key;
-					}
-					var available = $("#material span[data-id='" + x + "']").parent().parent().children().eq(3).text();
-					var total = $("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text();
-					var status;
-					if(total > 0)
-						status = "badge-success";
-					else if(total <= 0 && available > 0)
-						status = "badge-warning";
-					else
-						status = "badge-important";
 					if(outter_link == null)
 						this.append(
 						$("<div>").addClass("icon").append(
@@ -27,9 +14,7 @@
 								.attr("class","material-display")//tootipster has been used
 								.attr("title",name[no].chinese)
 							).append(
-							$("<span>")
-								.addClass("badge " + status)
-								.text(available)
+							$("<span>").attr("data-no",no)
 							)
 						);
 					else
@@ -47,9 +32,7 @@
 									.attr("title",name[no].chinese)
 								)
 							).append(
-							$("<span>")
-								.addClass("badge " + status)
-								.text(available)
+							$("<span>").attr("data-no",no)
 							)
 						);
 				}else
@@ -79,9 +62,6 @@
 		}
 		return this;
 	};
-}( jQuery ));
-
-(function( $ ) {
 	$.fn.showAction = function( priority , no ) {
 		if(!(window.localStorage.getItem("evolution") === null)){
 			var evolution = JSON.parse(window.localStorage.evolution);
@@ -123,21 +103,10 @@
 								}
 							}
 							for(var index in need){
-								var x = -1;
-									for(var key in materialAttr){
-										if(materialAttr[key].no == need[index])
-											x = key;
-									}
-									if(x != -1){
-										var needQty = $("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text();
-										var total = $("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text();
-										total++;
-										needQty--;
-										$("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text(needQty);
-										$("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text(total);
-									}
+								materialTab.needMinus(need[index]);
 							}
 						}
+						updateMeterial();
 					})
 				).append(" ");
 			if(no in evolution && evolution[no].status != "n")
@@ -227,19 +196,7 @@
 							string = JSON.stringify(box);
 							window.localStorage.box = string;
 							for(var index in need){
-								var x = -1;
-								for(var key in materialAttr){
-									if(materialAttr[key].no == need[index])
-										x = key;
-								}
-								if(x != -1){
-									var available = $("#material span[data-id='" + x + "']").parent().parent().children().eq(3).text();
-									var needQty = $("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text();
-									available--;
-									needQty--;
-									$("#material span[data-id='" + x + "']").parent().parent().children().eq(3).text(available);
-									$("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text(needQty);
-								}
+								materialTab.evolution(need[index]);
 							}
 							var resort = true;
 							$("#mainTable table #" + id).remove();
@@ -250,6 +207,7 @@
 							alert(notHave + "不存在\n無法進化");
 						
 						}
+						updateMeterial();
 					})
 				).append(" ");
 			if(priority == 0)
@@ -279,7 +237,7 @@
 			else
 				$( this ).append($("<span>")
 					.addClass("glyphicon glyphicon-star")
-					.attr("title","設為一般進化對象")
+					.attr("title",/*"設為一般進化對象"*/"Unstar")
 					.click(no,function(){
 						var box = dataLoad("box");
 						var id = $( this ).parent().parent().attr("id");
@@ -303,53 +261,6 @@
 		}
 		return this;
 	};
-}( jQuery ));
-
-function dataLoad( target )
-{
-	var result = [];
-	if(!(window.localStorage.getItem(target) === null)){
-		var string = window.localStorage.getItem(target);
-		result = JSON.parse(string);
-		if(target == "material" && result.length==46){
-			result[46] = JSON.parse("{\"no\":1325,\"quantity\":0}");
-			result[47] = JSON.parse("{\"no\":1326,\"quantity\":0}");
-			result[48] = JSON.parse("{\"no\":1327,\"quantity\":0}");
-			result[49] = JSON.parse("{\"no\":1328,\"quantity\":0}");
-			result[50] = JSON.parse("{\"no\":1329,\"quantity\":0}");
-		}
-		if(target == "box" && result[0].hasOwnProperty('priority') == false){
-			for(var i in result)
-				result[i].priority = 0;
-		}
-		return result;
-	}else{
-		if(target == "box")
-			window.localStorage.boxid = 0;
-		else if(target == "material"){
-			var string = "[{\"no\":147,\"quantity\":\"0\"},{\"no\":148,\"quantity\":0},{\"no\":149,\"quantity\":0},{\"no\":150,\"quantity\":0},{\"no\":151,\"quantity\":0},{\"no\":321,\"quantity\":0},{\"no\":1176,\"quantity\":0},{\"no\":161,\"quantity\":0},{\"no\":171,\"quantity\":0},{\"no\":166,\"quantity\":0},{\"no\":162,\"quantity\":0},{\"no\":172,\"quantity\":0},{\"no\":167,\"quantity\":0},{\"no\":1294,\"quantity\":0},{\"no\":163,\"quantity\":0},{\"no\":173,\"quantity\":0},{\"no\":168,\"quantity\":0},{\"no\":1295,\"quantity\":0},{\"no\":164,\"quantity\":0},{\"no\":174,\"quantity\":0},{\"no\":169,\"quantity\":0},{\"no\":165,\"quantity\":0},{\"no\":175,\"quantity\":0},{\"no\":170,\"quantity\":0},{\"no\":234,\"quantity\":0},{\"no\":152,\"quantity\":0},{\"no\":153,\"quantity\":0},{\"no\":154,\"quantity\":0},{\"no\":227,\"quantity\":0},{\"no\":1085,\"quantity\":0},{\"no\":1086,\"quantity\":0},{\"no\":1087,\"quantity\":0},{\"no\":155,\"quantity\":0},{\"no\":156,\"quantity\":0},{\"no\":157,\"quantity\":0},{\"no\":158,\"quantity\":0},{\"no\":159,\"quantity\":0},{\"no\":160,\"quantity\":0},{\"no\":246,\"quantity\":0},{\"no\":247,\"quantity\":0},{\"no\":248,\"quantity\":0},{\"no\":249,\"quantity\":0},{\"no\":250,\"quantity\":0},{\"no\":251,\"quantity\":0},{\"no\":915,\"quantity\":0},{\"no\":916,\"quantity\":0},{\"no\":1325,\"quantity\":0},{\"no\":1326,\"quantity\":0},{\"no\":1327,\"quantity\":0},{\"no\":1328,\"quantity\":0},{\"no\":1329,\"quantity\":0}]";
-			window.localStorage.material = string;
-			result = JSON.parse(string);
-		}
-		return result;
-	}
-}
-
-function boxDisplay( box )
-{
-	var i = 0;
-	var choice;
-	for(i=0;i<box.length;i++){
-		if(box[i].hasOwnProperty('choice'))
-			choice = box[i].choice;
-		else
-			choice = 0;
-		$("#mainTable tbody").append( $(" <tr> ").attr( 'id' , box[i].id ).attr( 'data-choice' , choice ).attr( 'data-priority' , box[i].priority )
-						.append( $(" <td> ").text( box[i].no )));
-	}	
-}
-
-(function( $ ) {
 	$.fn.showNeedMaterial = function( no , id , choice ) {
 		if(!(window.localStorage.getItem("evolution") === null && window.localStorage.getItem("ultimate") === null)){
 			var evolution = JSON.parse(window.localStorage.evolution);
@@ -416,6 +327,61 @@ function boxDisplay( box )
 		return this;
 	};
 }( jQuery ));
+
+function updateMeterial()
+{
+	$("#mainTable div span").each(function(){
+		var materialNo = $( this ).attr("data-no");
+		if(materialTab.state(materialNo) != false){
+			$( this ).attr("class","badge " + materialTab.state(materialNo));
+			$( this ).text(materialTab.quantity(materialNo));
+		}
+	});
+}
+
+function dataLoad( target )
+{
+	var result = [];
+	if(!(window.localStorage.getItem(target) === null)){
+		var string = window.localStorage.getItem(target);
+		result = JSON.parse(string);
+		if(target == "material" && result.length==46){
+			result[46] = JSON.parse("{\"no\":1325,\"quantity\":0}");
+			result[47] = JSON.parse("{\"no\":1326,\"quantity\":0}");
+			result[48] = JSON.parse("{\"no\":1327,\"quantity\":0}");
+			result[49] = JSON.parse("{\"no\":1328,\"quantity\":0}");
+			result[50] = JSON.parse("{\"no\":1329,\"quantity\":0}");
+		}
+		if(target == "box" && result[0].hasOwnProperty('priority') == false){
+			for(var i in result)
+				result[i].priority = 0;
+		}
+		return result;
+	}else{
+		if(target == "box")
+			window.localStorage.boxid = 0;
+		else if(target == "material"){
+			var string = "[{\"no\":147,\"quantity\":\"0\"},{\"no\":148,\"quantity\":0},{\"no\":149,\"quantity\":0},{\"no\":150,\"quantity\":0},{\"no\":151,\"quantity\":0},{\"no\":321,\"quantity\":0},{\"no\":1176,\"quantity\":0},{\"no\":161,\"quantity\":0},{\"no\":171,\"quantity\":0},{\"no\":166,\"quantity\":0},{\"no\":162,\"quantity\":0},{\"no\":172,\"quantity\":0},{\"no\":167,\"quantity\":0},{\"no\":1294,\"quantity\":0},{\"no\":163,\"quantity\":0},{\"no\":173,\"quantity\":0},{\"no\":168,\"quantity\":0},{\"no\":1295,\"quantity\":0},{\"no\":164,\"quantity\":0},{\"no\":174,\"quantity\":0},{\"no\":169,\"quantity\":0},{\"no\":165,\"quantity\":0},{\"no\":175,\"quantity\":0},{\"no\":170,\"quantity\":0},{\"no\":234,\"quantity\":0},{\"no\":152,\"quantity\":0},{\"no\":153,\"quantity\":0},{\"no\":154,\"quantity\":0},{\"no\":227,\"quantity\":0},{\"no\":1085,\"quantity\":0},{\"no\":1086,\"quantity\":0},{\"no\":1087,\"quantity\":0},{\"no\":155,\"quantity\":0},{\"no\":156,\"quantity\":0},{\"no\":157,\"quantity\":0},{\"no\":158,\"quantity\":0},{\"no\":159,\"quantity\":0},{\"no\":160,\"quantity\":0},{\"no\":246,\"quantity\":0},{\"no\":247,\"quantity\":0},{\"no\":248,\"quantity\":0},{\"no\":249,\"quantity\":0},{\"no\":250,\"quantity\":0},{\"no\":251,\"quantity\":0},{\"no\":915,\"quantity\":0},{\"no\":916,\"quantity\":0},{\"no\":1325,\"quantity\":0},{\"no\":1326,\"quantity\":0},{\"no\":1327,\"quantity\":0},{\"no\":1328,\"quantity\":0},{\"no\":1329,\"quantity\":0}]";
+			window.localStorage.material = string;
+			result = JSON.parse(string);
+		}
+		return result;
+	}
+}
+
+function boxDisplay( box )
+{
+	var i = 0;
+	var choice;
+	for(i=0;i<box.length;i++){
+		if(box[i].hasOwnProperty('choice'))
+			choice = box[i].choice;
+		else
+			choice = 0;
+		$("#mainTable tbody").append( $(" <tr> ").attr( 'id' , box[i].id ).attr( 'data-choice' , choice ).attr( 'data-priority' , box[i].priority )
+						.append( $(" <td> ").text( box[i].no )));
+	}	
+}
 
 function materialDisplay( material )
 {
@@ -600,6 +566,7 @@ function internalLoad( load_times )
 			var total = $(this).children().eq(3).text() - $(this).children().eq(4).text();
 			$(this).children().eq(5).text(total);
 		});
+		updateMeterial();
 		$("#mainTable table").tablesorter();
 	}else
 		return false;
@@ -665,6 +632,7 @@ function addMaterial( id )
 			$(this).children().eq(5).text(total);
 		}
 	});
+	updateMeterial();
 }
 
 function minusMaterial( id )
@@ -681,6 +649,7 @@ function minusMaterial( id )
 			$(this).children().eq(5).text(total);
 		}
 	});
+	updateMeterial();
 }
 
 function addMonster(no,times,box)
@@ -697,9 +666,10 @@ function addMonster(no,times,box)
 		mon[i] = {};
 		mon[i]["id"] = window.localStorage.boxid;
 		mon[i]["no"] = no;
+		mon[i]["priority"] = 0;
 		box.push(mon[i]);
 		window.localStorage.boxid ++;
-		$row = $("<tr>").attr("id",mon[i]["id"]).attr("data-choice",0)
+		$row = $("<tr>").attr("id",mon[i]["id"]).attr("data-choice",0).attr("data-priority",0)
 				.append($("<td>").text(no))
 				.append($("<td>").addIcon(false,setting[2],no))
 				.append($("<td>").text(name[no].chinese))
@@ -710,19 +680,7 @@ function addMonster(no,times,box)
 		if(no in evolution){
 			if(evolution[no].status == 'y'){
 				for(var key in evolution[no].need){
-					var x = -1;
-					for(var index in materialAttr){
-						if(materialAttr[index].no == evolution[no].need[key])
-							x = index;
-					}
-					if(x != -1){
-						var need = $("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text();
-						var total = $("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text();
-						need++;
-						total--;
-						$("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text(need);
-						$("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text(total);
-					}
+					materialTab.needPlus(evolution[no].need[key]);
 				}
 			}
 			else if(evolution[no].status == 'u'){
@@ -734,19 +692,7 @@ function addMonster(no,times,box)
 						ultimateNeed = ultimate[i].need;
 					}
 					for(var key in ultimateNeed){
-						var x = -1;
-						for(var index in materialAttr){
-							if(materialAttr[index].no == ultimateNeed[key])
-								x = index;
-						}
-						if(x != -1){
-							var need = $("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text();
-							var total = $("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text();
-							need++;
-							total--;
-							$("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text(need);
-							$("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text(total);
-						}
+						materialTab.needPlus(ultimateNeed[key]);
 					}
 				}
 			}
@@ -756,6 +702,7 @@ function addMonster(no,times,box)
 	window.localStorage.box = string;
 	$("#add input[name='no']").val("");
 	$("#add input[name='quantity']").val("1");
+	updateMeterial();
 	$(".material-display").tooltipster(); //active tooltipster
 } 
 /* center modal */
@@ -829,21 +776,9 @@ $(document).ready(function() {
 			ultimateNeed = ultimate[i].need;
 		}
 		for(j=0;j<ultimateNeed.length;j++){
-			var x = -1;
-			for(var index in materialAttr){
-				if(materialAttr[index].no == ultimateNeed[j])
-					x = index;
-			}
-			if(x != -1){
-				var need = $("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text();
-				var total = $("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text();
-				need++;
-				total--;
-				$("#material span[data-id='" + x + "']").parent().parent().children().eq(4).text(need);
-				$("#material span[data-id='" + x + "']").parent().parent().children().eq(5).text(total);
-			}
+			materialTab.needPlus(ultimateNeed[j]);
 		}
-		
+		updateMeterial();
 		$('#ultimateBranch').modal('hide');
 	});
 	$('#ultimateBranch').on('hidden.bs.modal', function (e) {
@@ -893,7 +828,7 @@ $(document).ready(function() {
 				$("#preview-modal .modal-body").append($("<table>").addClass("table table-bordered").attr("data-number",index).append($("<thead>").append($("<tr>").append($("<th>")).append($("<th>").text("名稱")).append($("<th>").text("現有")).append($("<th>").text("總共")))));
 				for(var key in value.need){
 					$("#preview-modal .modal-body table[data-number='"+ index +"']").append($("<tr>")
-						.append($("<td>").addIcon(false,value.need[key]))
+						.append($("<td>").addIcon(false,setting[2],value.need[key]))
 						.append($("<td>").text(value.need[key] + " - " + name[value.need[key]].chinese))
 						.append($("<td>").text($("#material table tr td:first-child:contains('" + value.need[key] + "')").next().next().next().text()))
 						.append($("<td>").text($("#material table tr td:first-child:contains('" + value.need[key] + "')").next().next().next().next().next().text()))
@@ -974,6 +909,7 @@ $(document).ready(function() {
 			$(this).children().eq(5).text(total);
 		}
 	});
+		updateMeterial();
 		$('#material-modal').modal('hide');
 	});
 	$("#import-modal .btn-primary").click(function(){
