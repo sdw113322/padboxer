@@ -14,9 +14,7 @@
 								.attr("class","material-display")//tootipster has been used
 								.attr("title",name[no].chinese)
 							).append(
-							$("<span>")
-								.addClass("badge")
-								.attr("data-no",no)
+							$("<span>").attr("data-no",no)
 							)
 						);
 					else
@@ -34,9 +32,7 @@
 									.attr("title",name[no].chinese)
 								)
 							).append(
-							$("<span>")
-								.addClass("badge")
-								.attr("data-no",no)
+							$("<span>").attr("data-no",no)
 							)
 						);
 				}else
@@ -110,6 +106,7 @@
 								materialTab.needMinus(need[index]);
 							}
 						}
+						updateMeterial();
 					})
 				).append(" ");
 			if(no in evolution && evolution[no].status != "n")
@@ -210,6 +207,7 @@
 							alert(notHave + "不存在\n無法進化");
 						
 						}
+						updateMeterial();
 					})
 				).append(" ");
 			if(priority == 0)
@@ -334,8 +332,10 @@ function updateMeterial()
 {
 	$("#mainTable div span").each(function(){
 		var materialNo = $( this ).attr("data-no");
-		$( this ).attr("class","badge " + materialTab.state(materialNo));
-		$( this ).text(materialTab.quantity(materialNo));
+		if(materialTab.state(materialNo) != false){
+			$( this ).attr("class","badge " + materialTab.state(materialNo));
+			$( this ).text(materialTab.quantity(materialNo));
+		}
 	});
 }
 
@@ -632,6 +632,7 @@ function addMaterial( id )
 			$(this).children().eq(5).text(total);
 		}
 	});
+	updateMeterial();
 }
 
 function minusMaterial( id )
@@ -648,6 +649,7 @@ function minusMaterial( id )
 			$(this).children().eq(5).text(total);
 		}
 	});
+	updateMeterial();
 }
 
 function addMonster(no,times,box)
@@ -699,6 +701,7 @@ function addMonster(no,times,box)
 	window.localStorage.box = string;
 	$("#add input[name='no']").val("");
 	$("#add input[name='quantity']").val("1");
+	updateMeterial();
 	$(".material-display").tooltipster(); //active tooltipster
 } 
 /* center modal */
@@ -774,7 +777,7 @@ $(document).ready(function() {
 		for(j=0;j<ultimateNeed.length;j++){
 			materialTab.needPlus(ultimateNeed[j]);
 		}
-		
+		updateMeterial();
 		$('#ultimateBranch').modal('hide');
 	});
 	$('#ultimateBranch').on('hidden.bs.modal', function (e) {
@@ -905,6 +908,7 @@ $(document).ready(function() {
 			$(this).children().eq(5).text(total);
 		}
 	});
+		updateMeterial();
 		$('#material-modal').modal('hide');
 	});
 	$("#import-modal .btn-primary").click(function(){
