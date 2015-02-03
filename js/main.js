@@ -512,7 +512,7 @@ function internalLoad( load_times )
 		var curr_year = data_date.getFullYear();
 		$(".data-date").text(curr_year + "/" + curr_month + "/" + curr_date);
 		$("#mainTable").append($("<table>")
-			.append("<thead><tr><th>No.</th><th></th><th>中文名</th><th>日文名</th><th>進化素材</th><th>動作</th></tr></thead>")	
+			.append("<thead><tr><th>No.</th><th></th><th>中文名</th><th>日文名</th><th>進化素材</th><th>目標</th><th>動作</th></tr></thead>")	
 			.append($("<tbody>"))
 		);
 		var box = dataLoad("box");
@@ -552,6 +552,7 @@ function internalLoad( load_times )
 							else
 								PAllNeed[evolution[text].need[j]] = 1;
 					}
+					$( this ).append($("<td>").addIcon(false,setting[2],evolution[text].result));
 				}
 				else if(evolution[text].status == 'u'){
 					if(choice > 0){
@@ -573,9 +574,15 @@ function internalLoad( load_times )
 								else
 									PAllNeed[ultimateNeed[j]] = 1;
 						}
+						$( this ).append($("<td>").addIcon(false,setting[2],choice));
+					}else{
+						$( this ).append($("<td>"));
 					}
+				}else{
+					$( this ).append($("<td>"));
 				}
 			}
+			
 			//顯示動作
 			$( this ).append($("<td>").showAction($( this ).attr("data-priority"),text));
 			
@@ -699,6 +706,12 @@ function addMonster(no,times,box)
 				.append($("<td>").text(name[no].chinese))
 				.append($("<td>").text(name[no].japanese))
 				.append($("<td>").showNeedMaterial(no,mon[i]["id"],0))
+				.append(function(){
+					if(evolution[no].status == "y")
+						return $("<td>").addIcon(false,setting[2],evolution[no].result);
+					else
+						return $("<td>");
+				})
 				.append($("<td>").showAction(0,no));
 		$("#mainTable table").find('tbody').append($row).trigger("addRows", [$row, resort]);
 		if(no in evolution){
