@@ -543,13 +543,14 @@ function internalLoad( load_times )
 					for(j=0;j<evolution[text].need.length;j++){
 						if(evolution[text].need[j] in allNeed){
 							allNeed[evolution[text].need[j]] ++;
-							if($( this ).attr('data-priority')>0)
-								PAllNeed[evolution[text].need[j]]++;
 						}else{
 							allNeed[evolution[text].need[j]] = 1;
-							if($( this ).attr('data-priority')>0)
-								PAllNeed[evolution[text].need[j]] = 1;
 						}
+						if($( this ).attr('data-priority')>0)
+							if(evolution[text].need[j] in PAllNeed)
+								PAllNeed[evolution[text].need[j]]++;
+							else
+								PAllNeed[evolution[text].need[j]] = 1;
 					}
 				}
 				else if(evolution[text].status == 'u'){
@@ -563,21 +564,20 @@ function internalLoad( load_times )
 						for(j=0;j<ultimateNeed.length;j++){
 							if(ultimateNeed[j] in allNeed){
 								allNeed[ultimateNeed[j]] ++;
-								if($( this ).attr('data-priority')>0)
-									PAllNeed[ultimateNeed[j]]++;
 							}else{
 								allNeed[ultimateNeed[j]] = 1;
-								if($( this ).attr('data-priority')>0)
-									PAllNeed[ultimateNeed[j]] = 1;
 							}
+							if($( this ).attr('data-priority')>0)
+								if(ultimateNeed[j] in PAllNeed)
+									PAllNeed[ultimateNeed[j]]++;
+								else
+									PAllNeed[ultimateNeed[j]] = 1;
 						}
 					}
 				}
-				console.log(PAllNeed[151]);
 			}
 			//顯示動作
 			$( this ).append($("<td>").showAction($( this ).attr("data-priority"),text));
-			console.log(PAllNeed[151]);
 			
 		});
 		$(".material-display").tooltipster(); //active tooltipster
@@ -587,7 +587,7 @@ function internalLoad( load_times )
 			var total = $(this).children().eq(3).text() - $(this).children().eq(4).text();
 			$(this).children().eq(5).text(total);
 			$(this).children().eq(6).text(PAllNeed[no]);
-			var Ptotal = $(this).children().eq(3).text() - $(this).children().eq(4).text();
+			var Ptotal = $(this).children().eq(3).text() - $(this).children().eq(6).text();
 			$(this).children().eq(7).text(Ptotal);
 		});
 		updateMeterial();
