@@ -10,16 +10,26 @@ var materialTab = (function() {
 		else
 			return x;
     }
-	function change( id , availDiff , needDiff , totalDiff ) {
+	function change( id , availDiff , needDiff , totalDiff , mode ) {
 		var available = $("#material span[data-id='" + id + "']").parent().parent().children().eq(3).text();
-		var need = $("#material span[data-id='" + id + "']").parent().parent().children().eq(4).text();
-		var total = $("#material span[data-id='" + id + "']").parent().parent().children().eq(5).text();
+		if(mode === "normal"){
+			var need = $("#material span[data-id='" + id + "']").parent().parent().children().eq(4).text();
+			var total = $("#material span[data-id='" + id + "']").parent().parent().children().eq(5).text();
+		}else if(mode ==="priority"){
+			var need = $("#material span[data-id='" + id + "']").parent().parent().children().eq(6).text();
+			var total = $("#material span[data-id='" + id + "']").parent().parent().children().eq(7).text();
+		}
 		available = Number(available) + Number(availDiff);
 		need = Number(need) + Number(needDiff);
 		total = Number(total) + Number(totalDiff);
 		$("#material span[data-id='" + id + "']").parent().parent().children().eq(3).text(available);
-		$("#material span[data-id='" + id + "']").parent().parent().children().eq(4).text(need);
-		$("#material span[data-id='" + id + "']").parent().parent().children().eq(5).text(total);
+		if(mode === "normal"){
+			$("#material span[data-id='" + id + "']").parent().parent().children().eq(4).text(need);
+			$("#material span[data-id='" + id + "']").parent().parent().children().eq(5).text(total);
+		}else if(mode ==="priority"){
+			$("#material span[data-id='" + id + "']").parent().parent().children().eq(6).text(need);
+			$("#material span[data-id='" + id + "']").parent().parent().children().eq(7).text(total);
+		}
 	}
 	function getState( id ) {
 		var available = $("#material span[data-id='" + id + "']").parent().parent().children().eq(3).text();
@@ -39,17 +49,17 @@ var materialTab = (function() {
 		needPlus: function( no ) {
 			var index = transform( no );
 			if(index != false)
-				change(index,0,1,-1);
+				change(index,0,1,-1,"normal");
 		},
 		needMinus: function( no ) {
 			var index = transform( no );
 			if(index != false)
-				change(index,0,-1,1);
+				change(index,0,-1,1,"normal");
 		},
 		evolution: function( no ) {
 			var index = transform( no );
 			if(index != false)
-				change(index,-1,-1,0);
+				change(index,-1,-1,0,"normal");
 		},
 		state: function( no ) {
 			var index = transform( no );
@@ -64,6 +74,21 @@ var materialTab = (function() {
 				return getQuantity( index );
 			else
 				return false;
+		},
+		PneedPlus: function( no ) {
+			var index = transform( no );
+			if(index != false)
+				change(index,0,1,-1,"priority");
+		},
+		PneedMinus: function( no ) {
+			var index = transform( no );
+			if(index != false)
+				change(index,0,-1,1,"priority");
+		},
+		Pevolution: function( no ) {
+			var index = transform( no );
+			if(index != false)
+				change(index,0,-1,0,"priority");
 		}
     };
 })();
