@@ -105,6 +105,10 @@
 							for(var index in need){
 								materialTab.needMinus(need[index]);
 							}
+							if($("#mainTable table #" + id).attr("data-priority")>0)
+								for(var index in need){
+									materialTab.PneedMinus(need[index]);
+								}
 						}
 						updateMeterial();
 					})
@@ -198,6 +202,10 @@
 							for(var index in need){
 								materialTab.evolution(need[index]);
 							}
+							if($("#mainTable table #" + id).attr("data-priority")>0)
+								for(var index in need){
+									materialTab.Pevolution(need[index]);
+								}
 							var resort = true;
 							$("#mainTable table #" + id).remove();
 							$("#mainTable table").trigger("update", [resort]);
