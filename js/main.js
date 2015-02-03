@@ -237,7 +237,7 @@
 			else
 				$( this ).append($("<span>")
 					.addClass("glyphicon glyphicon-star")
-					.attr("title","設為一般進化對象")
+					.attr("title",/*"設為一般進化對象"*/"Unstar")
 					.click(no,function(){
 						var box = dataLoad("box");
 						var id = $( this ).parent().parent().attr("id");
