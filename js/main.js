@@ -656,11 +656,13 @@ function addMaterial( id )
 	var string = JSON.stringify(material);
 	window.localStorage.material = string;
 	$("#material tr").each(function(){
-		if($(this).children().eq(6).children().attr("data-id") == id){
+		if($(this).children().eq(8).children().attr("data-id") == id){
 			var available = Number($(this).children().eq(3).text()) + 1;
 			var total = Number($(this).children().eq(5).text()) + 1;
+			var Ptotal = Number($(this).children().eq(7).text()) + 1;
 			$(this).children().eq(3).text(available);
 			$(this).children().eq(5).text(total);
+			$(this).children().eq(7).text(Ptotal);
 		}
 	});
 	updateMeterial();
@@ -673,11 +675,13 @@ function minusMaterial( id )
 	var string = JSON.stringify(material);
 	window.localStorage.material = string;
 	$("#material tr").each(function(){
-		if($(this).children().eq(6).children().attr("data-id") == id){
+		if($(this).children().eq(8).children().attr("data-id") == id){
 			var available = Number($(this).children().eq(3).text()) - 1;
 			var total = Number($(this).children().eq(5).text()) - 1;
+			var Ptotal = Number($(this).children().eq(7).text()) - 1;
 			$(this).children().eq(3).text(available);
 			$(this).children().eq(5).text(total);
+			$(this).children().eq(7).text(Ptotal);
 		}
 	});
 	updateMeterial();
@@ -939,11 +943,13 @@ $(document).ready(function() {
 		var string = JSON.stringify(material);
 		window.localStorage.material = string;
 		$("#material tr").each(function(){
-		if($(this).children().eq(6).children().attr("data-id") == id){
+		if($(this).children().eq(8).children().attr("data-id") == id){
 			var available = value;
 			var total = value - Number($(this).children().eq(4).text());
+			var Ptotal = value - Number($(this).children().eq(6).text());
 			$(this).children().eq(3).text(available);
 			$(this).children().eq(5).text(total);
+			$(this).children().eq(7).text(Ptotal);
 		}
 	});
 		updateMeterial();
