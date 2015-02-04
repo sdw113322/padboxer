@@ -593,7 +593,6 @@ function internalLoad( load_times )
 			
 			//顯示動作
 			$( this ).append($("<td>").showAction($( this ).attr("data-priority"),text));
-			
 		});
 		$(".material-display").tooltipster(); //active tooltipster
 		$("#material tbody tr").each(function(){
@@ -605,6 +604,10 @@ function internalLoad( load_times )
 			var Ptotal = $(this).children().eq(3).text() - $(this).children().eq(6).text();
 			$(this).children().eq(7).text(Ptotal);
 		});
+		for(i=0;i<7;i++){
+				if(setting[3][i] === false)
+					$("#mainTable tr").each(function(){$(this).children().eq(i).css( "display", "none" );});
+			}
 		updateMeterial();
 		$("#mainTable table").tablesorter();
 	}else
@@ -746,6 +749,10 @@ function addMonster(no,times,box)
 				}
 			}
 		}
+		for(i=0;i<7;i++){
+			if(setting[3][i] === false)
+				$row.children().eq(i).css( "display", "none" );
+		}
 	}
 	var string = JSON.stringify(box);
 	window.localStorage.box = string;
@@ -773,6 +780,7 @@ $(document).ready(function() {
 		setting[0] = false;
 		setting[1] = false;
 		setting[2] = null;
+		setting[3] = [true,true,true,true,true,true,true];
 		window.localStorage.setting = JSON.stringify(setting);
 		window.localStorage.removeItem("settingA");
 	}else{
@@ -783,6 +791,12 @@ $(document).ready(function() {
 			$("#setting2").val("NULL");
 		else
 			$("#setting2").val(setting[2]);
+		if(typeof setting[3] == "undefined"){
+			setting[3] = [true,true,true,true,true,true,true];
+			window.localStorage.setting = JSON.stringify(setting);
+		}
+		for(var i = 0;i < 7;i++)
+			$("#setting3" + i).prop("checked" , setting[3][i]);
 	}
 	if(internalLoad(0) == false){
 		externalLoad();
@@ -815,6 +829,7 @@ $(document).ready(function() {
 		//boxReset();
 		//internalLoad();
 		$("#mainTable table tr[id='"+ id +"']").children().eq(4).empty().showNeedMaterial(box[offset].no,id,branchChoice);
+		$("#mainTable table tr[id='"+ id +"']").children().eq(5).addIcon(false,setting[2],branchChoice);
 		$("#mainTable table tr[id='"+ id +"']").attr("data-choice",branchChoice);
 		$(".material-display").tooltipster(); //active tooltipster
 		var i = 1;
@@ -986,24 +1001,6 @@ $(document).ready(function() {
 		var box = dataLoad("box");
 		$.debounce( 250, addMonster(no,qty,box) );
 	});
-	$("#setting0").click(function(){
-		var setting = JSON.parse(window.localStorage.setting);
-		if($("#setting0").prop( "checked" )){
-			setting[0] = true;		
-		}else{
-			setting[0] = false;
-		}
-		window.localStorage.setting = JSON.stringify(setting);
-	});
-	$("#setting1").click(function(){
-		var setting = JSON.parse(window.localStorage.setting);
-		if($("#setting1").prop( "checked" )){
-			setting[1] = true;		
-		}else{
-			setting[1] = false;
-		}
-		window.localStorage.setting = JSON.stringify(setting);
-	});
 	$( "#setting2" ).change(function() {
 		var setting = JSON.parse(window.localStorage.setting);
 		var val = $( "#setting2 option:selected" ).val();
@@ -1011,6 +1008,62 @@ $(document).ready(function() {
 			setting[2] = null;
 		else
 			setting[2] = val;
+		window.localStorage.setting = JSON.stringify(setting);
+	});
+	$( "input[type='checkbox']" ).change(function() {
+		var input = $(this).attr("id");
+		var inputID;
+		switch(input){
+			case "setting0":
+			inputID = 0;
+			break;
+			case "setting1":
+			inputID = 1;
+			break;
+			default:
+			inputID = 3;
+			break;
+		}
+		var setting = JSON.parse(window.localStorage.setting);
+		if(inputID != 3)
+			if($(this).prop( "checked" )){
+				setting[inputID] = true;		
+			}else{
+				setting[inputID] = false;
+			}
+		else{
+			var inputID2;
+			switch(input){
+				case "setting30":
+				inputID2 = 0;
+				break;
+				case "setting31":
+				inputID2 = 1;
+				break;
+				case "setting32":
+				inputID2 = 2;
+				break;
+				case "setting33":
+				inputID2 = 3;
+				break;
+				case "setting34":
+				inputID2 = 4;
+				break;
+				case "setting35":
+				inputID2 = 5;
+				break;
+				case "setting36":
+				inputID2 = 6;
+				break;
+			}
+			if($(this).prop( "checked" )){
+				setting[inputID][inputID2] = true;
+				$("#mainTable tr").each(function(){$(this).children().eq(inputID2).show();});
+			}else{
+				setting[inputID][inputID2] = false;
+				$("#mainTable tr").each(function(){$(this).children().eq(inputID2).hide();});
+			}
+		}
 		window.localStorage.setting = JSON.stringify(setting);
 	});
 	$(window).bind('scroll', function(){
