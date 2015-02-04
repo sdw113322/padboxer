@@ -105,6 +105,10 @@
 							for(var index in need){
 								materialTab.needMinus(need[index]);
 							}
+							if($(this).parent().parent().attr("data-priority")>0)
+								for(var index in need){
+									materialTab.PneedMinus(need[index]);
+								}
 						}
 						updateMeterial();
 					})
@@ -198,6 +202,10 @@
 							for(var index in need){
 								materialTab.evolution(need[index]);
 							}
+							if($(this).parent().parent().attr("data-priority")>0)
+								for(var index in need){
+									materialTab.Pevolution(need[index]);
+								}
 							var resort = true;
 							$("#mainTable table #" + id).remove();
 							$("#mainTable table").trigger("update", [resort]);
@@ -213,7 +221,7 @@
 			if(priority == 0)
 				$( this ).append($("<span>")
 					.addClass("glyphicon glyphicon-star-empty")
-					.attr("title",/*"設為優先進化對象"*/"Star")
+					.attr("title","設為優先進化對象")
 					.click(no,function(){
 						var box = dataLoad("box");
 						var id = $( this ).parent().parent().attr("id");
@@ -223,11 +231,61 @@
 								if(priority2 == 0){
 									box[i].priority = 1;
 									$( this ).parent().parent().attr("data-priority",1);
-									$( this ).attr("class","glyphicon glyphicon-star").attr("title",/*"設為一般進化對象"*/"Unstar");
+									$( this ).attr("class","glyphicon glyphicon-star").attr("title","設為一般進化對象");
+									var evolution = JSON.parse(window.localStorage.evolution);
+									var ultimate = JSON.parse(window.localStorage.ultimate);
+									var choice = $("#mainTable table #" + id).attr("data-choice");
+									var need = [];
+									var text = $("#mainTable table #" + id).children().eq(0).text();
+									if(text in evolution){
+										if(evolution[text].status == 'y'){
+											need = evolution[text].need;
+										}
+										else if(evolution[text].status == 'u'){
+											if(choice > 0){
+												var i = 1;
+												var ultimateNeed = [];
+												while(ultimate[i].result!=choice){
+													i++;
+													ultimateNeed = ultimate[i].need;
+												}
+												need = ultimateNeed;
+											}
+										}
+										for(var index in need){
+											materialTab.PneedPlus(need[index]);
+										}
+									}
+									updateMeterial();
 								}else{
 									box[i].priority = 0;
 									$( this ).parent().parent().attr("data-priority",0);
-									$( this ).attr("class","glyphicon glyphicon-star-empty").attr("title",/*"設為優先進化對象"*/"Star");
+									$( this ).attr("class","glyphicon glyphicon-star-empty").attr("title","設為優先進化對象");
+									var evolution = JSON.parse(window.localStorage.evolution);
+									var ultimate = JSON.parse(window.localStorage.ultimate);
+									var choice = $("#mainTable table #" + id).attr("data-choice");
+									var need = [];
+									var text = $("#mainTable table #" + id).children().eq(0).text();
+									if(text in evolution){
+										if(evolution[text].status == 'y'){
+											need = evolution[text].need;
+										}
+										else if(evolution[text].status == 'u'){
+											if(choice > 0){
+												var i = 1;
+												var ultimateNeed = [];
+												while(ultimate[i].result!=choice){
+													i++;
+													ultimateNeed = ultimate[i].need;
+												}
+												need = ultimateNeed;
+											}
+										}
+										for(var index in need){
+											materialTab.PneedMinus(need[index]);
+										}
+									}
+									updateMeterial();
 								}
 						}
 						var string = JSON.stringify(box);
@@ -237,7 +295,7 @@
 			else
 				$( this ).append($("<span>")
 					.addClass("glyphicon glyphicon-star")
-					.attr("title",/*"設為一般進化對象"*/"Unstar")
+					.attr("title","設為一般進化對象")
 					.click(no,function(){
 						var box = dataLoad("box");
 						var id = $( this ).parent().parent().attr("id");
@@ -247,11 +305,61 @@
 								if(priority2 == 0){
 									box[i].priority = 1;
 									$( this ).parent().parent().attr("data-priority",1);
-									$( this ).attr("class","glyphicon glyphicon-star").attr("title",/*"設為一般進化對象"*/"Unstar");
+									$( this ).attr("class","glyphicon glyphicon-star").attr("title","設為一般進化對象");
+									var evolution = JSON.parse(window.localStorage.evolution);
+									var ultimate = JSON.parse(window.localStorage.ultimate);
+									var choice = $("#mainTable table #" + id).attr("data-choice");
+									var need = [];
+									var text = $("#mainTable table #" + id).children().eq(0).text();
+									if(text in evolution){
+										if(evolution[text].status == 'y'){
+											need = evolution[text].need;
+										}
+										else if(evolution[text].status == 'u'){
+											if(choice > 0){
+												var i = 1;
+												var ultimateNeed = [];
+												while(ultimate[i].result!=choice){
+													i++;
+													ultimateNeed = ultimate[i].need;
+												}
+												need = ultimateNeed;
+											}
+										}
+										for(var index in need){
+											materialTab.PneedPlus(need[index]);
+										}
+									}
+									updateMeterial();
 								}else{
 									box[i].priority = 0;
 									$( this ).parent().parent().attr("data-priority",0);
-									$( this ).attr("class","glyphicon glyphicon-star-empty").attr("title",/*"設為優先進化對象"*/"Star");
+									$( this ).attr("class","glyphicon glyphicon-star-empty").attr("title","設為優先進化對象");
+									var evolution = JSON.parse(window.localStorage.evolution);
+									var ultimate = JSON.parse(window.localStorage.ultimate);
+									var choice = $("#mainTable table #" + id).attr("data-choice");
+									var need = [];
+									var text = $("#mainTable table #" + id).children().eq(0).text();
+									if(text in evolution){
+										if(evolution[text].status == 'y'){
+											need = evolution[text].need;
+										}
+										else if(evolution[text].status == 'u'){
+											if(choice > 0){
+												var i = 1;
+												var ultimateNeed = [];
+												while(ultimate[i].result!=choice){
+													i++;
+													ultimateNeed = ultimate[i].need;
+												}
+												need = ultimateNeed;
+											}
+										}
+										for(var index in need){
+											materialTab.PneedMinus(need[index]);
+										}
+									}
+									updateMeterial();
 								}
 						}
 						var string = JSON.stringify(box);
@@ -408,6 +516,10 @@ function materialDisplay( material )
 						).append(
 							$("<th>").text("總計")
 						).append(
+							$("<th>").html("優先<br />需要").addClass("priority")
+						).append(
+							$("<th>").html("優先<br />總計").addClass("priority")
+						).append(
 							$("<th>").text("動作")
 						)
 					)
@@ -442,6 +554,10 @@ function materialDisplay( material )
 					$("<td>").text("0")
 				).append(
 					$("<td>").text("0")
+				).append(
+					$("<td>").text("0").addClass("priority")
+				).append(
+					$("<td>").text("0").addClass("priority")
 				).append(
 					$("<td>").append(
 						$("<span>").addClass("glyphicon glyphicon-plus add-material").attr("title","+1").attr("data-id",materialTemplate[0][0][key1][key2])
@@ -504,12 +620,13 @@ function internalLoad( load_times )
 		var curr_year = data_date.getFullYear();
 		$(".data-date").text(curr_year + "/" + curr_month + "/" + curr_date);
 		$("#mainTable").append($("<table>")
-			.append("<thead><tr><th>No.</th><th></th><th>中文名</th><th>日文名</th><th>進化素材</th><th>動作</th></tr></thead>")	
+			.append("<thead><tr><th>No.</th><th></th><th>中文名</th><th>日文名</th><th>進化素材</th><th>目標</th><th>動作</th></tr></thead>")	
 			.append($("<tbody>"))
 		);
 		var box = dataLoad("box");
 		var material = dataLoad("material");
 		var allNeed = [];
+		var PAllNeed = [];
 		var setting = JSON.parse(window.localStorage.setting);
 		boxDisplay(box);
 		materialDisplay(material);
@@ -532,11 +649,18 @@ function internalLoad( load_times )
 				if(evolution[text].status == 'y'){
 					var j = 0;
 					for(j=0;j<evolution[text].need.length;j++){
-						if(evolution[text].need[j] in allNeed)
+						if(evolution[text].need[j] in allNeed){
 							allNeed[evolution[text].need[j]] ++;
-						else
+						}else{
 							allNeed[evolution[text].need[j]] = 1;
+						}
+						if($( this ).attr('data-priority')>0)
+							if(evolution[text].need[j] in PAllNeed)
+								PAllNeed[evolution[text].need[j]]++;
+							else
+								PAllNeed[evolution[text].need[j]] = 1;
 					}
+					$( this ).append($("<td>").addIcon(false,setting[2],evolution[text].result));
 				}
 				else if(evolution[text].status == 'u'){
 					if(choice > 0){
@@ -547,17 +671,28 @@ function internalLoad( load_times )
 							ultimateNeed = ultimate[i].need;
 						}
 						for(j=0;j<ultimateNeed.length;j++){
-							if(ultimateNeed[j] in allNeed)
+							if(ultimateNeed[j] in allNeed){
 								allNeed[ultimateNeed[j]] ++;
-							else
+							}else{
 								allNeed[ultimateNeed[j]] = 1;
+							}
+							if($( this ).attr('data-priority')>0)
+								if(ultimateNeed[j] in PAllNeed)
+									PAllNeed[ultimateNeed[j]]++;
+								else
+									PAllNeed[ultimateNeed[j]] = 1;
 						}
+						$( this ).append($("<td>").addIcon(false,setting[2],choice));
+					}else{
+						$( this ).append($("<td>"));
 					}
+				}else{
+					$( this ).append($("<td>"));
 				}
 			}
+			
 			//顯示動作
 			$( this ).append($("<td>").showAction($( this ).attr("data-priority"),text));
-			
 		});
 		$(".material-display").tooltipster(); //active tooltipster
 		$("#material tbody tr").each(function(){
@@ -565,7 +700,14 @@ function internalLoad( load_times )
 			$(this).children().eq(4).text(allNeed[no]);
 			var total = $(this).children().eq(3).text() - $(this).children().eq(4).text();
 			$(this).children().eq(5).text(total);
+			$(this).children().eq(6).text(PAllNeed[no]);
+			var Ptotal = $(this).children().eq(3).text() - $(this).children().eq(6).text();
+			$(this).children().eq(7).text(Ptotal);
 		});
+		for(i=0;i<7;i++){
+				if(setting[3][i] === false)
+					$("#mainTable tr").each(function(){$(this).children().eq(i).css( "display", "none" );});
+			}
 		updateMeterial();
 		$("#mainTable table").tablesorter();
 	}else
@@ -625,11 +767,13 @@ function addMaterial( id )
 	var string = JSON.stringify(material);
 	window.localStorage.material = string;
 	$("#material tr").each(function(){
-		if($(this).children().eq(6).children().attr("data-id") == id){
+		if($(this).children().eq(8).children().attr("data-id") == id){
 			var available = Number($(this).children().eq(3).text()) + 1;
 			var total = Number($(this).children().eq(5).text()) + 1;
+			var Ptotal = Number($(this).children().eq(7).text()) + 1;
 			$(this).children().eq(3).text(available);
 			$(this).children().eq(5).text(total);
+			$(this).children().eq(7).text(Ptotal);
 		}
 	});
 	updateMeterial();
@@ -642,11 +786,13 @@ function minusMaterial( id )
 	var string = JSON.stringify(material);
 	window.localStorage.material = string;
 	$("#material tr").each(function(){
-		if($(this).children().eq(6).children().attr("data-id") == id){
+		if($(this).children().eq(8).children().attr("data-id") == id){
 			var available = Number($(this).children().eq(3).text()) - 1;
 			var total = Number($(this).children().eq(5).text()) - 1;
+			var Ptotal = Number($(this).children().eq(7).text()) - 1;
 			$(this).children().eq(3).text(available);
 			$(this).children().eq(5).text(total);
+			$(this).children().eq(7).text(Ptotal);
 		}
 	});
 	updateMeterial();
@@ -675,6 +821,12 @@ function addMonster(no,times,box)
 				.append($("<td>").text(name[no].chinese))
 				.append($("<td>").text(name[no].japanese))
 				.append($("<td>").showNeedMaterial(no,mon[i]["id"],0))
+				.append(function(){
+					if(evolution[no].status == "y")
+						return $("<td>").addIcon(false,setting[2],evolution[no].result);
+					else
+						return $("<td>");
+				})
 				.append($("<td>").showAction(0,no));
 		$("#mainTable table").find('tbody').append($row).trigger("addRows", [$row, resort]);
 		if(no in evolution){
@@ -696,6 +848,10 @@ function addMonster(no,times,box)
 					}
 				}
 			}
+		}
+		for(i=0;i<7;i++){
+			if(setting[3][i] === false)
+				$row.children().eq(i).css( "display", "none" );
 		}
 	}
 	var string = JSON.stringify(box);
@@ -724,6 +880,7 @@ $(document).ready(function() {
 		setting[0] = false;
 		setting[1] = false;
 		setting[2] = null;
+		setting[3] = [true,true,true,true,true,true,true];
 		window.localStorage.setting = JSON.stringify(setting);
 		window.localStorage.removeItem("settingA");
 	}else{
@@ -734,6 +891,12 @@ $(document).ready(function() {
 			$("#setting2").val("NULL");
 		else
 			$("#setting2").val(setting[2]);
+		if(typeof setting[3] == "undefined"){
+			setting[3] = [true,true,true,true,true,true,true];
+			window.localStorage.setting = JSON.stringify(setting);
+		}
+		for(var i = 0;i < 7;i++)
+			$("#setting3" + i).prop("checked" , setting[3][i]);
 	}
 	if(internalLoad(0) == false){
 		externalLoad();
@@ -766,6 +929,7 @@ $(document).ready(function() {
 		//boxReset();
 		//internalLoad();
 		$("#mainTable table tr[id='"+ id +"']").children().eq(4).empty().showNeedMaterial(box[offset].no,id,branchChoice);
+		$("#mainTable table tr[id='"+ id +"']").children().eq(5).addIcon(false,setting[2],branchChoice);
 		$("#mainTable table tr[id='"+ id +"']").attr("data-choice",branchChoice);
 		$(".material-display").tooltipster(); //active tooltipster
 		var i = 1;
@@ -902,11 +1066,13 @@ $(document).ready(function() {
 		var string = JSON.stringify(material);
 		window.localStorage.material = string;
 		$("#material tr").each(function(){
-		if($(this).children().eq(6).children().attr("data-id") == id){
+		if($(this).children().eq(8).children().attr("data-id") == id){
 			var available = value;
 			var total = value - Number($(this).children().eq(4).text());
+			var Ptotal = value - Number($(this).children().eq(6).text());
 			$(this).children().eq(3).text(available);
 			$(this).children().eq(5).text(total);
+			$(this).children().eq(7).text(Ptotal);
 		}
 	});
 		updateMeterial();
@@ -935,24 +1101,6 @@ $(document).ready(function() {
 		var box = dataLoad("box");
 		$.debounce( 250, addMonster(no,qty,box) );
 	});
-	$("#setting0").click(function(){
-		var setting = JSON.parse(window.localStorage.setting);
-		if($("#setting0").prop( "checked" )){
-			setting[0] = true;		
-		}else{
-			setting[0] = false;
-		}
-		window.localStorage.setting = JSON.stringify(setting);
-	});
-	$("#setting1").click(function(){
-		var setting = JSON.parse(window.localStorage.setting);
-		if($("#setting1").prop( "checked" )){
-			setting[1] = true;		
-		}else{
-			setting[1] = false;
-		}
-		window.localStorage.setting = JSON.stringify(setting);
-	});
 	$( "#setting2" ).change(function() {
 		var setting = JSON.parse(window.localStorage.setting);
 		var val = $( "#setting2 option:selected" ).val();
@@ -960,6 +1108,62 @@ $(document).ready(function() {
 			setting[2] = null;
 		else
 			setting[2] = val;
+		window.localStorage.setting = JSON.stringify(setting);
+	});
+	$( "input[type='checkbox']" ).change(function() {
+		var input = $(this).attr("id");
+		var inputID;
+		switch(input){
+			case "setting0":
+			inputID = 0;
+			break;
+			case "setting1":
+			inputID = 1;
+			break;
+			default:
+			inputID = 3;
+			break;
+		}
+		var setting = JSON.parse(window.localStorage.setting);
+		if(inputID != 3)
+			if($(this).prop( "checked" )){
+				setting[inputID] = true;		
+			}else{
+				setting[inputID] = false;
+			}
+		else{
+			var inputID2;
+			switch(input){
+				case "setting30":
+				inputID2 = 0;
+				break;
+				case "setting31":
+				inputID2 = 1;
+				break;
+				case "setting32":
+				inputID2 = 2;
+				break;
+				case "setting33":
+				inputID2 = 3;
+				break;
+				case "setting34":
+				inputID2 = 4;
+				break;
+				case "setting35":
+				inputID2 = 5;
+				break;
+				case "setting36":
+				inputID2 = 6;
+				break;
+			}
+			if($(this).prop( "checked" )){
+				setting[inputID][inputID2] = true;
+				$("#mainTable tr").each(function(){$(this).children().eq(inputID2).show();});
+			}else{
+				setting[inputID][inputID2] = false;
+				$("#mainTable tr").each(function(){$(this).children().eq(inputID2).hide();});
+			}
+		}
 		window.localStorage.setting = JSON.stringify(setting);
 	});
 	$(window).bind('scroll', function(){
