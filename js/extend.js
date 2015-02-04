@@ -8,7 +8,7 @@ var materialTab = (function() {
 		if(x === -1)
 			return false;
 		else
-			return x;
+			return [x, true];
     }
 	function change( id , availDiff , needDiff , totalDiff , mode ) {
 		var available = $("#material span[data-id='" + id + "']").parent().parent().children().eq(3).text();
@@ -48,47 +48,47 @@ var materialTab = (function() {
     return {
 		needPlus: function( no ) {
 			var index = transform( no );
-			if(index != false)
-				change(index,0,1,-1,"normal");
+			if(index[1] != false)
+				change(index[0],0,1,-1,"normal");
 		},
 		needMinus: function( no ) {
 			var index = transform( no );
-			if(index != false)
-				change(index,0,-1,1,"normal");
+			if(index[1] != false)
+				change(index[0],0,-1,1,"normal");
 		},
 		evolution: function( no ) {
 			var index = transform( no );
-			if(index != false)
-				change(index,-1,-1,0,"normal");
+			if(index[1] != false)
+				change(index[0],-1,-1,0,"normal");
 		},
 		state: function( no ) {
 			var index = transform( no );
-			if(index != false)
-				return getState( index );
+			if(index[1] != false)
+				return getState( index[0] );
 			else
 				return false;
 		},
 		quantity: function( no ) {
 			var index = transform( no );
-			if(index != false)
-				return getQuantity( index );
+			if(index[1] != false)
+				return getQuantity( index[0] );
 			else
 				return false;
 		},
 		PneedPlus: function( no ) {
 			var index = transform( no );
-			if(index != false)
-				change(index,0,1,-1,"priority");
+			if(index[1] != false)
+				change(index[0],0,1,-1,"priority");
 		},
 		PneedMinus: function( no ) {
 			var index = transform( no );
-			if(index != false)
-				change(index,0,-1,1,"priority");
+			if(index[1] != false)
+				change(index[0],0,-1,1,"priority");
 		},
 		Pevolution: function( no ) {
 			var index = transform( no );
-			if(index != false)
-				change(index,0,-1,0,"priority");
+			if(index[1] != false)
+				change(index[0],0,-1,0,"priority");
 		}
     };
 })();
