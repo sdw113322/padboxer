@@ -133,7 +133,25 @@
 	  .mainTable .purple td{
 	    background-color:#f9d6ff;
 	  }
-      body{
+	  .mainTable .red td.priority{
+		background-color: #FF8080;
+	  }
+	  .mainTable .blue td.priority{
+	    background-color:#7A8BFF;
+	  }
+	  .mainTable .green td.priority{
+	    background-color:#65EB65;
+	  }
+	  .mainTable .yellow td.priority{
+	    background-color:#FFFF57;
+	  }
+	  .mainTable .purple td.priority{
+	    background-color:#EB75FF;
+	  }
+	  .mainTable tr:hover td.priority{
+		background-color:#ffffff;
+		}
+	  body{
         margin: 0px;
         background-image: url("../img/background.png");
         background-repeat: repeat;
