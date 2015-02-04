@@ -105,7 +105,7 @@
 							for(var index in need){
 								materialTab.needMinus(need[index]);
 							}
-							if($("#mainTable table #" + id).attr("data-priority")>0)
+							if($(this).parent().parent().attr("data-priority")>0)
 								for(var index in need){
 									materialTab.PneedMinus(need[index]);
 								}
@@ -202,7 +202,7 @@
 							for(var index in need){
 								materialTab.evolution(need[index]);
 							}
-							if($("#mainTable table #" + id).attr("data-priority")>0)
+							if($(this).parent().parent().attr("data-priority")>0)
 								for(var index in need){
 									materialTab.Pevolution(need[index]);
 								}
@@ -516,9 +516,9 @@ function materialDisplay( material )
 						).append(
 							$("<th>").text("總計")
 						).append(
-							$("<th>").html("優先<br>需要").addClass("priority")
+							$("<th>").html("優先<br />需要").addClass("priority")
 						).append(
-							$("<th>").html("優先<br>總計").addClass("priority")
+							$("<th>").html("優先<br />總計").addClass("priority")
 						).append(
 							$("<th>").text("動作")
 						)
