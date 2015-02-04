@@ -516,9 +516,9 @@ function materialDisplay( material )
 						).append(
 							$("<th>").text("總計")
 						).append(
-							$("<th>").text("需要")
+							$("<th>").html("優先<br>需要").addClass("priority")
 						).append(
-							$("<th>").text("總計")
+							$("<th>").html("優先<br>總計").addClass("priority")
 						).append(
 							$("<th>").text("動作")
 						)
@@ -555,9 +555,9 @@ function materialDisplay( material )
 				).append(
 					$("<td>").text("0")
 				).append(
-					$("<td>").text("0")
+					$("<td>").text("0").addClass("priority")
 				).append(
-					$("<td>").text("0")
+					$("<td>").text("0").addClass("priority")
 				).append(
 					$("<td>").append(
 						$("<span>").addClass("glyphicon glyphicon-plus add-material").attr("title","+1").attr("data-id",materialTemplate[0][0][key1][key2])
