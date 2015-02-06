@@ -837,11 +837,11 @@ function addMonster(no,times,box)
 			}
 			else if(evolution[no].status == 'u'){
 				if(choice > 0){
-					var i = 1;
-					var ultimateNeed = ultimate[i].need;
-					while(ultimate[i].result!=choice){
-						i++;
-						ultimateNeed = ultimate[i].need;
+					var j = 1;
+					var ultimateNeed = ultimate[j].need;
+					while(ultimate[j].result!=choice){
+						j++;
+						ultimateNeed = ultimate[j].need;
 					}
 					for(var key in ultimateNeed){
 						materialTab.needPlus(ultimateNeed[key]);
@@ -849,9 +849,9 @@ function addMonster(no,times,box)
 				}
 			}
 		}
-		for(i=0;i<7;i++){
-			if(setting[3][i] === false)
-				$row.children().eq(i).css( "display", "none" );
+		for(k=0;k<7;k++){
+			if(setting[3][k] === false)
+				$row.children().eq(k).css( "display", "none" );
 		}
 	}
 	var string = JSON.stringify(box);
