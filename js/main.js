@@ -529,15 +529,15 @@ function materialDisplay( material )
 				).append(
 					$("<td>").text(materialAttr[materialTemplate[0][0][key1][key2]].name)
 				).append(
-					$("<td>").text(material[materialTemplate[0][0][key1][key2]].quantity)
+					$("<td>").text(material[materialTemplate[0][0][key1][key2]].quantity).addClass("number")
 				).append(
-					$("<td>").text("0")
+					$("<td>").text("0").addClass("number")
 				).append(
-					$("<td>").text("0")
+					$("<td>").text("0").addClass("number")
 				).append(
-					$("<td>").text("0").addClass("priority")
+					$("<td>").text("0").addClass("number priority")
 				).append(
-					$("<td>").text("0").addClass("priority")
+					$("<td>").text("0").addClass("number priority")
 				).append(
 					$("<td>").append(
 						$("<span>").addClass("glyphicon glyphicon-plus add-material").attr("title","+1").attr("data-id",materialTemplate[0][0][key1][key2])
