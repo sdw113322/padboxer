@@ -6,8 +6,7 @@
 				.attr("width",36)
 				.attr("height",36)
 				.attr("class","material-display")//tootipster has been used
-				.attr("title",name[no].chinese)
-			;
+				.attr("title",name[no].chinese);
 		};
 		if(!(window.localStorage.getItem("name") === null)){
 			var name = JSON.parse(window.localStorage.name);
@@ -601,7 +600,7 @@ function internalLoad( load_times )
 		var curr_year = data_date.getFullYear();
 		$(".data-date").text(curr_year + "/" + curr_month + "/" + curr_date);
 		$("#mainTable").append($("<table>")
-			.append("<thead><tr><th>No.</th><th></th><th>中文名</th><th>日文名</th><th>進化素材</th><th>目標</th><th>動作</th></tr></thead>")	
+			.append("<thead><tr><th>No.</th><th></th><th>中文名</th><th>日文名</th><th>進化素材</th><th>目標</th><th>數量</th><th><span class='glyphicon glyphicon-star'></span>數量</th><th>動作</th></tr></thead>")	
 			.append($("<tbody>"))
 		);
 		var box = dataLoad("box");
@@ -671,7 +670,8 @@ function internalLoad( load_times )
 					$( this ).append($("<td>"));
 				}
 			}
-			
+			$( this ).append($("<td>"));
+			$( this ).append($("<td>"));
 			//顯示動作
 			$( this ).append($("<td>").showAction($( this ).attr("data-priority"),text));
 		});
