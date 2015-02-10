@@ -92,3 +92,34 @@ var materialTab = (function() {
 		}
     };
 })();
+
+function NeedMaterial( no , choice ){
+	var evolution = JSON.parse(window.localStorage.evolution);
+	var ultimate = JSON.parse(window.localStorage.ultimate);
+	var result = [];
+	var status;
+	if(no in evolution){
+		if(evolution[no].status == 'y'){
+			result = evolution[no].need;
+		}
+		else if(evolution[no].status == 'u'){
+			if(choice > 0){
+				var i = 1;
+				var ultimateNeed = ultimate[i].need;
+				while(ultimate[i].result!=choice){
+					i++;
+					ultimateNeed = ultimate[i].need;
+				}
+				result = ultimateNeed;
+			}
+		}
+		if(evolution[no].status == 'u' && choice == 0)
+			status = 'un';
+		else
+			status = evolution[no].status;
+		return{
+			result : result,
+			status : status
+		};
+	}else return false;
+}
