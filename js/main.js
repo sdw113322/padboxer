@@ -861,7 +861,7 @@ $(document).ready(function() {
 		setting[0] = false;
 		setting[1] = false;
 		setting[2] = null;
-		setting[3] = [true,true,true,true,true,true,true];
+		setting[3] = [true,true,true,true,true,true,true,true,true];
 		window.localStorage.setting = JSON.stringify(setting);
 		window.localStorage.removeItem("settingA");
 	}else{
@@ -873,10 +873,15 @@ $(document).ready(function() {
 		else
 			$("#setting2").val(setting[2]);
 		if(typeof setting[3] == "undefined"){
-			setting[3] = [true,true,true,true,true,true,true];
+			setting[3] = [true,true,true,true,true,true,true,true,true];
 			window.localStorage.setting = JSON.stringify(setting);
 		}
-		for(var i = 0;i < 7;i++)
+		if(typeof setting[3][7] == "undefined"){
+			setting[3][7] = true;
+			setting[3][8] = true;
+			window.localStorage.setting = JSON.stringify(setting);
+		}
+		for(var i = 0;i < 9;i++)
 			$("#setting3" + i).prop("checked" , setting[3][i]);
 	}
 	if(internalLoad(0) == false){
@@ -1113,36 +1118,15 @@ $(document).ready(function() {
 				setting[inputID] = false;
 			}
 		else{
-			var inputID2;
-			switch(input){
-				case "setting30":
-				inputID2 = 0;
-				break;
-				case "setting31":
-				inputID2 = 1;
-				break;
-				case "setting32":
-				inputID2 = 2;
-				break;
-				case "setting33":
-				inputID2 = 3;
-				break;
-				case "setting34":
-				inputID2 = 4;
-				break;
-				case "setting35":
-				inputID2 = 5;
-				break;
-				case "setting36":
-				inputID2 = 6;
-				break;
-			}
-			if($(this).prop( "checked" )){
-				setting[inputID][inputID2] = true;
-				$("#mainTable tr").each(function(){$(this).children().eq(inputID2).show();});
-			}else{
-				setting[inputID][inputID2] = false;
-				$("#mainTable tr").each(function(){$(this).children().eq(inputID2).hide();});
+			var rows = document.getElementsByName('setting3[]');
+			for (var i = 0, l = rows.length; i < l; i++) {
+				if (rows[i].checked) {
+					setting[inputID][i] = true;
+					$("#mainTable tr").each(function(){$(this).children().eq(i).show();});
+				}else{
+					setting[inputID][i] = false;
+					$("#mainTable tr").each(function(){$(this).children().eq(i).hide();});
+				}
 			}
 		}
 		window.localStorage.setting = JSON.stringify(setting);
