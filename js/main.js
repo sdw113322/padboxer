@@ -1,63 +1,44 @@
 (function( $ ) {
 	$.fn.addIcon = function( qty_notification , outter_link , no ) {
+		var core = function(){
+			return $("<img>")
+				.attr("src","icon/"+ no +".png")
+				.attr("width",36)
+				.attr("height",36)
+				.attr("class","material-display")//tootipster has been used
+				.attr("title",name[no].chinese)
+			;
+		};
 		if(!(window.localStorage.getItem("name") === null)){
 			var name = JSON.parse(window.localStorage.name);
 			if(no in name)
 				if(qty_notification == true){
 					if(outter_link == null)
 						this.append(
-						$("<div>").addClass("icon").append(
-							$("<img>")
-								.attr("src","icon/"+ no +".png")
-								.attr("width",36)
-								.attr("height",36)
-								.attr("class","material-display")//tootipster has been used
-								.attr("title",name[no].chinese)
-							).append(
-							$("<span>").attr("data-no",no)
+							$("<div>").addClass("icon").append(core).append(
+								$("<span>").attr("data-no",no)
 							)
 						);
 					else
 						this.append(
-						$("<div>").addClass("icon").append(
-							$("<a>")
-							.attr("href",outter_link + no)
-							.attr("target","_blank")
-							.append(
-								$("<img>")
-									.attr("src","icon/"+ no +".png")
-									.attr("width",36)
-									.attr("height",36)
-									.attr("class","material-display")//tootipster has been used
-									.attr("title",name[no].chinese)
-								)
+							$("<div>").addClass("icon").append(
+								$("<a>")
+								.attr("href",outter_link + no)
+								.attr("target","_blank")
+								.append(core)
 							).append(
-							$("<span>").attr("data-no",no)
+								$("<span>").attr("data-no",no)
 							)
 						);
 				}else
 					if(outter_link == null)
-						this.append(
-						$("<img>")
-							.attr("src","icon/"+ no +".png")
-							.attr("width",36)
-							.attr("height",36)
-							.attr("class","material-display")//tootipster has been used
-							.attr("title",name[no].chinese)
-						);
+						this.append(core);
 					else
 						this.append(
 							$("<a>")
 							.attr("href",outter_link + no)
 							.attr("target","_blank")
-							.append(
-								$("<img>")
-									.attr("src","icon/"+ no +".png")
-									.attr("width",36)
-									.attr("height",36)
-									.attr("class","material-display")//tootipster has been used
-									.attr("title",name[no].chinese)
-							)
+							.append(core)
 						);
 		}
 		return this;
