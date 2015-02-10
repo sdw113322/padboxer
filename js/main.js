@@ -94,32 +94,12 @@
 						var notIn = [];
 						var error = 0;
 						var choice = $( this ).parent().parent().attr("data-choice");
-						if(text in evolution){
-							if(evolution[text].status == 'y'){
-								need = evolution[text].need;
-								if(evolution[evolution[text].result].status == 'y' || evolution[evolution[text].result].status == 'u')
-									result = evolution[text].result;
-							}
-							else if(evolution[text].status == 'u'){
-								if(choice > 0){
-									var i = 1;
-									var ultimateNeed = ultimate[i].need;
-									while(ultimate[i].result!=choice){
-										i++;
-										ultimateNeed = ultimate[i].need;
-										result = ultimate[i].result;
-									}
-									need = ultimateNeed;
-								}
-								else{
-									alert("error!");
-									error = 1;
-								}
-							}
-							else if(evolution[text].status == 'n'){
-								alert("無法進化");
-								error = 1;
-							}
+						var needMaterial = NeedMaterial( text , choice );
+						if(needMaterial.status != 'n' && needMaterial.status != 'un'){
+							need = needMaterial.result;
+						}else if(needMaterial.status == 'n'){
+							alert("無法進化");
+							error = 1;
 						}else{
 							alert("錯誤");
 							error = 1;
