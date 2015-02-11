@@ -648,6 +648,7 @@ function externalLoad()
 		success: function(data){
 			var string = JSON.stringify(data);
 			window.localStorage.name = string;
+			loadingComplete(3);
 		},
 		error: function(request,error) 
 		{
@@ -660,6 +661,7 @@ function externalLoad()
 		success: function(data){
 			var string = JSON.stringify(data);
 			window.localStorage.evolution = string;
+			loadingComplete(1);
 		},
 		error: function(request,error) 
 		{
@@ -672,6 +674,7 @@ function externalLoad()
 		success: function(data){
 			var string = JSON.stringify(data);
 			window.localStorage.ultimate = string;
+			loadingComplete(2);
 		},
 		error: function(request,error) 
 		{
@@ -789,6 +792,19 @@ function addMonster(no,times,box)
 	updateMeterial();
 	$(".material-display").tooltipster(); //active tooltipster
 } 
+function loadingComplete( id )
+{
+	$("#loading" + id).removeClass("danger").addClass("success").children().first().text("完成");
+	var count = 0;
+	for(var i=1;i<=3;i++){
+		if($("#loading" + i).hasClass("success") === true)
+			count++;
+	}
+	if(count === 3){
+		$('#loading-modal').modal('hide');
+		internalLoad(1);
+	}
+}
 /* center modal */
 function centerModals(){
   $('.modal').each(function(i){
@@ -834,11 +850,6 @@ $(document).ready(function() {
 	if(internalLoad(0) == false){
 		externalLoad();
 		$('#loading-modal').modal('show');
-		$("#progressTimer").progressTimer({
-			timeLimit: 18
-		});
-		window.setTimeout("internalLoad(1);",18000);
-		window.setTimeout("$('#loading-modal').modal('hide');",18000);
 	}
 	$("#add #btn-add-enter").click(function(){
 		var box = dataLoad("box");
