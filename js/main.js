@@ -51,9 +51,11 @@
 				.click(no,function(){
 					var box = dataLoad("box");
 					var id = $( this ).parent().parent().attr("id");
+					var choice = $( this ).parent().parent().attr("data-choice");
 					for(var i in box){
 						if(box[i].id == id){
 							var quantity = box[i].quantity;
+							var no = box[i].no;
 							quantity++;
 							box[i].quantity = quantity;
 							$( this ).parent().parent().children().eq(6).text(quantity);
@@ -61,6 +63,11 @@
 					}
 					var string = JSON.stringify(box);
 					window.localStorage.box = string;
+					var needMaterial = NeedMaterial( no , choice );
+					var need = needMaterial.result;
+					for(var index in need){
+						materialTab.needPlus(need[index],1);
+					}
 				})
 			);
 			$( this ).append($("<span>")
@@ -72,35 +79,22 @@
 					var priority2 = $( this ).parent().parent().attr("data-priority");
 					for(var i in box){
 						if(box[i].id == id){
-							priority2++;
-							box[i].priority = priority2;
-							$( this ).parent().parent().attr("data-priority",priority2);
-							$( this ).parent().parent().children().eq(7).text(priority2);
-							var evolution = JSON.parse(window.localStorage.evolution);
-							var ultimate = JSON.parse(window.localStorage.ultimate);
-							var choice = $("#mainTable table #" + id).attr("data-choice");
-							var need = [];
-							var text = $("#mainTable table #" + id).children().eq(0).text();
-							if(text in evolution){
-								if(evolution[text].status == 'y'){
-									need = evolution[text].need;
-								}
-								else if(evolution[text].status == 'u'){
-									if(choice > 0){
-										var i = 1;
-										var ultimateNeed = [];
-										while(ultimate[i].result!=choice){
-											i++;
-											ultimateNeed = ultimate[i].need;
-										}
-										need = ultimateNeed;
-									}
-								}
+							if(box[i].quantity > box[i].priority){
+								priority2++;
+								box[i].priority = priority2;
+								$( this ).parent().parent().attr("data-priority",priority2);
+								$( this ).parent().parent().children().eq(7).text(priority2);
+								var evolution = JSON.parse(window.localStorage.evolution);
+								var ultimate = JSON.parse(window.localStorage.ultimate);
+								var choice = $("#mainTable table #" + id).attr("data-choice");
+								var text = $("#mainTable table #" + id).children().eq(0).text();
+								var needMaterial = NeedMaterial( text , choice );
+								var need = needMaterial.result;
 								for(var index in need){
-									materialTab.PneedMinus(need[index]);
+									materialTab.PneedPlus(need[index],1);
 								}
+								updateMeterial();
 							}
-							updateMeterial();
 						}
 					}
 					var string = JSON.stringify(box);
@@ -129,6 +123,7 @@
 						var needMaterial = NeedMaterial( text , choice );
 						if(needMaterial.status != 'n' && needMaterial.status != 'un'){
 							need = needMaterial.result;
+							result = evolution[text].result;
 						}else if(needMaterial.status == 'n'){
 							alert("無法進化");
 							error = 1;
@@ -169,21 +164,55 @@
 								if(box[i].id == id)
 									offset = i;
 							}
-							deleteMonster(offset,box);
+							if(box[offset].quantity<=1){
+								deleteMonster(offset,box);
+								$("#mainTable table #" + id).remove();
+							}
+							else{
+								box[offset].quantity--;
+								$(this).parent().parent().children().eq(6).text(box[offset].quantity);
+							}
 							var setting = JSON.parse(window.localStorage.setting);
-							if(result != 0 && setting[0])
-								addMonster(result,1,box);
+							var from = 0;
+							for(var i in box){
+								if(typeof box[i].from != 'undefined')
+									if(box[i].from == offset)
+										from = i;
+							}
+							from = Number(from);
+							if(result != 0 && setting[0]){
+								if(from === 0)
+									addMonster(result,1,box,offset);
+								else{
+									box[from].quantity++;
+									var fromID = box[from].id;
+									var fromQuan = $("tr#" + fromID).children().eq(6).text();
+									fromQuan++;
+									$("tr#" + fromID).children().eq(6).text(fromQuan);
+									var NextNeedMaterial = NeedMaterial( result , 0 );
+									var nextNeed = NextNeedMaterial.result;
+									console.log(nextNeed);
+									for(var i in nextNeed){
+										materialTab.needPlus(nextNeed[i],1);
+									}
+								}
+							}
+							for(var index in need){
+								materialTab.evolution(need[index],1);
+							}
+							if($(this).parent().parent().attr("data-priority")>0){
+								var priority = $(this).parent().parent().attr("data-priority");
+								priority--;
+								$(this).parent().parent().attr("data-priority",priority);
+								$(this).parent().parent().children().eq(7).text(priority);
+								box[offset].priority--;
+								for(var index in need){
+									materialTab.Pevolution(need[index],1);
+								}
+							}
 							string = JSON.stringify(box);
 							window.localStorage.box = string;
-							for(var index in need){
-								materialTab.evolution(need[index]);
-							}
-							if($(this).parent().parent().attr("data-priority")>0)
-								for(var index in need){
-									materialTab.Pevolution(need[index]);
-								}
 							var resort = true;
-							$("#mainTable table #" + id).remove();
 							$("#mainTable table").trigger("update", [resort]);
 						}else if(error == 0){
 						}
@@ -207,6 +236,8 @@
 							if(box[i].id == id)
 								offset = i;
 						}
+						var quantity = box[offset].quantity;
+						var priority = box[offset].priority;
 						deleteMonster(offset,box);
 						var string = JSON.stringify(box);
 						window.localStorage.box = string;
@@ -216,11 +247,11 @@
 						var needMaterial = NeedMaterial( text , choice );
 						if(needMaterial.status != 'n' && needMaterial.status != 'un'){
 							for(var index in needMaterial.result){
-								materialTab.needMinus(needMaterial.result[index]);
+								materialTab.needMinus(needMaterial.result[index],quantity);
 							}
-							if($(this).parent().parent().attr("data-priority")>0)
+							if(quantity > 0)
 								for(var index in needMaterial.result){
-									materialTab.PneedMinus(needMaterial.result[index]);
+									materialTab.PneedMinus(needMaterial.result[index],priority);
 								}
 						}
 						updateMeterial();
@@ -652,7 +683,7 @@ function minusMaterial( id )
 	updateMeterial();
 }
 
-function addMonster(no,times,box)
+function addMonster(no,times,box,from)
 {
 	var name = JSON.parse(window.localStorage.name);
 	var evolution = JSON.parse(window.localStorage.evolution);
@@ -662,53 +693,54 @@ function addMonster(no,times,box)
 	var resort = true;
 	var choice = 0;
 	var setting = JSON.parse(window.localStorage.setting);
-	for(i=0;i<times;i++){
-		mon[i] = {};
-		mon[i]["id"] = window.localStorage.boxid;
-		mon[i]["no"] = no;
-		mon[i]["priority"] = 0;
-		box.push(mon[i]);
-		window.localStorage.boxid ++;
-		$row = $("<tr>").attr("id",mon[i]["id"]).attr("data-choice",0).attr("data-priority",0)
-				.append($("<td>").text(no))
-				.append($("<td>").addIcon(false,setting[2],no))
-				.append($("<td>").text(name[no].chinese))
-				.append($("<td>").text(name[no].japanese))
-				.append($("<td>").showNeedMaterial(no,mon[i]["id"],0))
-				.append(function(){
-					if(evolution[no].status == "y")
-						return $("<td>").addIcon(false,setting[2],evolution[no].result);
-					else
-						return $("<td>");
-				})
-				.append($("<td>"))
-				.append($("<td>"))
-				.append($("<td>").showAction(0,no));
-		$("#mainTable table").find('tbody').append($row).trigger("addRows", [$row, resort]);
-		if(no in evolution){
-			if(evolution[no].status == 'y'){
-				for(var key in evolution[no].need){
-					materialTab.needPlus(evolution[no].need[key]);
-				}
+	mon[i] = {};
+	mon[i]["id"] = window.localStorage.boxid;
+	mon[i]["no"] = no;
+	mon[i]["priority"] = 0;
+	mon[i]["quantity"] = times;
+	if(from != null)
+		mon[i]["from"] = from;
+	box.push(mon[i]);
+	window.localStorage.boxid ++;
+	$row = $("<tr>").attr("id",mon[i]["id"]).attr("data-choice",0).attr("data-priority",0)
+			.append($("<td>").text(no))
+			.append($("<td>").addIcon(false,setting[2],no))
+			.append($("<td>").text(name[no].chinese))
+			.append($("<td>").text(name[no].japanese))
+			.append($("<td>").showNeedMaterial(no,mon[i]["id"],0))
+			.append(function(){
+				if(evolution[no].status == "y")
+					return $("<td>").addIcon(false,setting[2],evolution[no].result);
+				else
+					return $("<td>");
+			})
+			.append($("<td>").text(times).addClass("number"))
+			.append($("<td>").text(0).addClass("number"))
+			.append($("<td>").showAction(0,no));
+	$("#mainTable table").find('tbody').append($row).trigger("addRows", [$row, resort]);
+	if(no in evolution){
+		if(evolution[no].status == 'y'){
+			for(var key in evolution[no].need){
+				materialTab.needPlus(evolution[no].need[key],times);
 			}
-			else if(evolution[no].status == 'u'){
-				if(choice > 0){
-					var j = 1;
-					var ultimateNeed = ultimate[j].need;
-					while(ultimate[j].result!=choice){
-						j++;
-						ultimateNeed = ultimate[j].need;
-					}
-					for(var key in ultimateNeed){
-						materialTab.needPlus(ultimateNeed[key]);
-					}
+		}
+		else if(evolution[no].status == 'u'){
+			if(choice > 0){
+				var j = 1;
+				var ultimateNeed = ultimate[j].need;
+				while(ultimate[j].result!=choice){
+					j++;
+					ultimateNeed = ultimate[j].need;
+				}
+				for(var key in ultimateNeed){
+					materialTab.needPlus(ultimateNeed[key],times);
 				}
 			}
 		}
-		for(k=0;k<9;k++){
-			if(setting[3][k] === false)
-				$row.children().eq(k).css( "display", "none" );
-		}
+	}
+	for(k=0;k<9;k++){
+		if(setting[3][k] === false)
+			$row.children().eq(k).css( "display", "none" );
 	}
 	var string = JSON.stringify(box);
 	window.localStorage.box = string;
@@ -780,7 +812,7 @@ $(document).ready(function() {
 		var box = dataLoad("box");
 		var a = $("#add input[name='no']").val();
 		var b = $("#add input[name='quantity']").val();
-		$.debounce( 250, addMonster(a,b,box) );
+		$.debounce( 250, addMonster(a,b,box,null) );
 	});
 	$("#ultimateBranch .btn-primary").click(function(){
 		var branchChoice = $("input[type='radio']:checked", "#ultimateBranch").val();
@@ -809,7 +841,7 @@ $(document).ready(function() {
 			ultimateNeed = ultimate[i].need;
 		}
 		for(j=0;j<ultimateNeed.length;j++){
-			materialTab.needPlus(ultimateNeed[j]);
+			materialTab.needPlus(ultimateNeed[j],1);
 		}
 		updateMeterial();
 		$('#ultimateBranch').modal('hide');
@@ -968,7 +1000,7 @@ $(document).ready(function() {
 		var no = $("#add input[name='no']").val();
 		var qty = $("#add input[name='quantity']").val();
 		var box = dataLoad("box");
-		$.debounce( 250, addMonster(no,qty,box) );
+		$.debounce( 250, addMonster(no,qty,box,null) );
 	});
 	$( "#setting2" ).change(function() {
 		var setting = JSON.parse(window.localStorage.setting);
