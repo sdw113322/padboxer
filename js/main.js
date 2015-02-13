@@ -65,7 +65,7 @@
 			);
 			$( this ).append($("<span>")
 				.addClass("glyphicon glyphicon-star")
-				.attr("title","設為一般進化對象")
+				.attr("title","優先進化對象數量+1")
 				.click(no,function(){
 					var box = dataLoad("box");
 					var id = $( this ).parent().parent().attr("id");
@@ -124,6 +124,8 @@
 						var notIn = [];
 						var error = 0;
 						var choice = $( this ).parent().parent().attr("data-choice");
+						var priority = $( this ).parent().parent().attr("data-priority");
+						var quantity = $( this ).parent().parent().children().eq(6);
 						var needMaterial = NeedMaterial( text , choice );
 						if(needMaterial.status != 'n' && needMaterial.status != 'un'){
 							need = needMaterial.result;
