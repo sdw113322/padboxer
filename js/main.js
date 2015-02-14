@@ -101,6 +101,19 @@
 					window.localStorage.box = string;
 				})
 			);
+			$( this ).append($("<span>")
+					.addClass("glyphicon glyphicon-pencil edit-material")
+					.attr("title","修改")
+					.click(function(){
+						$("#box-modal").modal('show');
+						var all = $( this ).parent().parent().children().eq(6).text();
+						var star = $( this ).parent().parent().children().eq(7).text();
+						$("#allQty").val(all).attr("data-original",all);
+						$("#allQty").val(all).attr("data-id",$( this ).parent().parent().attr("id"));
+						$("#starQty").val(star).attr("data-original",star);
+						setTimeout(function(){$("#box-modal input").eq(0).focus();},500);
+					})
+				);
 			if(no in evolution && evolution[no].status != "n")
 				$( this ).append($("<span>")
 					.addClass("glyphicon glyphicon-forward")
@@ -191,7 +204,6 @@
 									$("tr#" + fromID).children().eq(6).text(fromQuan);
 									var NextNeedMaterial = NeedMaterial( result , 0 );
 									var nextNeed = NextNeedMaterial.result;
-									console.log(nextNeed);
 									for(var i in nextNeed){
 										materialTab.needPlus(nextNeed[i],1);
 									}
@@ -529,15 +541,15 @@ function internalLoad( load_times )
 					var j = 0;
 					for(j=0;j<evolution[text].need.length;j++){
 						if(evolution[text].need[j] in allNeed){
-							allNeed[evolution[text].need[j]] += quantity;
+							allNeed[evolution[text].need[j]] += Number(quantity);
 						}else{
-							allNeed[evolution[text].need[j]] = quantity;
+							allNeed[evolution[text].need[j]] = Number(quantity);
 						}
 						if($( this ).attr('data-priority')>0)
 							if(evolution[text].need[j] in PAllNeed)
-								PAllNeed[evolution[text].need[j]] += priority;
+								PAllNeed[evolution[text].need[j]] += Number(priority);
 							else
-								PAllNeed[evolution[text].need[j]] = priority;
+								PAllNeed[evolution[text].need[j]] = Number(priority);
 					}
 					$( this ).append($("<td>").addIcon(false,setting[2],evolution[text].result));
 				}
@@ -948,6 +960,11 @@ $(document).ready(function() {
 			$("#material-modal .btn-primary").click();
 		}
 	});
+	$("#box-modal input").keyup(function(event){
+		if(event.keyCode == 13 && $("#box-modal").is(":visible")){
+			$("#box-modal .btn-primary").click();
+		}
+	});
 	$("#clear").click(function(){
 		var accept = confirm ("真的要清空嗎？");
 		if(accept == true){
@@ -967,17 +984,57 @@ $(document).ready(function() {
 		var string = JSON.stringify(material);
 		window.localStorage.material = string;
 		$("#material tr").each(function(){
-		if($(this).children().eq(8).children().attr("data-id") == id){
-			var available = value;
-			var total = value - Number($(this).children().eq(4).text());
-			var Ptotal = value - Number($(this).children().eq(6).text());
-			$(this).children().eq(3).text(available);
-			$(this).children().eq(5).text(total);
-			$(this).children().eq(7).text(Ptotal);
-		}
-	});
+			if($(this).children().eq(8).children().attr("data-id") == id){
+				var available = value;
+				var total = value - Number($(this).children().eq(4).text());
+				var Ptotal = value - Number($(this).children().eq(6).text());
+				$(this).children().eq(3).text(available);
+				$(this).children().eq(5).text(total);
+				$(this).children().eq(7).text(Ptotal);
+			}
+		});
 		updateMeterial();
 		$('#material-modal').modal('hide');
+	});
+	$("#box-modal .btn-primary").click(function(){
+		var allValue = $("#allQty").val();
+		var starValue = $("#starQty").val();
+		if(allValue >= starValue){
+			var allOriginal = $("#allQty").attr("data-original");
+			var starOriginal = $("#starQty").attr("data-original");
+			var id = $("#allQty").attr("data-id");
+			var box = dataLoad("box");
+			var offset = 0;
+			for(var i in box){
+				if(box[i].id == id)
+					offset = i;
+			}
+			box[offset].quantity = allValue;
+			box[offset].priority = starValue;
+			var string = JSON.stringify(box);
+			window.localStorage.box = string;
+			$("#mainTable tr").each(function(){
+				if($(this).attr("id") == id){
+					$(this).children().eq(6).text(allValue);
+					$(this).children().eq(7).text(starValue);
+				}
+			});
+			var allDiff = allValue - allOriginal;
+			var starDiff = starValue - starOriginal;
+			var choice = 0;
+			if(typeof box[offset].choice != 'undefined')
+				choice = box[offset].choice;
+			var needMaterial = NeedMaterial(box[offset].no,choice);
+			var need = needMaterial.result;
+			for(var index in need){
+				materialTab.needPlus(need[index],allDiff);
+				materialTab.PneedPlus(need[index],starDiff);
+			}
+			updateMeterial();
+		}else{
+			alert("Error!\n優先數量大於所有數量");
+		}
+		$('#box-modal').modal('hide');
 	});
 	$("#import-modal .btn-primary").click(function(){
 		var value = $("#import-modal .modal-body textarea").val();
