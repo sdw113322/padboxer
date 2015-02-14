@@ -106,7 +106,6 @@
 				}else{
 					unique.push(evol[j]);
 				}
-				console.log(remove);
 			}
 			var m = remove.length;
 			for(var l in remove){
@@ -131,11 +130,10 @@
 						})
 				);
 			});
-			console.log(box);
 		});
 		$("#submit").click(function(){
-			//var string = JSON.stringify(box);
-			//window.localStorage.box = string;
+			var string = JSON.stringify(box);
+			window.localStorage.box = string;
 			location.href = "index.html";
 		});
 	});
