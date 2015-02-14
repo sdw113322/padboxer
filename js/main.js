@@ -481,6 +481,11 @@ function materialDisplay( material )
 			);
 		}
 	}
+	if(setting[4] === true)
+		$("#material tr").each(function(){
+			$(this).children().eq(6).hide();
+			$(this).children().eq(7).hide();
+		});
 }
 
 function boxReset()
@@ -797,6 +802,7 @@ $(document).ready(function() {
 		setting[1] = false;
 		setting[2] = null;
 		setting[3] = [true,true,true,true,true,true,true,true,true];
+		setting[4] = false;
 		window.localStorage.setting = JSON.stringify(setting);
 		window.localStorage.removeItem("settingA");
 	}else{
@@ -816,6 +822,11 @@ $(document).ready(function() {
 			setting[3][8] = true;
 			window.localStorage.setting = JSON.stringify(setting);
 		}
+		if(typeof setting[4] == "undefined"){
+			setting[4] = false;
+			$("#setting1").prop("checked" , false);
+		}else
+			$("#setting1").prop("checked" , setting[4]);
 		for(var i = 0;i < 9;i++)
 			$("#setting3" + i).prop("checked" , setting[3][i]);
 	}
@@ -1081,6 +1092,9 @@ $(document).ready(function() {
 			case "setting1":
 			inputID = 1;
 			break;
+			case "setting4":
+			inputID = 4;
+			break;
 			default:
 			inputID = 3;
 			break;
@@ -1103,6 +1117,18 @@ $(document).ready(function() {
 					$("#mainTable tr").each(function(){$(this).children().eq(i).hide();});
 				}
 			}
+		}
+		if(inputID == 4){
+			if(setting[4] === true)
+				$("#material tr").each(function(){
+					$(this).children().eq(6).hide();
+					$(this).children().eq(7).hide();
+				});
+			else
+				$("#material tr").each(function(){
+					$(this).children().eq(6).show();
+					$(this).children().eq(7).show();
+				});
 		}
 		window.localStorage.setting = JSON.stringify(setting);
 	});
