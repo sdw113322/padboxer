@@ -189,13 +189,14 @@
 							var from = 0;
 							for(var i in box){
 								if(typeof box[i].from != 'undefined')
-									if(box[i].from == offset)
+									if(box[i].from == box[offset].id)
 										from = i;
 							}
 							from = Number(from);
 							if(result != 0 && setting[0]){
-								if(from === 0)
-									addMonster(result,1,box,offset);
+								if(from === 0){
+									addMonster(result,1,box,box[offset].id);
+								}
 								else{
 									box[from].quantity++;
 									var fromID = box[from].id;
@@ -344,13 +345,15 @@ function dataLoad( target )
 			result[49] = JSON.parse("{\"no\":1328,\"quantity\":0}");
 			result[50] = JSON.parse("{\"no\":1329,\"quantity\":0}");
 		}
-		if(target == "box" && result[0].hasOwnProperty('priority') == false){
-			for(var i in result)
-				result[i].priority = 0;
+		if(target == "box" && result.length > 0){
+			if(result[0].hasOwnProperty('priority') == false)
+				for(var i in result)
+					result[i].priority = 0;
 		}
-		if(target == "box" && result[0].hasOwnProperty('quantity') == false){
-			for(var i in result)
-				result[i].quantity = 1;
+		if(target == "box" && result.length > 0){
+			if(result[0].hasOwnProperty('quantity') == false)
+				for(var i in result)
+					result[i].quantity = 1;
 		}
 		return result;
 	}else{
