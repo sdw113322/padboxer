@@ -796,6 +796,7 @@ function centerModals(){
 $(document).ready(function() {
 	$('.modal').on('show.bs.modal', centerModals);
 	$(window).on('resize', centerModals);
+	$("#btn-add").removeAttr("disabled");
 	window.localStorage.removeItem("settingA");
 	if(window.localStorage.getItem("setting") === null){
 		var setting = new Array();
