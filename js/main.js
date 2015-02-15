@@ -990,6 +990,11 @@ $(document).ready(function() {
 		var backup = window.localStorage.boxid + "      " + window.localStorage.box + "      " + window.localStorage.material + "      " + window.localStorage.setting;
 		$("#backup-modal .modal-body textarea").val(backup);
 	});
+	$("#backup-modal .btn-primary").click(function(){
+		var backup = window.localStorage.boxid + "      " + window.localStorage.box + "      " + window.localStorage.material + "      " + window.localStorage.setting;
+		var blob = new Blob([backup], {type: "text/plain;charset=utf-8"});
+		saveAs(blob, "padboxer-backup.txt");
+	});
 	$("#material-modal .btn-primary").click(function(){
 		var value = $("#material-modal .modal-body form input").val();
 		var id = $("#material-modal .modal-body form input").attr("data-id");
