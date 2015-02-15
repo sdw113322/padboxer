@@ -824,9 +824,9 @@ $(document).ready(function() {
 		}
 		if(typeof setting[4] == "undefined"){
 			setting[4] = false;
-			$("#setting1").prop("checked" , false);
+			$("#setting4").prop("checked" , false);
 		}else
-			$("#setting1").prop("checked" , setting[4]);
+			$("#setting4").prop("checked" , setting[4]);
 		for(var i = 0;i < 9;i++)
 			$("#setting3" + i).prop("checked" , setting[3][i]);
 	}
