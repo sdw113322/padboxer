@@ -46,20 +46,20 @@ var materialTab = (function() {
 		return available;
 	}
     return {
-		needPlus: function( no ) {
+		needPlus: function( no , quantity ) {
 			var index = transform( no );
 			if(index[1] != false)
-				change(index[0],0,1,-1,"normal");
+				change(index[0],0,quantity,-quantity,"normal");
 		},
-		needMinus: function( no ) {
+		needMinus: function( no , quantity ) {
 			var index = transform( no );
 			if(index[1] != false)
-				change(index[0],0,-1,1,"normal");
+				change(index[0],0,-quantity,quantity,"normal");
 		},
-		evolution: function( no ) {
+		evolution: function( no , quantity ) {
 			var index = transform( no );
 			if(index[1] != false)
-				change(index[0],-1,-1,0,"normal");
+				change(index[0],-quantity,-quantity,0,"normal");
 		},
 		state: function( no ) {
 			var index = transform( no );
@@ -75,20 +75,51 @@ var materialTab = (function() {
 			else
 				return false;
 		},
-		PneedPlus: function( no ) {
+		PneedPlus: function( no , quantity ) {
 			var index = transform( no );
 			if(index[1] != false)
-				change(index[0],0,1,-1,"priority");
+				change(index[0],0,quantity,-quantity,"priority");
 		},
-		PneedMinus: function( no ) {
+		PneedMinus: function( no , quantity ) {
 			var index = transform( no );
 			if(index[1] != false)
-				change(index[0],0,-1,1,"priority");
+				change(index[0],0,-quantity,quantity,"priority");
 		},
-		Pevolution: function( no ) {
+		Pevolution: function( no , quantity ) {
 			var index = transform( no );
 			if(index[1] != false)
-				change(index[0],0,-1,0,"priority");
+				change(index[0],0,-quantity,0,"priority");
 		}
     };
 })();
+
+function NeedMaterial( no , choice ){
+	var evolution = JSON.parse(window.localStorage.evolution);
+	var ultimate = JSON.parse(window.localStorage.ultimate);
+	var result = [];
+	var status;
+	if(no in evolution){
+		if(evolution[no].status == 'y'){
+			result = evolution[no].need;
+		}
+		else if(evolution[no].status == 'u'){
+			if(choice > 0){
+				var i = 1;
+				var ultimateNeed = ultimate[i].need;
+				while(ultimate[i].result!=choice){
+					i++;
+					ultimateNeed = ultimate[i].need;
+				}
+				result = ultimateNeed;
+			}
+		}
+		if(evolution[no].status == 'u' && choice == 0)
+			status = 'un';
+		else
+			status = evolution[no].status;
+		return{
+			result : result,
+			status : status
+		};
+	}else return false;
+}

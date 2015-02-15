@@ -1,5 +1,5 @@
       .main{
-        width: 960px;
+        width: 1030px;
         margin-left: auto;
         margin-right: auto;
         border-left: 5px;
@@ -13,6 +13,8 @@
       .pageHeader{
         height: 200px;
         background-image: url("../img/head.png");
+		background-repeat: no-repeat;
+		background-position: 50% 70%;
       }
 	  .body{
 		padding: 30px;	  
@@ -186,3 +188,6 @@
 	.badge-important{background-color:#b94a48 !important;}
 	.badge-warning{background-color:#f89406 !important;}
 	.badge-success{background-color:#468847 !important;}
+	td.number{
+		font-size: 24px;
+	}
