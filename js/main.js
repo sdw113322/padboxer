@@ -572,15 +572,15 @@ function internalLoad( load_times )
 						}
 						for(j=0;j<ultimateNeed.length;j++){
 							if(ultimateNeed[j] in allNeed){
-								allNeed[ultimateNeed[j]] += quantity;
+								allNeed[ultimateNeed[j]] += Number(quantity);
 							}else{
-								allNeed[ultimateNeed[j]] = quantity;
+								allNeed[ultimateNeed[j]] = Number(quantity);
 							}
 							if($( this ).attr('data-priority')>0)
 								if(ultimateNeed[j] in PAllNeed)
-									PAllNeed[ultimateNeed[j]] += priority;
+									PAllNeed[ultimateNeed[j]] += Number(priority);
 								else
-									PAllNeed[ultimateNeed[j]] = priority;
+									PAllNeed[ultimateNeed[j]] = Number(priority);
 						}
 						$( this ).append($("<td>").addIcon(false,setting[2],choice));
 					}else{
