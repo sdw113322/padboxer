@@ -6,12 +6,13 @@
 	<link rel=stylesheet type="text/css" href="./css/main.css" />
 	<link rel=stylesheet type="text/css" href="./css/bootstrap.min.css" />
 	<link rel="stylesheet" type="text/css" href="./css/tooltipster.css" />
+	<script type="text/javascript" src="./js/Blob.js"></script>
+	<script type="text/javascript" src="./js/FileSaver.min.js"></script>
 	<script type="text/javascript" src="./js/jquery-2.1.3.min.js"></script>
 	<script type="text/javascript" src="./js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="./js/jquery.tablesorter.min.js"></script>
     <script type="text/javascript" src="./js/jquery.tooltipster.min.js"></script>
 	<script type="text/javascript" src="./js/jquery.ba-throttle-debounce.min.js"></script>
-	<script type="text/javascript" src="./js/jquery.progressTimer.min.js"></script>
 	<script type="text/javascript" src="./js/const.js"></script>
 	<script type="text/javascript" src="./js/extend.js"></script>
 	<script type="text/javascript" src="./js/main.js"></script>
@@ -81,23 +82,40 @@
 			GitHub:<a href="https://github.com/sdw113322/padboxer/">https://github.com/sdw113322/padboxer/</a><br>
 			made by sdw113322</p>
 			<h3>設定</h3>
-			<div class="checkbox"><label><input type="checkbox" id="setting0"></input>自動將以進化的寵物加至box中</label></div>
-			<div class="checkbox"><label><input type="checkbox" id="setting1"></input>*在BOX分頁中顯示進化素材數量</label></div>
-			*外部連結網站　
-			<select id="setting2">
-				<option value="NULL">不啟用</option>
-				<option value="http://pad.skyozora.com/pets/">戰友網</option>
-				<option value="http://zh.pad.wikia.com/wiki/">WIKI</option>
-			</select>
-			<h4>BOX分頁顯示欄位</h4>
-			<div class="checkbox"><label><input type="checkbox" id="setting30"></input>編號</label></div>
-			<div class="checkbox"><label><input type="checkbox" id="setting31"></input>圖案</label></div>
-			<div class="checkbox"><label><input type="checkbox" id="setting32"></input>中文名</label></div>
-			<div class="checkbox"><label><input type="checkbox" id="setting33"></input>日文名</label></div>
-			<div class="checkbox"><label><input type="checkbox" id="setting34"></input>素材</label></div>
-			<div class="checkbox"><label><input type="checkbox" id="setting35"></input>目標</label></div>
-			<div class="checkbox"><label><input type="checkbox" id="setting36"></input>動作</label></div>
-			<p>*:變更該設定後，請重新整理</p>
+			<div class="container-fluid">
+				<div class="panel panel-default col-md-4">
+				  <div class="panel-body">
+					<h4>BOX分頁顯示欄位</h4>
+					<div class="checkbox"><label><input type="checkbox" name="setting3[]" id="setting30"></input>編號</label></div>
+					<div class="checkbox"><label><input type="checkbox" name="setting3[]" id="setting31"></input>圖案</label></div>
+					<div class="checkbox"><label><input type="checkbox" name="setting3[]" id="setting32"></input>中文名</label></div>
+					<div class="checkbox"><label><input type="checkbox" name="setting3[]" id="setting33"></input>日文名</label></div>
+					<div class="checkbox"><label><input type="checkbox" name="setting3[]" id="setting34"></input>素材</label></div>
+					<div class="checkbox"><label><input type="checkbox" name="setting3[]" id="setting35"></input>目標</label></div>
+					<div class="checkbox"><label><input type="checkbox" name="setting3[]" id="setting36"></input>數量</label></div>
+					<div class="checkbox"><label><input type="checkbox" name="setting3[]" id="setting37"></input><span class='glyphicon glyphicon-star'></span>數量</label></div>
+					<div class="checkbox"><label><input type="checkbox" name="setting3[]" id="setting38"></input>動作</label></div>
+				  </div>
+				</div>
+				<div class="panel panel-default col-md-6 col-md-offset-1">
+				  <div class="panel-body">
+					<div class="checkbox"><label><input type="checkbox" id="setting0"></input>自動將已進化的寵物加至box中</label></div>
+					<div class="checkbox"><label><input type="checkbox" id="setting4"></input>隱藏素材分頁中的優先欄位</label></div>
+				  </div>
+				</div>
+				<div class="panel panel-default col-md-6 col-md-offset-1">
+				  <div class="panel-body">
+					<h4>變更以下設定後，請立刻重新整理</h4>
+					<div class="checkbox"><label><input type="checkbox" id="setting1"></input>在BOX分頁中顯示進化素材數量</label></div>
+					外部連結網站　
+					<select id="setting2">
+						<option value="NULL">不啟用</option>
+						<option value="http://pad.skyozora.com/pets/">戰友網</option>
+						<option value="http://zh.pad.wikia.com/wiki/">WIKI</option>
+					</select>
+				  </div>
+				</div>
+			</div>
 		</div>
       </div>
 	  <div class="footer"> 
@@ -122,15 +140,17 @@
 	  </div>
 	</div>
 	<div class="modal fade" id="material-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
-	  <div class="modal-dialog">
+	  <div class="modal-dialog modal-sm">
 		<div class="modal-content">
 		  <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">關閉</span></button>
 			<h4 class="modal-title" id="myModalLabel2">請輸入數量</h4>
 		  </div>
 		  <div class="modal-body">
-			<form>
-				<input type="text"></input>
+			<form class="form-inline">
+			  <div class="form-group">
+				  <input type="text" class="form-control">
+			  </div>
 			</form>
 		  </div>
 		  <div class="modal-footer">
@@ -152,6 +172,7 @@
 		  </div>
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+			<button type="submit" class="btn btn-primary">儲存</button>
 		  </div>
 		</div>
 	  </div>
@@ -194,13 +215,48 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-body">
-        <h3>資料更新中...</h3>
-		<div class="progress">
-		  <div id="progressTimer"></div>
-		</div>
+        <h3>資料更新中...</h3><br>
+		<table class="table table-bordered">
+		<tr class="danger" id="loading1"><td>未完成</td><td>進化資訊</td></tr>
+		<tr class="danger" id="loading2"><td>未完成</td><td>究極進化資訊</td></tr>
+		<tr class="danger" id="loading3"><td>未完成</td><td>中日文名稱</td></tr>
+		</table>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+	<div class="modal fade" id="box-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+	  <div class="modal-dialog modal-sm">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">關閉</span></button>
+			<h4 class="modal-title" id="myModalLabel2">請輸入數量</h4>
+		  </div>
+		  <div class="modal-body">
+			<form class="form-inline">
+			  <div class="form-group">
+				<div class="input-group">
+				  <div class="input-group-addon">All</div>
+				  <input type="text" class="form-control" id="allQty">
+				</div>
+			  </div>
+			</form>
+			<br>
+			<form class="form-inline">
+			  <div class="form-group">
+				<div class="input-group">
+				  <div class="input-group-addon"><span class="glyphicon glyphicon-star"></span></div>
+				  <input type="text" class="form-control" id="starQty">
+				</div>
+			  </div>
+			</form>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+			<button type="submit" class="btn btn-primary">儲存變更</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
   </body>
 </html>
