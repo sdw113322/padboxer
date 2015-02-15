@@ -427,6 +427,7 @@ function materialDisplay( material )
 			)
 		)
 	);
+	$("#material .panel-body div").append($("<a>").addClass("list-group-item").attr("onclick","scroll(0,0)").append("TOP"));
 	for(var i in materialTemplate[0][0]){
 		$("#material .panel-body div").append($("<a>").addClass("list-group-item").attr("href","#" + materialTemplate[0][1][i]).append(materialTemplate[0][2][i]));
 	}
