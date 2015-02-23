@@ -168,6 +168,14 @@
 		  .modal-dialog-center { /* Edited classname 10/03/2014 */
 			width: 100%;
 	    }
+		.main{
+			width: 100%;
+			margin-left: auto;
+			margin-right: auto;    
+		}
+		.pageHeader{
+			display: none;
+		  }
 	}
 	  .material-sidebar{
 			position: fixed !important;
