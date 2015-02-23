@@ -989,13 +989,25 @@ $(document).ready(function() {
 		}
 	});
 	$("#backup").click(function(){
-		var backup = window.localStorage.boxid + "      " + window.localStorage.box + "      " + window.localStorage.material + "      " + window.localStorage.setting;
-		$("#backup-modal .modal-body textarea").val(backup);
+		var backup = {
+			version : version,
+			boxid : Number(window.localStorage.boxid) ,
+			box : JSON.parse(window.localStorage.box) ,
+			material : JSON.parse(window.localStorage.material) ,
+			setting : JSON.parse(window.localStorage.setting)
+		};
+		$("#backup-modal .modal-body textarea").val(JSON.stringify(backup));
 	});
 	$("#backup-modal .btn-primary").click(function(){
-		var backup = window.localStorage.boxid + "      " + window.localStorage.box + "      " + window.localStorage.material + "      " + window.localStorage.setting;
-		var blob = new Blob([backup], {type: "text/plain;charset=utf-8"});
-		saveAs(blob, "padboxer-backup.txt");
+		var backup = {
+			version : version,
+			boxid : Number(window.localStorage.boxid) ,
+			box : JSON.parse(window.localStorage.box) ,
+			material : JSON.parse(window.localStorage.material) ,
+			setting : JSON.parse(window.localStorage.setting)
+		};
+		var blob = new Blob([JSON.stringify(backup)], {type: "application/json;charset=utf-8"});
+		saveAs(blob, "padboxer-backup.json");
 	});
 	$("#material-modal .btn-primary").click(function(){
 		var value = $("#material-modal .modal-body form input").val();
@@ -1057,13 +1069,26 @@ $(document).ready(function() {
 		}
 		$('#box-modal').modal('hide');
 	});
-	$("#import-modal .btn-primary").click(function(){
+	$("#import-modal #importOld").click(function(){
 		var value = $("#import-modal .modal-body textarea").val();
 		var splits = value.split("      ");
 		window.localStorage.boxid = splits[0];
 		window.localStorage.box = splits[1];
 		window.localStorage.material = splits[2];
 		window.localStorage.setting = splits[3];
+		boxReset();
+		internalLoad();
+		$("#import-modal .modal-body textarea").val("");
+		$('#import-modal').modal('hide');
+	});
+	$("#import-modal #importNew").click(function(){
+		var value = $("#import-modal .modal-body textarea").val();
+		var data = JSON.parse(value);
+		//要加版本判斷機制
+		window.localStorage.boxid = data.boxid;
+		window.localStorage.box = JSON.stringify(data.box);
+		window.localStorage.material = JSON.stringify(data.material);
+		window.localStorage.setting = JSON.stringify(data.setting);
 		boxReset();
 		internalLoad();
 		$("#import-modal .modal-body textarea").val("");
