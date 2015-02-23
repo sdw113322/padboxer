@@ -326,7 +326,7 @@ function updateMeterial()
 	$("#mainTable div span").each(function(){
 		var materialNo = $( this ).attr("data-no");
 		if(materialTab.state(materialNo) != false){
-			$( this ).attr("class","badge " + materialTab.state(materialNo));
+			$( this ).attr("class","notation " + materialTab.state(materialNo));
 			$( this ).text(materialTab.quantity(materialNo));
 		}
 	});
