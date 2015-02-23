@@ -35,11 +35,11 @@ var materialTab = (function() {
 		var available = $("#material span[data-id='" + id + "']").parent().parent().children().eq(3).text();
 		var total = $("#material span[data-id='" + id + "']").parent().parent().children().eq(5).text();
 		if(total > 0)
-			return "badge-success";
+			return "notation-success";
 		else if(total <= 0 && available > 0)
-			return "badge-warning";
+			return "notation-warning";
 		else
-			return "badge-important";
+			return "notation-important";
 	}
 	function getQuantity( id ) {
 		var available = $("#material span[data-id='" + id + "']").parent().parent().children().eq(3).text();
