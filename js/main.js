@@ -45,20 +45,23 @@
 	$.fn.showAction = function( priority , no ) {
 		if(!(window.localStorage.getItem("evolution") === null)){
 			var evolution = JSON.parse(window.localStorage.evolution);
-			$( this ).append($("<span>")
-				.addClass("glyphicon glyphicon-plus")
-				.attr("title","+1")
-				.click(no,function(){
+			$( this ).append($("<div>").addClass("btn-group"));
+			$( this ).children().append(
+				$("<button>").addClass("btn btn-default").attr("type","button").append(
+					$("<span>")
+					.addClass("glyphicon glyphicon-plus")
+					.attr("title","+1")
+				).click(no,function(){
 					var box = dataLoad("box");
-					var id = $( this ).parent().parent().attr("id");
-					var choice = $( this ).parent().parent().attr("data-choice");
+					var id = $( this ).parent().parent().parent().attr("id");
+					var choice = $( this ).parent().parent().parent().attr("data-choice");
 					for(var i in box){
 						if(box[i].id == id){
 							var quantity = box[i].quantity;
 							var no = box[i].no;
 							quantity++;
 							box[i].quantity = quantity;
-							$( this ).parent().parent().children().eq(6).text(quantity);
+							$( this ).parent().parent().parent().children().eq(6).text(quantity);
 						}
 					}
 					var string = JSON.stringify(box);
@@ -70,20 +73,22 @@
 					}
 				})
 			);
-			$( this ).append($("<span>")
-				.addClass("glyphicon glyphicon-star")
-				.attr("title","優先進化對象數量+1")
-				.click(no,function(){
+			$( this ).children().append(
+				$("<button>").addClass("btn btn-default").attr("type","button").append(
+				$("<span>")
+					.addClass("glyphicon glyphicon-star")
+					.attr("title","優先進化對象數量+1")
+				).click(no,function(){
 					var box = dataLoad("box");
-					var id = $( this ).parent().parent().attr("id");
-					var priority2 = $( this ).parent().parent().attr("data-priority");
+					var id = $( this ).parent().parent().parent().attr("id");
+					var priority2 = $( this ).parent().parent().parent().attr("data-priority");
 					for(var i in box){
 						if(box[i].id == id){
 							if(box[i].quantity > box[i].priority){
 								priority2++;
 								box[i].priority = priority2;
-								$( this ).parent().parent().attr("data-priority",priority2);
-								$( this ).parent().parent().children().eq(7).text(priority2);
+								$( this ).parent().parent().parent().attr("data-priority",priority2);
+								$( this ).parent().parent().parent().children().eq(7).text(priority2);
 								var evolution = JSON.parse(window.localStorage.evolution);
 								var ultimate = JSON.parse(window.localStorage.ultimate);
 								var choice = $("#mainTable table #" + id).attr("data-choice");
@@ -101,26 +106,30 @@
 					window.localStorage.box = string;
 				})
 			);
-			$( this ).append($("<span>")
-					.addClass("glyphicon glyphicon-pencil edit-material")
-					.attr("title","修改")
-					.click(function(){
+			$( this ).children().append(
+				$("<button>").addClass("btn btn-default").attr("type","button").append(
+						$("<span>")
+						.addClass("glyphicon glyphicon-pencil edit-material")
+						.attr("title","修改")
+					).click(function(){
 						$("#box-modal").modal('show');
-						var all = $( this ).parent().parent().children().eq(6).text();
-						var star = $( this ).parent().parent().children().eq(7).text();
+						var all = $( this ).parent().parent().parent().children().eq(6).text();
+						var star = $( this ).parent().parent().parent().children().eq(7).text();
 						$("#allQty").val(all).attr("data-original",all);
-						$("#allQty").val(all).attr("data-id",$( this ).parent().parent().attr("id"));
+						$("#allQty").val(all).attr("data-id",$( this ).parent().parent().parent().attr("id"));
 						$("#starQty").val(star).attr("data-original",star);
 						setTimeout(function(){$("#box-modal input").eq(0).focus();},500);
 					})
 				);
 			if(no in evolution && evolution[no].status != "n")
-				$( this ).append($("<span>")
-					.addClass("glyphicon glyphicon-forward")
-					.attr("title","進化")
-					.click(no,function(){
-						var text = $( this ).parent().parent().children().first().text();
-						var id = $( this ).parent().parent().attr("id");
+				$( this ).children().append(
+					$("<button>").addClass("btn btn-default").attr("type","button").append(
+						$("<span>")
+						.addClass("glyphicon glyphicon-forward")
+						.attr("title","進化")
+					).click(no,function(){
+						var text = $( this ).parent().parent().parent().children().first().text();
+						var id = $( this ).parent().parent().parent().attr("id");
 						var evolution = JSON.parse(window.localStorage.evolution);
 						var ultimate = JSON.parse(window.localStorage.ultimate);
 						var box = dataLoad("box");
@@ -130,9 +139,9 @@
 						var result = 0;
 						var notIn = [];
 						var error = 0;
-						var choice = $( this ).parent().parent().attr("data-choice");
-						var priority = $( this ).parent().parent().attr("data-priority");
-						var quantity = $( this ).parent().parent().children().eq(6);
+						var choice = $( this ).parent().parent().parent().attr("data-choice");
+						var priority = $( this ).parent().parent().parent().attr("data-priority");
+						var quantity = $( this ).parent().parent().parent().children().eq(6);
 						var needMaterial = NeedMaterial( text , choice );
 						if(needMaterial.status != 'n' && needMaterial.status != 'un'){
 							need = needMaterial.result;
@@ -183,7 +192,7 @@
 							}
 							else{
 								box[offset].quantity--;
-								$(this).parent().parent().children().eq(6).text(box[offset].quantity);
+								$(this).parent().parent().parent().children().eq(6).text(box[offset].quantity);
 							}
 							var setting = JSON.parse(window.localStorage.setting);
 							var from = 0;
@@ -213,11 +222,11 @@
 							for(var index in need){
 								materialTab.evolution(need[index],1);
 							}
-							if($(this).parent().parent().attr("data-priority")>0){
-								var priority = $(this).parent().parent().attr("data-priority");
+							if($(this).parent().parent().parent().attr("data-priority")>0){
+								var priority = $(this).parent().parent().parent().attr("data-priority");
 								priority--;
-								$(this).parent().parent().attr("data-priority",priority);
-								$(this).parent().parent().children().eq(7).text(priority);
+								$(this).parent().parent().parent().attr("data-priority",priority);
+								$(this).parent().parent().parent().children().eq(7).text(priority);
 								box[offset].priority--;
 								for(var index in need){
 									materialTab.Pevolution(need[index],1);
@@ -236,11 +245,13 @@
 						updateMeterial();
 					})
 				);
-			$( this ).append($("<span>")
-					.addClass("glyphicon glyphicon-remove")
-					.attr("title","刪除")
-					.click(function(){
-						var id = $(this).parent().parent().attr('id');
+			$( this ).children().append(
+					$("<button>").addClass("btn btn-default").attr("type","button").append(
+						$("<span>")
+						.addClass("glyphicon glyphicon-remove")
+						.attr("title","刪除")
+					).click(function(){
+						var id = $(this).parent().parent().parent().attr('id');
 						var box = dataLoad("box");
 						var choice = $("#mainTable table #" + id).attr("data-choice");
 						var text = $("#mainTable table #" + id).children().eq(0).text();
@@ -323,7 +334,7 @@
 
 function updateMeterial()
 {
-	$("#mainTable div span").each(function(){
+	$("#mainTable div.icon span").each(function(){
 		var materialNo = $( this ).attr("data-no");
 		if(materialTab.state(materialNo) != false){
 			$( this ).attr("class","notation " + materialTab.state(materialNo));
