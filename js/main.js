@@ -393,7 +393,7 @@ function boxDisplay( box )
 	}	
 }
 
-function materialDisplay( material )
+function materialDisplay( material , mode )
 {
 	var setting = JSON.parse(window.localStorage.setting);
 	$("#material").empty();
@@ -432,15 +432,23 @@ function materialDisplay( material )
 	$("#material .row").append(
 		$("<div>").addClass("col-md-4").append(
 			$("<div>").addClass("material-sidebar").append(
-				$("<div>").addClass(/*"panel panel-default"*/).append(
-					$("<div>").addClass("panel-body").append($("<div>").addClass("list-group"))
+				$("<div>").addClass("panel panel-default")
+				.append($("<div>").addClass("list-group")
+				)
+				.append(
+					$("<div>").addClass("panel-heading").append("分類方法")
+				)
+				.append(
+					$("<div>").addClass("panel-body")
+						.append($("<div>").addClass("radio").append($("<label>").append($("<input>").attr("type","radio").attr("name","class")).append("依星期分類")))
+						.append($("<div>").addClass("radio").append($("<label>").append($("<input>").attr("type","radio").attr("name","class")).append("依屬性分類")))
 				)
 			)
 		)
 	);
-	$("#material .panel-body div").append($("<a>").addClass("list-group-item").attr("onclick","scroll(0,0)").append("TOP"));
+	$("#material .list-group").append($("<a>").addClass("list-group-item").attr("href","#").attr("onclick","scroll(0,0)").append("TOP"));
 	for(var i in materialTemplate[0][0]){
-		$("#material .panel-body div").append($("<a>").addClass("list-group-item").attr("href","#" + materialTemplate[0][1][i]).append(materialTemplate[0][2][i]));
+		$("#material .list-group").append($("<a>").addClass("list-group-item").attr("href","#" + materialTemplate[0][1][i]).append(materialTemplate[0][2][i]));
 	}
 	for(var key1 in materialTemplate[0][0]){
 		for(var key2 in materialTemplate[0][0][key1]){
@@ -537,7 +545,7 @@ function internalLoad( load_times )
 		var PAllNeed = [];
 		var setting = JSON.parse(window.localStorage.setting);
 		boxDisplay(box);
-		materialDisplay(material);
+		materialDisplay(material,0);
 		var k = 0;
 		$("#mainTable tbody tr").each(function() {
 			var text = $( this ).children().text();
