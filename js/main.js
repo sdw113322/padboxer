@@ -440,12 +440,16 @@ function materialDisplay( material , mode )
 				)
 				.append(
 					$("<div>").addClass("panel-body")
-						.append($("<div>").addClass("radio").append($("<label>").append($("<input>").attr("type","radio").attr("name","class")).append("依星期分類")))
-						.append($("<div>").addClass("radio").append($("<label>").append($("<input>").attr("type","radio").attr("name","class")).append("依屬性分類")))
+						.append($("<div>").addClass("radio").append($("<label>").append($("<input>").attr("type","radio").attr("name","class").attr("id","setting50")).append("依星期分類")))
+						.append($("<div>").addClass("radio").append($("<label>").append($("<input>").attr("type","radio").attr("name","class").attr("id","setting51")).append("依屬性分類")))
 				)
 			)
 		)
 	);
+	$("#setting50").click(function(){
+		var setting = JSON.parse(window.localStorage.setting);
+		
+	});
 	$("#material .list-group").append($("<a>").addClass("list-group-item").attr("href","#").attr("onclick","scroll(0,0)").append("TOP"));
 	for(var i in materialTemplate[0][0]){
 		$("#material .list-group").append($("<a>").addClass("list-group-item").attr("href","#" + materialTemplate[0][1][i]).append(materialTemplate[0][2][i]));
@@ -848,6 +852,15 @@ $(document).ready(function() {
 			$("#setting4").prop("checked" , false);
 		}else
 			$("#setting4").prop("checked" , setting[4]);
+		if(typeof setting[5] == "undefined"){
+			setting[5] = 0;
+			$("#setting50").prop("checked" , true);
+		}else{
+			if(setting[5]==0)
+				$("#setting50").prop("checked" , true);
+			else
+				$("#setting51").prop("checked" , true);
+		}
 		for(var i = 0;i < 9;i++)
 			$("#setting3" + i).prop("checked" , setting[3][i]);
 	}
