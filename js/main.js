@@ -398,12 +398,12 @@ function materialDisplay( material , mode )
 	var setting = JSON.parse(window.localStorage.setting);
 	$("#material").empty();
 	$("#material").append($("<div>").addClass("row").append($("<div>").addClass("material-body col-md-8")));
-	for(var i in materialTemplate[0][0]){
+	for(var i in materialTemplate[mode][0]){
 		$("#material .material-body").append(
 			$("<div>").addClass("mainTable").append(
-				$("<h2>").text(materialTemplate[0][2][i])
+				$("<h2>").text(materialTemplate[mode][2][i])
 			).append(
-				$("<table>").attr("id",materialTemplate[0][1][i]).append(
+				$("<table>").attr("id",materialTemplate[mode][1][i]).append(
 					$("<thead>").append(
 						$("<tr>").append(
 							$("<th>").text("No.")
@@ -440,31 +440,43 @@ function materialDisplay( material , mode )
 				)
 				.append(
 					$("<div>").addClass("panel-body")
-						.append($("<div>").addClass("radio").append($("<label>").append($("<input>").attr("type","radio").attr("name","class").attr("id","setting50")).append("依星期分類")))
-						.append($("<div>").addClass("radio").append($("<label>").append($("<input>").attr("type","radio").attr("name","class").attr("id","setting51")).append("依屬性分類")))
+						.append($("<div>").addClass("radio").append($("<label>").append($("<input>").attr("type","radio").attr("name","setting5").attr("value",0)).append("依星期分類")))
+						.append($("<div>").addClass("radio").append($("<label>").append($("<input>").attr("type","radio").attr("name","setting5").attr("value",1)).append("依屬性分類")))
 				)
 			)
 		)
 	);
-	$("#setting50").click(function(){
+	console.log($('input[name="setting5"][value=0]'));
+	if(setting[5] != undefined)
+		$('input[name="setting5"][value="'+ setting[5] +'"]').attr('checked',true);
+	else
+		$('input[name="setting5"][value=0]').attr('checked',true);
+	
+	$('input[name="setting5"]').click(function(){
+		var type = this.value;
+		console.log(type);
+		var material = dataLoad("material");
 		var setting = JSON.parse(window.localStorage.setting);
-		
+		type = Number(type);
+		setting[5] = type;
+		window.localStorage.setting = JSON.stringify(setting);
+		materialDisplay( material , type );
 	});
 	$("#material .list-group").append($("<a>").addClass("list-group-item").attr("href","#").attr("onclick","scroll(0,0)").append("TOP"));
-	for(var i in materialTemplate[0][0]){
-		$("#material .list-group").append($("<a>").addClass("list-group-item").attr("href","#" + materialTemplate[0][1][i]).append(materialTemplate[0][2][i]));
+	for(var i in materialTemplate[mode][0]){
+		$("#material .list-group").append($("<a>").addClass("list-group-item").attr("href","#" + materialTemplate[mode][1][i]).append(materialTemplate[mode][2][i]));
 	}
-	for(var key1 in materialTemplate[0][0]){
-		for(var key2 in materialTemplate[0][0][key1]){
-			$("#" + materialTemplate[0][1][key1] + " tbody").append(
-				$("<tr>").addClass(materialAttr[materialTemplate[0][0][key1][key2]].element).append(
-					$("<td>").text(materialAttr[materialTemplate[0][0][key1][key2]].no)
+	for(var key1 in materialTemplate[mode][0]){
+		for(var key2 in materialTemplate[mode][0][key1]){
+			$("#" + materialTemplate[mode][1][key1] + " tbody").append(
+				$("<tr>").addClass(materialAttr[materialTemplate[mode][0][key1][key2]].element).append(
+					$("<td>").text(materialAttr[materialTemplate[mode][0][key1][key2]].no)
 				).append(
-					$("<td>").addIcon(false,setting[2],materialAttr[materialTemplate[0][0][key1][key2]].no)
+					$("<td>").addIcon(false,setting[2],materialAttr[materialTemplate[mode][0][key1][key2]].no)
 				).append(
-					$("<td>").text(materialAttr[materialTemplate[0][0][key1][key2]].name)
+					$("<td>").text(materialAttr[materialTemplate[mode][0][key1][key2]].name)
 				).append(
-					$("<td>").text(material[materialTemplate[0][0][key1][key2]].quantity).addClass("number")
+					$("<td>").text(material[materialTemplate[mode][0][key1][key2]].quantity).addClass("number")
 				).append(
 					$("<td>").text("0").addClass("number")
 				).append(
@@ -475,21 +487,21 @@ function materialDisplay( material , mode )
 					$("<td>").text("0").addClass("number priority")
 				).append(
 					$("<td>").append(
-						$("<span>").addClass("glyphicon glyphicon-plus add-material").attr("title","+1").attr("data-id",materialTemplate[0][0][key1][key2])
+						$("<span>").addClass("glyphicon glyphicon-plus add-material").attr("title","+1").attr("data-id",materialTemplate[mode][0][key1][key2])
 						.click(function(){
 							var id = $(this).attr('data-id');
 							$.debounce( 250, addMaterial(id) );
 						})
 					).append(" ")
 					.append(
-						$("<span>").addClass("glyphicon glyphicon-minus minus-material").attr("title","-1").attr("data-id",materialTemplate[0][0][key1][key2])
+						$("<span>").addClass("glyphicon glyphicon-minus minus-material").attr("title","-1").attr("data-id",materialTemplate[mode][0][key1][key2])
 						.click(function(){
 							var id = $(this).attr('data-id');
 							$.debounce( 250, minusMaterial(id) );
 						})
 					).append(" ")
 					.append(
-						$("<span>").addClass("glyphicon glyphicon-pencil edit-material").attr("title","修改").attr("data-id",materialTemplate[0][0][key1][key2])
+						$("<span>").addClass("glyphicon glyphicon-pencil edit-material").attr("title","修改").attr("data-id",materialTemplate[mode][0][key1][key2])
 						//.attr("data-toggle","modal")
 						//.attr("data-target","#material-modal")
 						.click(function(){
@@ -549,7 +561,10 @@ function internalLoad( load_times )
 		var PAllNeed = [];
 		var setting = JSON.parse(window.localStorage.setting);
 		boxDisplay(box);
-		materialDisplay(material,0);
+		if(setting[5] == undefined)
+			materialDisplay(material,0);
+		else
+			materialDisplay(material,setting[5]);
 		var k = 0;
 		$("#mainTable tbody tr").each(function() {
 			var text = $( this ).children().text();
@@ -854,7 +869,6 @@ $(document).ready(function() {
 			$("#setting4").prop("checked" , setting[4]);
 		if(typeof setting[5] == "undefined"){
 			setting[5] = 0;
-			$("#setting50").prop("checked" , true);
 		}else{
 			if(setting[5]==0)
 				$("#setting50").prop("checked" , true);
