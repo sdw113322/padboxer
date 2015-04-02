@@ -69,7 +69,7 @@
 					var needMaterial = NeedMaterial( no , choice );
 					var need = needMaterial.result;
 					for(var index in need){
-						materialTab.needPlus(need[index],1);
+						Material.needPlus(need[index],1);
 					}
 				})
 			);
@@ -96,7 +96,7 @@
 								var needMaterial = NeedMaterial( text , choice );
 								var need = needMaterial.result;
 								for(var index in need){
-									materialTab.PneedPlus(need[index],1);
+									Material.PneedPlus(need[index],1);
 								}
 								updateMeterial();
 							}
@@ -215,12 +215,12 @@
 									var NextNeedMaterial = NeedMaterial( result , 0 );
 									var nextNeed = NextNeedMaterial.result;
 									for(var i in nextNeed){
-										materialTab.needPlus(nextNeed[i],1);
+										Material.needPlus(nextNeed[i],1);
 									}
 								}
 							}
 							for(var index in need){
-								materialTab.evolution(need[index],1);
+								Material.evolution(need[index],1);
 							}
 							if($(this).parent().parent().parent().attr("data-priority")>0){
 								var priority = $(this).parent().parent().parent().attr("data-priority");
@@ -229,7 +229,7 @@
 								$(this).parent().parent().parent().children().eq(7).text(priority);
 								box[offset].priority--;
 								for(var index in need){
-									materialTab.Pevolution(need[index],1);
+									Material.Pevolution(need[index],1);
 								}
 							}
 							string = JSON.stringify(box);
@@ -271,11 +271,11 @@
 						var needMaterial = NeedMaterial( text , choice );
 						if(needMaterial.status != 'n' && needMaterial.status != 'un'){
 							for(var index in needMaterial.result){
-								materialTab.needMinus(needMaterial.result[index],quantity);
+								Material.needMinus(needMaterial.result[index],quantity);
 							}
 							if(quantity > 0)
 								for(var index in needMaterial.result){
-									materialTab.PneedMinus(needMaterial.result[index],priority);
+									Material.PneedMinus(needMaterial.result[index],priority);
 								}
 						}
 						updateMeterial();
@@ -336,9 +336,9 @@ function updateMeterial()
 {
 	$("#mainTable div.icon span").each(function(){
 		var materialNo = $( this ).attr("data-no");
-		if(materialTab.state(materialNo) != false){
-			$( this ).attr("class","notation " + materialTab.state(materialNo));
-			$( this ).text(materialTab.quantity(materialNo));
+		if(Material.state(materialNo) != false){
+			$( this ).attr("class","notation " + Material.state(materialNo));
+			$( this ).text(Material.quantity(materialNo));
 		}
 	});
 }
@@ -780,7 +780,7 @@ function addMonster(no,times,box,from)
 	if(no in evolution){
 		if(evolution[no].status == 'y'){
 			for(var key in evolution[no].need){
-				materialTab.needPlus(evolution[no].need[key],times);
+				Material.needPlus(evolution[no].need[key],times);
 			}
 		}
 		else if(evolution[no].status == 'u'){
@@ -792,7 +792,7 @@ function addMonster(no,times,box,from)
 					ultimateNeed = ultimate[j].need;
 				}
 				for(var key in ultimateNeed){
-					materialTab.needPlus(ultimateNeed[key],times);
+					Material.needPlus(ultimateNeed[key],times);
 				}
 			}
 		}
@@ -915,7 +915,7 @@ $(document).ready(function() {
 			ultimateNeed = ultimate[i].need;
 		}
 		for(j=0;j<ultimateNeed.length;j++){
-			materialTab.needPlus(ultimateNeed[j],1);
+			Material.needPlus(ultimateNeed[j],1);
 		}
 		updateMeterial();
 		$('#ultimateBranch').modal('hide');
@@ -1106,8 +1106,8 @@ $(document).ready(function() {
 			var needMaterial = NeedMaterial(box[offset].no,choice);
 			var need = needMaterial.result;
 			for(var index in need){
-				materialTab.needPlus(need[index],allDiff);
-				materialTab.PneedPlus(need[index],starDiff);
+				Material.needPlus(need[index],allDiff);
+				Material.PneedPlus(need[index],starDiff);
 			}
 			updateMeterial();
 		}else{
