@@ -1,4 +1,4 @@
-var materialTab = (function() {
+var Material = (function() {
     function transform( no ) { 
         var x = -1;
 		for(var key in materialAttr){
