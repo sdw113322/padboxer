@@ -645,7 +645,7 @@ function internalLoad( load_times )
 			var Ptotal = $(this).children().eq(3).text() - $(this).children().eq(6).text();
 			$(this).children().eq(7).text(Ptotal);
 		});
-		for(i=0;i<9;i++){
+		for(var i=0;i<9;i++){
 				if(setting[3][i] === false)
 					$("#mainTable tr").each(function(){$(this).children().eq(i).css( "display", "none" );});
 			}
