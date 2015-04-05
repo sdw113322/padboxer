@@ -46,9 +46,6 @@
 		height:100%;
 		margin:0px;padding:0px;
 		}
-	  #mainTable tbody tr td:last-child {
-	    text-align:left;
-	    }
 	  .mainTable tr:hover td{
 		background-color:#ffffff;
 		}
@@ -61,11 +58,14 @@
 		border-width:0px 1px 1px 0px;
 		text-align:center;
 		padding:10px;
-		font-size:14px;
+		font-size:12px;
 		font-family:Arial;
 		font-weight:normal;
 		color:#000000;
 		}
+	  .mainTable td div{
+		display: inline-block;
+	  }
 	  .mainTable th{
 		vertical-align:middle;
 		
@@ -100,7 +100,7 @@
 		border:0px solid #ffffff;
 		text-align:center;
 		border-width:0px 0px 1px 1px;
-		font-size:16px;
+		font-size:14px;
 		font-family:Arial;
 		font-weight:bold;
 		color:#000000;
@@ -174,20 +174,23 @@
 			width: 280px;
 			top: 320px;
 	  }
-	.icon span.badge {
-			//position: relative;
+	.icon span.notation {
 		    position:absolute;
-			//top: -10px;
-			left: 25px;
+			color: #FFFFFF;
+			padding-left: 2px;
+			padding-right: 2px;
+			font-size: 12px;
+			right: 0px;
 		}
 	div.icon{
 			position: relative;
-			float:left;
-			width: 50px;
+			width: 36px;
+			padding: 0px;
+			display: inline-block;
 	}
-	.badge-important{background-color:#b94a48 !important;}
-	.badge-warning{background-color:#f89406 !important;}
-	.badge-success{background-color:#468847 !important;}
+	.notation-important{background-color:#b94a48;}
+	.notation-warning{background-color:#f89406;}
+	.notation-success{background-color:#468847;}
 	td.number{
 		font-size: 24px;
 	}
