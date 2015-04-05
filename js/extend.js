@@ -107,7 +107,7 @@ var Material = (function() {
 		return available;
 	}
     return {
-		init: function init() {
+		init: function() {
 			var string = window.localStorage.getItem("material");
 			if(string === null){
 				string = "[{\"no\":147,\"quantity\":\"0\"},{\"no\":148,\"quantity\":0},{\"no\":149,\"quantity\":0},{\"no\":150,\"quantity\":0},{\"no\":151,\"quantity\":0},{\"no\":321,\"quantity\":0},{\"no\":1176,\"quantity\":0},{\"no\":161,\"quantity\":0},{\"no\":171,\"quantity\":0},{\"no\":166,\"quantity\":0},{\"no\":162,\"quantity\":0},{\"no\":172,\"quantity\":0},{\"no\":167,\"quantity\":0},{\"no\":1294,\"quantity\":0},{\"no\":163,\"quantity\":0},{\"no\":173,\"quantity\":0},{\"no\":168,\"quantity\":0},{\"no\":1295,\"quantity\":0},{\"no\":164,\"quantity\":0},{\"no\":174,\"quantity\":0},{\"no\":169,\"quantity\":0},{\"no\":165,\"quantity\":0},{\"no\":175,\"quantity\":0},{\"no\":170,\"quantity\":0},{\"no\":234,\"quantity\":0},{\"no\":152,\"quantity\":0},{\"no\":153,\"quantity\":0},{\"no\":154,\"quantity\":0},{\"no\":227,\"quantity\":0},{\"no\":1085,\"quantity\":0},{\"no\":1086,\"quantity\":0},{\"no\":1087,\"quantity\":0},{\"no\":155,\"quantity\":0},{\"no\":156,\"quantity\":0},{\"no\":157,\"quantity\":0},{\"no\":158,\"quantity\":0},{\"no\":159,\"quantity\":0},{\"no\":160,\"quantity\":0},{\"no\":246,\"quantity\":0},{\"no\":247,\"quantity\":0},{\"no\":248,\"quantity\":0},{\"no\":249,\"quantity\":0},{\"no\":250,\"quantity\":0},{\"no\":251,\"quantity\":0},{\"no\":915,\"quantity\":0},{\"no\":916,\"quantity\":0},{\"no\":1325,\"quantity\":0},{\"no\":1326,\"quantity\":0},{\"no\":1327,\"quantity\":0},{\"no\":1328,\"quantity\":0},{\"no\":1329,\"quantity\":0}]";
@@ -121,6 +121,14 @@ var Material = (function() {
 				materials[49] = JSON.parse("{\"no\":1328,\"quantity\":0}");
 				materials[50] = JSON.parse("{\"no\":1329,\"quantity\":0}");
 			}
+			for(var i=0;i<51;i++){
+				materials[i].need = 0;
+				materials[i].Pneed = 0;
+			}
+			countMaterial();
+		},
+		init_new: function(){
+			materials = Data.get("material");
 			for(var i=0;i<51;i++){
 				materials[i].need = 0;
 				materials[i].Pneed = 0;
@@ -149,12 +157,20 @@ var Material = (function() {
 			else
 				return false;
 		},
-		quantity: function( no ) {
-			var index = transform( no );
-			if(index[1] != false)
-				return getQuantity( index[0] );
-			else
-				return false;
+		quantity: function( id ) {
+				return materials[id].quantity;
+		},
+		need:  function( id ) {
+				return materials[id].need;
+		},
+		Pneed: function( id ) {
+				return materials[id].Pneed;
+		},
+		total: function( id ) {
+				return materials[id].quantity - materials[id].need;
+		},
+		Ptotal: function( id ) {
+				return materials[id].quantity - materials[id].Pneed;
 		},
 		PneedPlus: function( no , quantity ) {
 			var index = transform( no );
