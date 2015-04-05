@@ -71,25 +71,14 @@ var Material = (function() {
 		else
 			return [x, true];
     }
-	function change( id , availDiff , needDiff , totalDiff , mode ) {
-		var available = $("#material span[data-id='" + id + "']").parent().parent().children().eq(3).text();
+	function change( id , mode ) {
 		if(mode === "normal"){
-			var need = $("#material span[data-id='" + id + "']").parent().parent().children().eq(4).text();
-			var total = $("#material span[data-id='" + id + "']").parent().parent().children().eq(5).text();
+			$("#material span[data-id='" + id + "']").parent().parent().children().eq(3).text(materials[id].quantity);
+			$("#material span[data-id='" + id + "']").parent().parent().children().eq(4).text(materials[id].need);
+			$("#material span[data-id='" + id + "']").parent().parent().children().eq(5).text(materials[id].quantity - materials[id].need);
 		}else if(mode ==="priority"){
-			var need = $("#material span[data-id='" + id + "']").parent().parent().children().eq(6).text();
-			var total = $("#material span[data-id='" + id + "']").parent().parent().children().eq(7).text();
-		}
-		available = Number(available) + Number(availDiff);
-		need = Number(need) + Number(needDiff);
-		total = Number(total) + Number(totalDiff);
-		$("#material span[data-id='" + id + "']").parent().parent().children().eq(3).text(available);
-		if(mode === "normal"){
-			$("#material span[data-id='" + id + "']").parent().parent().children().eq(4).text(need);
-			$("#material span[data-id='" + id + "']").parent().parent().children().eq(5).text(total);
-		}else if(mode ==="priority"){
-			$("#material span[data-id='" + id + "']").parent().parent().children().eq(6).text(need);
-			$("#material span[data-id='" + id + "']").parent().parent().children().eq(7).text(total);
+			$("#material span[data-id='" + id + "']").parent().parent().children().eq(6).text(materials[id].Pneed);
+			$("#material span[data-id='" + id + "']").parent().parent().children().eq(7).text(materials[id].quantity - materials[id].Pneed);
 		}
 	}
 	function getState( id ) {
@@ -101,10 +90,6 @@ var Material = (function() {
 			return "notation-warning";
 		else
 			return "notation-important";
-	}
-	function getQuantity( id ) {
-		var available = $("#material span[data-id='" + id + "']").parent().parent().children().eq(3).text();
-		return available;
 	}
     return {
 		init: function() {
@@ -137,18 +122,46 @@ var Material = (function() {
 		},
 		needPlus: function( no , quantity ) {
 			var index = transform( no );
-			if(index[1] != false)
-				change(index[0],0,quantity,-quantity,"normal");
+			if(index[1] != false){
+				materials[index[0]].need += quantity;
+				change(index[0],"normal");
+			}
 		},
 		needMinus: function( no , quantity ) {
 			var index = transform( no );
-			if(index[1] != false)
-				change(index[0],0,-quantity,quantity,"normal");
+			if(index[1] != false){
+				materials[index[0]].need -= quantity;
+				change(index[0],"normal");
+			}
 		},
 		evolution: function( no , quantity ) {
 			var index = transform( no );
-			if(index[1] != false)
-				change(index[0],-quantity,-quantity,0,"normal");
+			if(index[1] != false){
+				materials[index[0]].quantity -= quantity;
+				materials[index[0]].need += quantity;
+				change(index[0],"normal");
+			}
+		},
+		PneedPlus: function( no , quantity ) {
+			var index = transform( no );
+			if(index[1] != false){
+				materials[index[0]].Pneed += quantity;
+				change(index[0],"priority");
+			}
+		},
+		PneedMinus: function( no , quantity ) {
+			var index = transform( no );
+			if(index[1] != false){
+				materials[index[0]].Pneed -= quantity;
+				change(index[0],"priority");
+			}
+		},
+		Pevolution: function( no , quantity ) {
+			var index = transform( no );
+			if(index[1] != false){
+				materials[index[0]].Pneed += quantity;
+				change(index[0],"priority");
+			}
 		},
 		state: function( no ) {
 			var index = transform( no );
@@ -171,21 +184,6 @@ var Material = (function() {
 		},
 		Ptotal: function( id ) {
 				return materials[id].quantity - materials[id].Pneed;
-		},
-		PneedPlus: function( no , quantity ) {
-			var index = transform( no );
-			if(index[1] != false)
-				change(index[0],0,quantity,-quantity,"priority");
-		},
-		PneedMinus: function( no , quantity ) {
-			var index = transform( no );
-			if(index[1] != false)
-				change(index[0],0,-quantity,quantity,"priority");
-		},
-		Pevolution: function( no , quantity ) {
-			var index = transform( no );
-			if(index[1] != false)
-				change(index[0],0,-quantity,0,"priority");
 		}
     };
 })();

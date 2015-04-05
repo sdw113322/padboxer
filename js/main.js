@@ -491,31 +491,32 @@ function materialDisplay( material , mode )
 					$("<td>").text(Material.Ptotal(materialTemplate[mode][0][key1][key2])).addClass("number priority")
 				).append(
 					$("<td>").append(
-						$("<span>").addClass("glyphicon glyphicon-plus add-material").attr("title","+1").attr("data-id",materialTemplate[mode][0][key1][key2])
-						.click(function(){
-							var id = $(this).attr('data-id');
-							$.debounce( 250, addMaterial(id) );
-						})
-					).append(" ")
-					.append(
-						$("<span>").addClass("glyphicon glyphicon-minus minus-material").attr("title","-1").attr("data-id",materialTemplate[mode][0][key1][key2])
-						.click(function(){
-							var id = $(this).attr('data-id');
-							$.debounce( 250, minusMaterial(id) );
-						})
-					).append(" ")
-					.append(
-						$("<span>").addClass("glyphicon glyphicon-pencil edit-material").attr("title","修改").attr("data-id",materialTemplate[mode][0][key1][key2])
-						//.attr("data-toggle","modal")
-						//.attr("data-target","#material-modal")
-						.click(function(){
-							var id = $(this).attr('data-id');
-							var material = dataLoad("material");
-							$("#material-modal").modal('show');
-							$("#material-modal input").val(material[id].quantity);
-							$("#material-modal input").attr("data-id",id);
-							setTimeout(function(){$("#material-modal input").focus();},500);
-						})
+						$("<div>").addClass("btn-group").append(
+							$("<button>").addClass("btn btn-default").attr("type","button").attr("data-id",materialTemplate[mode][0][key1][key2]).append(
+								$("<span>").addClass("glyphicon glyphicon-plus add-material").attr("title","+1")
+							).click(function(){
+								var id = $(this).attr('data-id');
+								$.debounce( 250, addMaterial(id) );
+							})
+						).append(
+							$("<button>").addClass("btn btn-default").attr("type","button").attr("data-id",materialTemplate[mode][0][key1][key2]).append(
+								$("<span>").addClass("glyphicon glyphicon-minus minus-material").attr("title","-1")
+							).click(function(){
+								var id = $(this).attr('data-id');
+								$.debounce( 250, minusMaterial(id) );
+							})
+						).append(
+							$("<button>").addClass("btn btn-default").attr("type","button").attr("data-id",materialTemplate[mode][0][key1][key2]).append(
+								$("<span>").addClass("glyphicon glyphicon-pencil edit-material").attr("title","修改")
+							).click(function(){
+								var id = $(this).attr('data-id');
+								var material = dataLoad("material");
+								$("#material-modal").modal('show');
+								$("#material-modal input").val(material[id].quantity);
+								$("#material-modal input").attr("data-id",id);
+								setTimeout(function(){$("#material-modal input").focus();},500);
+							})
+						)
 					)
 				)
 			);
@@ -716,7 +717,7 @@ function addMaterial( id )
 	var string = JSON.stringify(material);
 	window.localStorage.material = string;
 	$("#material tr").each(function(){
-		if($(this).children().eq(8).children().attr("data-id") == id){
+		if($(this).children().eq(8).children().children().attr("data-id") == id){
 			var available = Number($(this).children().eq(3).text()) + 1;
 			var total = Number($(this).children().eq(5).text()) + 1;
 			var Ptotal = Number($(this).children().eq(7).text()) + 1;
@@ -735,7 +736,7 @@ function minusMaterial( id )
 	var string = JSON.stringify(material);
 	window.localStorage.material = string;
 	$("#material tr").each(function(){
-		if($(this).children().eq(8).children().attr("data-id") == id){
+		if($(this).children().eq(8).children().children().attr("data-id") == id){
 			var available = Number($(this).children().eq(3).text()) - 1;
 			var total = Number($(this).children().eq(5).text()) - 1;
 			var Ptotal = Number($(this).children().eq(7).text()) - 1;
@@ -1080,7 +1081,7 @@ $(document).ready(function() {
 		var string = JSON.stringify(material);
 		window.localStorage.material = string;
 		$("#material tr").each(function(){
-			if($(this).children().eq(8).children().attr("data-id") == id){
+			if($(this).children().eq(8).children().children().attr("data-id") == id){
 				var available = value;
 				var total = value - Number($(this).children().eq(4).text());
 				var Ptotal = value - Number($(this).children().eq(6).text());
