@@ -73,17 +73,17 @@ var Material = (function() {
     }
 	function change( id , mode ) {
 		if(mode === "normal"){
-			$("#material span[data-id='" + id + "']").parent().parent().children().eq(3).text(materials[id].quantity);
-			$("#material span[data-id='" + id + "']").parent().parent().children().eq(4).text(materials[id].need);
-			$("#material span[data-id='" + id + "']").parent().parent().children().eq(5).text(materials[id].quantity - materials[id].need);
+			$("#material button[data-id='" + id + "']").parent().parent().parent().children().eq(3).text(materials[id].quantity);
+			$("#material button[data-id='" + id + "']").parent().parent().parent().children().eq(4).text(materials[id].need);
+			$("#material button[data-id='" + id + "']").parent().parent().parent().children().eq(5).text(materials[id].quantity - materials[id].need);
 		}else if(mode ==="priority"){
-			$("#material span[data-id='" + id + "']").parent().parent().children().eq(6).text(materials[id].Pneed);
-			$("#material span[data-id='" + id + "']").parent().parent().children().eq(7).text(materials[id].quantity - materials[id].Pneed);
+			$("#material button[data-id='" + id + "']").parent().parent().parent().children().eq(6).text(materials[id].Pneed);
+			$("#material button[data-id='" + id + "']").parent().parent().parent().children().eq(7).text(materials[id].quantity - materials[id].Pneed);
 		}
 	}
 	function getState( id ) {
-		var available = $("#material span[data-id='" + id + "']").parent().parent().children().eq(3).text();
-		var total = $("#material span[data-id='" + id + "']").parent().parent().children().eq(5).text();
+		var available = materials[id].quantity;
+		var total = materials[id].quantity - materials[id].need;
 		if(total > 0)
 			return "notation-success";
 		else if(total <= 0 && available > 0)
