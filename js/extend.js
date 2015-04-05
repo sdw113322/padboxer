@@ -121,6 +121,7 @@ var Material = (function() {
 			countMaterial();
 		},
 		needPlus: function( no , quantity ) {
+			quantity = Number(quantity);
 			var index = transform( no );
 			if(index[1] != false){
 				materials[index[0]].need += quantity;
@@ -128,21 +129,34 @@ var Material = (function() {
 			}
 		},
 		needMinus: function( no , quantity ) {
+			quantity = Number(quantity);
 			var index = transform( no );
 			if(index[1] != false){
 				materials[index[0]].need -= quantity;
 				change(index[0],"normal");
 			}
 		},
+		quantityPlus: function(id){
+			materials[id].quantity ++;
+		},
+		quantityMinus: function(id){
+			materials[id].quantity --;
+		},
+		setQuantity: function(id,quantity){
+			quantity = Number(quantity);
+			materials[id].quantity = quantity;
+		},
 		evolution: function( no , quantity ) {
+			quantity = Number(quantity);
 			var index = transform( no );
 			if(index[1] != false){
 				materials[index[0]].quantity -= quantity;
-				materials[index[0]].need += quantity;
+				materials[index[0]].need -= quantity;
 				change(index[0],"normal");
 			}
 		},
 		PneedPlus: function( no , quantity ) {
+			quantity = Number(quantity);
 			var index = transform( no );
 			if(index[1] != false){
 				materials[index[0]].Pneed += quantity;
@@ -150,6 +164,7 @@ var Material = (function() {
 			}
 		},
 		PneedMinus: function( no , quantity ) {
+			quantity = Number(quantity);
 			var index = transform( no );
 			if(index[1] != false){
 				materials[index[0]].Pneed -= quantity;
@@ -157,9 +172,10 @@ var Material = (function() {
 			}
 		},
 		Pevolution: function( no , quantity ) {
+			quantity = Number(quantity);
 			var index = transform( no );
 			if(index[1] != false){
-				materials[index[0]].Pneed += quantity;
+				materials[index[0]].Pneed -= quantity;
 				change(index[0],"priority");
 			}
 		},

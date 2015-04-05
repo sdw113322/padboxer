@@ -724,6 +724,7 @@ function addMaterial( id )
 			$(this).children().eq(3).text(available);
 			$(this).children().eq(5).text(total);
 			$(this).children().eq(7).text(Ptotal);
+			Material.quantityPlus(id);
 		}
 	});
 	updateMeterial();
@@ -743,6 +744,7 @@ function minusMaterial( id )
 			$(this).children().eq(3).text(available);
 			$(this).children().eq(5).text(total);
 			$(this).children().eq(7).text(Ptotal);
+			Material.quantityMinus(id);
 		}
 	});
 	updateMeterial();
@@ -1076,6 +1078,7 @@ $(document).ready(function() {
 				$(this).children().eq(3).text(available);
 				$(this).children().eq(5).text(total);
 				$(this).children().eq(7).text(Ptotal);
+				Material.setQuantity(id,value);
 			}
 		});
 		updateMeterial();
