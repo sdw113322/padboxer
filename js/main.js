@@ -45,20 +45,23 @@
 	$.fn.showAction = function( priority , no ) {
 		if(!(window.localStorage.getItem("evolution") === null)){
 			var evolution = JSON.parse(window.localStorage.evolution);
-			$( this ).append($("<span>")
-				.addClass("glyphicon glyphicon-plus")
-				.attr("title","+1")
-				.click(no,function(){
+			$( this ).append($("<div>").addClass("btn-group"));
+			$( this ).children().append(
+				$("<button>").addClass("btn btn-default").attr("type","button").append(
+					$("<span>")
+					.addClass("glyphicon glyphicon-plus")
+					.attr("title","+1")
+				).click(no,function(){
 					var box = dataLoad("box");
-					var id = $( this ).parent().parent().attr("id");
-					var choice = $( this ).parent().parent().attr("data-choice");
+					var id = $( this ).parent().parent().parent().attr("id");
+					var choice = $( this ).parent().parent().parent().attr("data-choice");
 					for(var i in box){
 						if(box[i].id == id){
 							var quantity = box[i].quantity;
 							var no = box[i].no;
 							quantity++;
 							box[i].quantity = quantity;
-							$( this ).parent().parent().children().eq(6).text(quantity);
+							$( this ).parent().parent().parent().children().eq(6).text(quantity);
 						}
 					}
 					var string = JSON.stringify(box);
@@ -66,24 +69,26 @@
 					var needMaterial = NeedMaterial( no , choice );
 					var need = needMaterial.result;
 					for(var index in need){
-						materialTab.needPlus(need[index],1);
+						Material.needPlus(need[index],1);
 					}
 				})
 			);
-			$( this ).append($("<span>")
-				.addClass("glyphicon glyphicon-star")
-				.attr("title","優先進化對象數量+1")
-				.click(no,function(){
+			$( this ).children().append(
+				$("<button>").addClass("btn btn-default").attr("type","button").append(
+				$("<span>")
+					.addClass("glyphicon glyphicon-star")
+					.attr("title","優先進化對象數量+1")
+				).click(no,function(){
 					var box = dataLoad("box");
-					var id = $( this ).parent().parent().attr("id");
-					var priority2 = $( this ).parent().parent().attr("data-priority");
+					var id = $( this ).parent().parent().parent().attr("id");
+					var priority2 = $( this ).parent().parent().parent().attr("data-priority");
 					for(var i in box){
 						if(box[i].id == id){
 							if(box[i].quantity > box[i].priority){
 								priority2++;
 								box[i].priority = priority2;
-								$( this ).parent().parent().attr("data-priority",priority2);
-								$( this ).parent().parent().children().eq(7).text(priority2);
+								$( this ).parent().parent().parent().attr("data-priority",priority2);
+								$( this ).parent().parent().parent().children().eq(7).text(priority2);
 								var evolution = JSON.parse(window.localStorage.evolution);
 								var ultimate = JSON.parse(window.localStorage.ultimate);
 								var choice = $("#mainTable table #" + id).attr("data-choice");
@@ -91,7 +96,7 @@
 								var needMaterial = NeedMaterial( text , choice );
 								var need = needMaterial.result;
 								for(var index in need){
-									materialTab.PneedPlus(need[index],1);
+									Material.PneedPlus(need[index],1);
 								}
 								updateMeterial();
 							}
@@ -101,26 +106,30 @@
 					window.localStorage.box = string;
 				})
 			);
-			$( this ).append($("<span>")
-					.addClass("glyphicon glyphicon-pencil edit-material")
-					.attr("title","修改")
-					.click(function(){
+			$( this ).children().append(
+				$("<button>").addClass("btn btn-default").attr("type","button").append(
+						$("<span>")
+						.addClass("glyphicon glyphicon-pencil edit-material")
+						.attr("title","修改")
+					).click(function(){
 						$("#box-modal").modal('show');
-						var all = $( this ).parent().parent().children().eq(6).text();
-						var star = $( this ).parent().parent().children().eq(7).text();
+						var all = $( this ).parent().parent().parent().children().eq(6).text();
+						var star = $( this ).parent().parent().parent().children().eq(7).text();
 						$("#allQty").val(all).attr("data-original",all);
-						$("#allQty").val(all).attr("data-id",$( this ).parent().parent().attr("id"));
+						$("#allQty").val(all).attr("data-id",$( this ).parent().parent().parent().attr("id"));
 						$("#starQty").val(star).attr("data-original",star);
 						setTimeout(function(){$("#box-modal input").eq(0).focus();},500);
 					})
 				);
 			if(no in evolution && evolution[no].status != "n")
-				$( this ).append($("<span>")
-					.addClass("glyphicon glyphicon-forward")
-					.attr("title","進化")
-					.click(no,function(){
-						var text = $( this ).parent().parent().children().first().text();
-						var id = $( this ).parent().parent().attr("id");
+				$( this ).children().append(
+					$("<button>").addClass("btn btn-default").attr("type","button").append(
+						$("<span>")
+						.addClass("glyphicon glyphicon-forward")
+						.attr("title","進化")
+					).click(no,function(){
+						var text = $( this ).parent().parent().parent().children().first().text();
+						var id = $( this ).parent().parent().parent().attr("id");
 						var evolution = JSON.parse(window.localStorage.evolution);
 						var ultimate = JSON.parse(window.localStorage.ultimate);
 						var box = dataLoad("box");
@@ -130,9 +139,9 @@
 						var result = 0;
 						var notIn = [];
 						var error = 0;
-						var choice = $( this ).parent().parent().attr("data-choice");
-						var priority = $( this ).parent().parent().attr("data-priority");
-						var quantity = $( this ).parent().parent().children().eq(6);
+						var choice = $( this ).parent().parent().parent().attr("data-choice");
+						var priority = $( this ).parent().parent().parent().attr("data-priority");
+						var quantity = $( this ).parent().parent().parent().children().eq(6);
 						var needMaterial = NeedMaterial( text , choice );
 						if(needMaterial.status != 'n' && needMaterial.status != 'un'){
 							need = needMaterial.result;
@@ -183,7 +192,7 @@
 							}
 							else{
 								box[offset].quantity--;
-								$(this).parent().parent().children().eq(6).text(box[offset].quantity);
+								$(this).parent().parent().parent().children().eq(6).text(box[offset].quantity);
 							}
 							var setting = JSON.parse(window.localStorage.setting);
 							var from = 0;
@@ -206,21 +215,21 @@
 									var NextNeedMaterial = NeedMaterial( result , 0 );
 									var nextNeed = NextNeedMaterial.result;
 									for(var i in nextNeed){
-										materialTab.needPlus(nextNeed[i],1);
+										Material.needPlus(nextNeed[i],1);
 									}
 								}
 							}
 							for(var index in need){
-								materialTab.evolution(need[index],1);
+								Material.evolution(need[index],1);
 							}
-							if($(this).parent().parent().attr("data-priority")>0){
-								var priority = $(this).parent().parent().attr("data-priority");
+							if($(this).parent().parent().parent().attr("data-priority")>0){
+								var priority = $(this).parent().parent().parent().attr("data-priority");
 								priority--;
-								$(this).parent().parent().attr("data-priority",priority);
-								$(this).parent().parent().children().eq(7).text(priority);
+								$(this).parent().parent().parent().attr("data-priority",priority);
+								$(this).parent().parent().parent().children().eq(7).text(priority);
 								box[offset].priority--;
 								for(var index in need){
-									materialTab.Pevolution(need[index],1);
+									Material.Pevolution(need[index],1);
 								}
 							}
 							string = JSON.stringify(box);
@@ -236,11 +245,13 @@
 						updateMeterial();
 					})
 				);
-			$( this ).append($("<span>")
-					.addClass("glyphicon glyphicon-remove")
-					.attr("title","刪除")
-					.click(function(){
-						var id = $(this).parent().parent().attr('id');
+			$( this ).children().append(
+					$("<button>").addClass("btn btn-default").attr("type","button").append(
+						$("<span>")
+						.addClass("glyphicon glyphicon-remove")
+						.attr("title","刪除")
+					).click(function(){
+						var id = $(this).parent().parent().parent().attr('id');
 						var box = dataLoad("box");
 						var choice = $("#mainTable table #" + id).attr("data-choice");
 						var text = $("#mainTable table #" + id).children().eq(0).text();
@@ -260,11 +271,11 @@
 						var needMaterial = NeedMaterial( text , choice );
 						if(needMaterial.status != 'n' && needMaterial.status != 'un'){
 							for(var index in needMaterial.result){
-								materialTab.needMinus(needMaterial.result[index],quantity);
+								Material.needMinus(needMaterial.result[index],quantity);
 							}
 							if(quantity > 0)
 								for(var index in needMaterial.result){
-									materialTab.PneedMinus(needMaterial.result[index],priority);
+									Material.PneedMinus(needMaterial.result[index],priority);
 								}
 						}
 						updateMeterial();
@@ -323,11 +334,17 @@
 
 function updateMeterial()
 {
-	$("#mainTable div span").each(function(){
+	$("#mainTable div.icon span").each(function(){
 		var materialNo = $( this ).attr("data-no");
-		if(materialTab.state(materialNo) != false){
-			$( this ).attr("class","badge " + materialTab.state(materialNo));
-			$( this ).text(materialTab.quantity(materialNo));
+		if(Material.state(materialNo) != false){
+			$( this ).attr("class","notation " + Material.state(materialNo));
+			var x = -1;
+			for(var key in materialAttr){
+				if(materialAttr[key].no == materialNo)
+					x = key;
+			}
+			if(x!=-1)
+				$( this ).text(Material.quantity(x));
 		}
 	});
 }
@@ -382,17 +399,18 @@ function boxDisplay( box )
 	}	
 }
 
-function materialDisplay( material )
+function materialDisplay( material , mode )
 {
+	Material.init();
 	var setting = JSON.parse(window.localStorage.setting);
 	$("#material").empty();
 	$("#material").append($("<div>").addClass("row").append($("<div>").addClass("material-body col-md-8")));
-	for(var i in materialTemplate[0][0]){
+	for(var i in materialTemplate[mode][0]){
 		$("#material .material-body").append(
 			$("<div>").addClass("mainTable").append(
-				$("<h2>").text(materialTemplate[0][2][i])
+				$("<h2>").text(materialTemplate[mode][2][i])
 			).append(
-				$("<table>").attr("id",materialTemplate[0][1][i]).append(
+				$("<table>").attr("id",materialTemplate[mode][1][i]).append(
 					$("<thead>").append(
 						$("<tr>").append(
 							$("<th>").text("No.")
@@ -421,67 +439,90 @@ function materialDisplay( material )
 	$("#material .row").append(
 		$("<div>").addClass("col-md-4").append(
 			$("<div>").addClass("material-sidebar").append(
-				$("<div>").addClass(/*"panel panel-default"*/).append(
-					$("<div>").addClass("panel-body").append($("<div>").addClass("list-group"))
+				$("<div>").addClass("panel panel-default")
+				.append($("<div>").addClass("list-group")
+				)
+				.append(
+					$("<div>").addClass("panel-heading").append("分類方法")
+				)
+				.append(
+					$("<div>").addClass("panel-body")
+						.append($("<div>").addClass("radio").append($("<label>").append($("<input>").attr("type","radio").attr("name","setting5").attr("value",0)).append("依星期分類")))
+						.append($("<div>").addClass("radio").append($("<label>").append($("<input>").attr("type","radio").attr("name","setting5").attr("value",1)).append("依屬性分類")))
 				)
 			)
 		)
 	);
-	$("#material .panel-body div").append($("<a>").addClass("list-group-item").attr("onclick","scroll(0,0)").append("TOP"));
-	for(var i in materialTemplate[0][0]){
-		$("#material .panel-body div").append($("<a>").addClass("list-group-item").attr("href","#" + materialTemplate[0][1][i]).append(materialTemplate[0][2][i]));
+	if(setting[5] != undefined)
+		$('input[name="setting5"][value="'+ setting[5] +'"]').attr('checked',true);
+	else
+		$('input[name="setting5"][value=0]').attr('checked',true);
+	
+	$('input[name="setting5"]').click(function(){
+		var type = this.value;
+		var setting = JSON.parse(window.localStorage.setting);
+		type = Number(type);
+		setting[5] = type;
+		window.localStorage.setting = JSON.stringify(setting);
+		materialDisplay( material , type );
+	});
+	$("#material .list-group").append($("<a>").addClass("list-group-item").attr("href","#").attr("onclick","scroll(0,0)").append("TOP"));
+	for(var i in materialTemplate[mode][0]){
+		$("#material .list-group").append($("<a>").addClass("list-group-item").attr("href","#" + materialTemplate[mode][1][i]).append(materialTemplate[mode][2][i]));
 	}
-	for(var key1 in materialTemplate[0][0]){
-		for(var key2 in materialTemplate[0][0][key1]){
-			$("#" + materialTemplate[0][1][key1] + " tbody").append(
-				$("<tr>").addClass(materialAttr[materialTemplate[0][0][key1][key2]].element).append(
-					$("<td>").text(materialAttr[materialTemplate[0][0][key1][key2]].no)
+	for(var key1 in materialTemplate[mode][0]){
+		for(var key2 in materialTemplate[mode][0][key1]){
+			$("#" + materialTemplate[mode][1][key1] + " tbody").append(
+				$("<tr>").addClass(materialAttr[materialTemplate[mode][0][key1][key2]].element).append(
+					$("<td>").text(materialAttr[materialTemplate[mode][0][key1][key2]].no)
 				).append(
-					$("<td>").addIcon(false,setting[2],materialAttr[materialTemplate[0][0][key1][key2]].no)
+					$("<td>").addIcon(false,setting[2],materialAttr[materialTemplate[mode][0][key1][key2]].no)
 				).append(
-					$("<td>").text(materialAttr[materialTemplate[0][0][key1][key2]].name)
+					$("<td>").text(materialAttr[materialTemplate[mode][0][key1][key2]].name)
 				).append(
-					$("<td>").text(material[materialTemplate[0][0][key1][key2]].quantity).addClass("number")
+					$("<td>").text(Material.quantity(materialTemplate[mode][0][key1][key2])).addClass("number")
 				).append(
-					$("<td>").text("0").addClass("number")
+					$("<td>").text(Material.need(materialTemplate[mode][0][key1][key2])).addClass("number")
 				).append(
-					$("<td>").text("0").addClass("number")
+					$("<td>").text(Material.total(materialTemplate[mode][0][key1][key2])).addClass("number")
 				).append(
-					$("<td>").text("0").addClass("number priority")
+					$("<td>").text(Material.Pneed(materialTemplate[mode][0][key1][key2])).addClass("number priority")
 				).append(
-					$("<td>").text("0").addClass("number priority")
+					$("<td>").text(Material.Ptotal(materialTemplate[mode][0][key1][key2])).addClass("number priority")
 				).append(
 					$("<td>").append(
-						$("<span>").addClass("glyphicon glyphicon-plus add-material").attr("title","+1").attr("data-id",materialTemplate[0][0][key1][key2])
-						.click(function(){
-							var id = $(this).attr('data-id');
-							$.debounce( 250, addMaterial(id) );
-						})
-					).append(" ")
-					.append(
-						$("<span>").addClass("glyphicon glyphicon-minus minus-material").attr("title","-1").attr("data-id",materialTemplate[0][0][key1][key2])
-						.click(function(){
-							var id = $(this).attr('data-id');
-							$.debounce( 250, minusMaterial(id) );
-						})
-					).append(" ")
-					.append(
-						$("<span>").addClass("glyphicon glyphicon-pencil edit-material").attr("title","修改").attr("data-id",materialTemplate[0][0][key1][key2])
-						//.attr("data-toggle","modal")
-						//.attr("data-target","#material-modal")
-						.click(function(){
-							var id = $(this).attr('data-id');
-							var material = dataLoad("material");
-							$("#material-modal").modal('show');
-							$("#material-modal input").val(material[id].quantity);
-							$("#material-modal input").attr("data-id",id);
-							setTimeout(function(){$("#material-modal input").focus();},500);
-						})
+						$("<div>").addClass("btn-group").append(
+							$("<button>").addClass("btn btn-default").attr("type","button").attr("data-id",materialTemplate[mode][0][key1][key2]).append(
+								$("<span>").addClass("glyphicon glyphicon-plus add-material").attr("title","+1")
+							).click(function(){
+								var id = $(this).attr('data-id');
+								$.debounce( 250, addMaterial(id) );
+							})
+						).append(
+							$("<button>").addClass("btn btn-default").attr("type","button").attr("data-id",materialTemplate[mode][0][key1][key2]).append(
+								$("<span>").addClass("glyphicon glyphicon-minus minus-material").attr("title","-1")
+							).click(function(){
+								var id = $(this).attr('data-id');
+								$.debounce( 250, minusMaterial(id) );
+							})
+						).append(
+							$("<button>").addClass("btn btn-default").attr("type","button").attr("data-id",materialTemplate[mode][0][key1][key2]).append(
+								$("<span>").addClass("glyphicon glyphicon-pencil edit-material").attr("title","修改")
+							).click(function(){
+								var id = $(this).attr('data-id');
+								var material = dataLoad("material");
+								$("#material-modal").modal('show');
+								$("#material-modal input").val(material[id].quantity);
+								$("#material-modal input").attr("data-id",id);
+								setTimeout(function(){$("#material-modal input").focus();},500);
+							})
+						)
 					)
 				)
 			);
 		}
 	}
+	SetMaterialSidebarPosition();
 	if(setting[4] === true)
 		$("#material tr").each(function(){
 			$(this).children().eq(6).hide();
@@ -526,7 +567,10 @@ function internalLoad( load_times )
 		var PAllNeed = [];
 		var setting = JSON.parse(window.localStorage.setting);
 		boxDisplay(box);
-		materialDisplay(material);
+		if(setting[5] == undefined)
+			materialDisplay(material,0);
+		else
+			materialDisplay(material,setting[5]);
 		var k = 0;
 		$("#mainTable tbody tr").each(function() {
 			var text = $( this ).children().text();
@@ -607,7 +651,7 @@ function internalLoad( load_times )
 			var Ptotal = $(this).children().eq(3).text() - $(this).children().eq(6).text();
 			$(this).children().eq(7).text(Ptotal);
 		});
-		for(i=0;i<9;i++){
+		for(var i=0;i<9;i++){
 				if(setting[3][i] === false)
 					$("#mainTable tr").each(function(){$(this).children().eq(i).css( "display", "none" );});
 			}
@@ -673,13 +717,14 @@ function addMaterial( id )
 	var string = JSON.stringify(material);
 	window.localStorage.material = string;
 	$("#material tr").each(function(){
-		if($(this).children().eq(8).children().attr("data-id") == id){
+		if($(this).children().eq(8).children().children().attr("data-id") == id){
 			var available = Number($(this).children().eq(3).text()) + 1;
 			var total = Number($(this).children().eq(5).text()) + 1;
 			var Ptotal = Number($(this).children().eq(7).text()) + 1;
 			$(this).children().eq(3).text(available);
 			$(this).children().eq(5).text(total);
 			$(this).children().eq(7).text(Ptotal);
+			Material.quantityPlus(id);
 		}
 	});
 	updateMeterial();
@@ -692,13 +737,14 @@ function minusMaterial( id )
 	var string = JSON.stringify(material);
 	window.localStorage.material = string;
 	$("#material tr").each(function(){
-		if($(this).children().eq(8).children().attr("data-id") == id){
+		if($(this).children().eq(8).children().children().attr("data-id") == id){
 			var available = Number($(this).children().eq(3).text()) - 1;
 			var total = Number($(this).children().eq(5).text()) - 1;
 			var Ptotal = Number($(this).children().eq(7).text()) - 1;
 			$(this).children().eq(3).text(available);
 			$(this).children().eq(5).text(total);
 			$(this).children().eq(7).text(Ptotal);
+			Material.quantityMinus(id);
 		}
 	});
 	updateMeterial();
@@ -742,7 +788,7 @@ function addMonster(no,times,box,from)
 	if(no in evolution){
 		if(evolution[no].status == 'y'){
 			for(var key in evolution[no].need){
-				materialTab.needPlus(evolution[no].need[key],times);
+				Material.needPlus(evolution[no].need[key],times);
 			}
 		}
 		else if(evolution[no].status == 'u'){
@@ -754,7 +800,7 @@ function addMonster(no,times,box,from)
 					ultimateNeed = ultimate[j].need;
 				}
 				for(var key in ultimateNeed){
-					materialTab.needPlus(ultimateNeed[key],times);
+					Material.needPlus(ultimateNeed[key],times);
 				}
 			}
 		}
@@ -793,6 +839,17 @@ function centerModals(){
     $(this).find('.modal-content').css("margin-top", top);
   });
 }
+function SetMaterialSidebarPosition(){
+	var $this = $(window);
+	if($this.scrollTop() < 300)
+		$(".material-sidebar").css({
+			top: 360-$this.scrollTop()
+		});
+	else
+		$(".material-sidebar").css({
+			top: 60
+		});
+}
 $(document).ready(function() {
 	$('.modal').on('show.bs.modal', centerModals);
 	$(window).on('resize', centerModals);
@@ -805,6 +862,7 @@ $(document).ready(function() {
 		setting[2] = null;
 		setting[3] = [true,true,true,true,true,true,true,true,true];
 		setting[4] = false;
+		setting[5] = 0;
 		window.localStorage.setting = JSON.stringify(setting);
 		window.localStorage.removeItem("settingA");
 	}else{
@@ -829,6 +887,14 @@ $(document).ready(function() {
 			$("#setting4").prop("checked" , false);
 		}else
 			$("#setting4").prop("checked" , setting[4]);
+		if(typeof setting[5] == "undefined"){
+			setting[5] = 0;
+		}else{
+			if(setting[5]==0)
+				$("#setting50").prop("checked" , true);
+			else
+				$("#setting51").prop("checked" , true);
+		}
 		for(var i = 0;i < 9;i++)
 			$("#setting3" + i).prop("checked" , setting[3][i]);
 	}
@@ -869,7 +935,7 @@ $(document).ready(function() {
 			ultimateNeed = ultimate[i].need;
 		}
 		for(j=0;j<ultimateNeed.length;j++){
-			materialTab.needPlus(ultimateNeed[j],1);
+			Material.needPlus(ultimateNeed[j],1);
 		}
 		updateMeterial();
 		$('#ultimateBranch').modal('hide');
@@ -1005,13 +1071,14 @@ $(document).ready(function() {
 		var string = JSON.stringify(material);
 		window.localStorage.material = string;
 		$("#material tr").each(function(){
-			if($(this).children().eq(8).children().attr("data-id") == id){
+			if($(this).children().eq(8).children().children().attr("data-id") == id){
 				var available = value;
 				var total = value - Number($(this).children().eq(4).text());
 				var Ptotal = value - Number($(this).children().eq(6).text());
 				$(this).children().eq(3).text(available);
 				$(this).children().eq(5).text(total);
 				$(this).children().eq(7).text(Ptotal);
+				Material.setQuantity(id,value);
 			}
 		});
 		updateMeterial();
@@ -1048,8 +1115,8 @@ $(document).ready(function() {
 			var needMaterial = NeedMaterial(box[offset].no,choice);
 			var need = needMaterial.result;
 			for(var index in need){
-				materialTab.needPlus(need[index],allDiff);
-				materialTab.PneedPlus(need[index],starDiff);
+				Material.needPlus(need[index],allDiff);
+				Material.PneedPlus(need[index],starDiff);
 			}
 			updateMeterial();
 		}else{
@@ -1057,7 +1124,7 @@ $(document).ready(function() {
 		}
 		$('#box-modal').modal('hide');
 	});
-	$("#import-modal .btn-primary").click(function(){
+	$("#import-modal #importOld").click(function(){
 		var value = $("#import-modal .modal-body textarea").val();
 		var splits = value.split("      ");
 		window.localStorage.boxid = splits[0];
@@ -1069,6 +1136,21 @@ $(document).ready(function() {
 		$("#import-modal .modal-body textarea").val("");
 		$('#import-modal').modal('hide');
 	});
+	/*
+	$("#import-modal #importNew").click(function(){
+		var value = $("#import-modal .modal-body textarea").val();
+		var data = JSON.parse(value);
+		//要加版本判斷機制
+		window.localStorage.boxid = data.boxid;
+		window.localStorage.box = JSON.stringify(data.box);
+		window.localStorage.material = JSON.stringify(data.material);
+		window.localStorage.setting = JSON.stringify(data.setting);
+		boxReset();
+		internalLoad();
+		$("#import-modal .modal-body textarea").val("");
+		$('#import-modal').modal('hide');
+	});
+	*/
 	$("#update").click(function(){
 		window.localStorage.removeItem("time");
 		document.location.reload(true);
@@ -1139,16 +1221,6 @@ $(document).ready(function() {
 		}
 		window.localStorage.setting = JSON.stringify(setting);
 	});
-	$(window).bind('scroll', function(){
-		var $this = $(this);
-		if($this.scrollTop() < 300)
-			$(".material-sidebar").css({
-					top: 360-$this.scrollTop()
-				});
-		else
-			$(".material-sidebar").css({
-					top: 60
-				});
-	});
+	$(window).bind('scroll', SetMaterialSidebarPosition);
 	$(".version").append(version);
 });
