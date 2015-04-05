@@ -843,6 +843,7 @@ $(document).ready(function() {
 		setting[2] = null;
 		setting[3] = [true,true,true,true,true,true,true,true,true];
 		setting[4] = false;
+		setting[5] = 0;
 		window.localStorage.setting = JSON.stringify(setting);
 		window.localStorage.removeItem("settingA");
 	}else{
