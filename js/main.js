@@ -338,7 +338,13 @@ function updateMeterial()
 		var materialNo = $( this ).attr("data-no");
 		if(Material.state(materialNo) != false){
 			$( this ).attr("class","notation " + Material.state(materialNo));
-			$( this ).text(Material.quantity(materialNo));
+			var x = -1;
+			for(var key in materialAttr){
+				if(materialAttr[key].no == materialNo)
+					x = key;
+			}
+			if(x!=-1)
+				$( this ).text(Material.quantity(x));
 		}
 	});
 }
@@ -395,6 +401,7 @@ function boxDisplay( box )
 
 function materialDisplay( material , mode )
 {
+	Material.init();
 	var setting = JSON.parse(window.localStorage.setting);
 	$("#material").empty();
 	$("#material").append($("<div>").addClass("row").append($("<div>").addClass("material-body col-md-8")));
@@ -446,7 +453,6 @@ function materialDisplay( material , mode )
 			)
 		)
 	);
-	console.log($('input[name="setting5"][value=0]'));
 	if(setting[5] != undefined)
 		$('input[name="setting5"][value="'+ setting[5] +'"]').attr('checked',true);
 	else
@@ -454,8 +460,6 @@ function materialDisplay( material , mode )
 	
 	$('input[name="setting5"]').click(function(){
 		var type = this.value;
-		console.log(type);
-		var material = dataLoad("material");
 		var setting = JSON.parse(window.localStorage.setting);
 		type = Number(type);
 		setting[5] = type;
@@ -476,15 +480,15 @@ function materialDisplay( material , mode )
 				).append(
 					$("<td>").text(materialAttr[materialTemplate[mode][0][key1][key2]].name)
 				).append(
-					$("<td>").text(material[materialTemplate[mode][0][key1][key2]].quantity).addClass("number")
+					$("<td>").text(Material.quantity(materialTemplate[mode][0][key1][key2])).addClass("number")
 				).append(
-					$("<td>").text("0").addClass("number")
+					$("<td>").text(Material.need(materialTemplate[mode][0][key1][key2])).addClass("number")
 				).append(
-					$("<td>").text("0").addClass("number")
+					$("<td>").text(Material.total(materialTemplate[mode][0][key1][key2])).addClass("number")
 				).append(
-					$("<td>").text("0").addClass("number priority")
+					$("<td>").text(Material.Pneed(materialTemplate[mode][0][key1][key2])).addClass("number priority")
 				).append(
-					$("<td>").text("0").addClass("number priority")
+					$("<td>").text(Material.Ptotal(materialTemplate[mode][0][key1][key2])).addClass("number priority")
 				).append(
 					$("<td>").append(
 						$("<span>").addClass("glyphicon glyphicon-plus add-material").attr("title","+1").attr("data-id",materialTemplate[mode][0][key1][key2])
@@ -517,6 +521,7 @@ function materialDisplay( material , mode )
 			);
 		}
 	}
+	SetMaterialSidebarPosition();
 	if(setting[4] === true)
 		$("#material tr").each(function(){
 			$(this).children().eq(6).hide();
@@ -830,6 +835,17 @@ function centerModals(){
     $clone.remove();
     $(this).find('.modal-content').css("margin-top", top);
   });
+}
+function SetMaterialSidebarPosition(){
+	var $this = $(window);
+	if($this.scrollTop() < 300)
+		$(".material-sidebar").css({
+			top: 360-$this.scrollTop()
+		});
+	else
+		$(".material-sidebar").css({
+			top: 60
+		});
 }
 $(document).ready(function() {
 	$('.modal').on('show.bs.modal', centerModals);
@@ -1211,16 +1227,6 @@ $(document).ready(function() {
 		}
 		window.localStorage.setting = JSON.stringify(setting);
 	});
-	$(window).bind('scroll', function(){
-		var $this = $(this);
-		if($this.scrollTop() < 300)
-			$(".material-sidebar").css({
-					top: 360-$this.scrollTop()
-				});
-		else
-			$(".material-sidebar").css({
-					top: 60
-				});
-	});
+	$(window).bind('scroll', SetMaterialSidebarPosition);
 	$(".version").append(version);
 });
