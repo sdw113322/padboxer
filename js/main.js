@@ -1053,25 +1053,13 @@ $(document).ready(function() {
 		}
 	});
 	$("#backup").click(function(){
-		var backup = {
-			version : version,
-			boxid : Number(window.localStorage.boxid) ,
-			box : JSON.parse(window.localStorage.box) ,
-			material : JSON.parse(window.localStorage.material) ,
-			setting : JSON.parse(window.localStorage.setting)
-		};
-		$("#backup-modal .modal-body textarea").val(JSON.stringify(backup));
+		var backup = window.localStorage.boxid + "      " + window.localStorage.box + "      " + window.localStorage.material + "      " + window.localStorage.setting;
+		$("#backup-modal .modal-body textarea").val(backup);
 	});
 	$("#backup-modal .btn-primary").click(function(){
-		var backup = {
-			version : version,
-			boxid : Number(window.localStorage.boxid) ,
-			box : JSON.parse(window.localStorage.box) ,
-			material : JSON.parse(window.localStorage.material) ,
-			setting : JSON.parse(window.localStorage.setting)
-		};
-		var blob = new Blob([JSON.stringify(backup)], {type: "application/json;charset=utf-8"});
-		saveAs(blob, "padboxer-backup.json");
+		var backup = window.localStorage.boxid + "      " + window.localStorage.box + "      " + window.localStorage.material + "      " + window.localStorage.setting;
+		var blob = new Blob([backup], {type: "text/plain;charset=utf-8"});
+		saveAs(blob, "padboxer-backup.txt");
 	});
 	$("#material-modal .btn-primary").click(function(){
 		var value = $("#material-modal .modal-body form input").val();
@@ -1145,6 +1133,7 @@ $(document).ready(function() {
 		$("#import-modal .modal-body textarea").val("");
 		$('#import-modal').modal('hide');
 	});
+	/*
 	$("#import-modal #importNew").click(function(){
 		var value = $("#import-modal .modal-body textarea").val();
 		var data = JSON.parse(value);
@@ -1158,6 +1147,7 @@ $(document).ready(function() {
 		$("#import-modal .modal-body textarea").val("");
 		$('#import-modal').modal('hide');
 	});
+	*/
 	$("#update").click(function(){
 		window.localStorage.removeItem("time");
 		document.location.reload(true);
