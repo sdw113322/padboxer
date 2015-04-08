@@ -854,6 +854,7 @@ $(document).ready(function() {
 	$('.modal').on('show.bs.modal', centerModals);
 	$(window).on('resize', centerModals);
 	$("#btn-add").removeAttr("disabled");
+	Material.init();
 	window.localStorage.removeItem("settingA");
 	var setting_err = false;
 	try {
