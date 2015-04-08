@@ -855,7 +855,14 @@ $(document).ready(function() {
 	$(window).on('resize', centerModals);
 	$("#btn-add").removeAttr("disabled");
 	window.localStorage.removeItem("settingA");
-	if(window.localStorage.getItem("setting") === null){
+	var setting_err = false;
+	try {
+		JSON.parse(window.localStorage.setting);
+	} catch (e) {
+		alert("Error! Invalid JSON string\ncontent:\n" + window.localStorage.setting);
+		setting_err = true;
+	}
+	if(window.localStorage.getItem("setting") === null || setting_err === true){
 		var setting = new Array();
 		setting[0] = false;
 		setting[1] = false;
