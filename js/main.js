@@ -859,7 +859,7 @@ $(document).ready(function() {
 	try {
 		JSON.parse(window.localStorage.setting);
 	} catch (e) {
-		alert("Error! Invalid JSON string");
+		alert("Error! Invalid JSON string\ncontent:\n" + window.localStorage.setting);
 		setting_err = true;
 	}
 	if(window.localStorage.getItem("setting") === null || setting_err === true){
