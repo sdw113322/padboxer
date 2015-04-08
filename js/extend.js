@@ -67,7 +67,7 @@ var Material = (function() {
 				x = key;
 		}
 		if(x === -1)
-			return false;
+			return [0,false];
 		else
 			return [x, true];
     }
