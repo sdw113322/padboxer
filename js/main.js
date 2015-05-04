@@ -905,10 +905,21 @@ $(document).ready(function() {
 		for(var i = 0;i < 9;i++)
 			$("#setting3" + i).prop("checked" , setting[3][i]);
 	}
-	if(internalLoad(0) == false){
-		externalLoad();
-		$('#loading-modal').modal('show');
+	var err = false;
+	for (var i = 0; i < localStorage.length; i++){
+		if(localStorage.key(i) != "time")
+			try {
+			JSON.parse(window.localStorage.getItem(localStorage.key(i)));
+			} catch (e) {
+				alert("錯誤~~不合規定的JSON字串~~\n\n錯誤資訊:\n" + e + "\n內容:\n" + window.localStorage.getItem(localStorage.key(i)));
+				err = true;
+			}
 	}
+	if(err == false)
+		if(internalLoad(0) == false){
+			externalLoad();
+			$('#loading-modal').modal('show');
+		}
 	$("#add #btn-add-enter").click(function(){
 		var box = dataLoad("box");
 		var a = $("#add input[name='no']").val();
