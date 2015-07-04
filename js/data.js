@@ -109,6 +109,12 @@ var Data = (function() {
 				getEntry();
 			}
 		},
+		newEntry: function(name){
+			currentEntry = tmpEntry;
+			currentEntry.name = name;
+			currentEntryNum = entryArray.length;
+			entryArray[currentEntryNum] = currentEntry;
+		},
 		backup: window.localStorage.padboxer_main,
 		restore: function(string){
 			try {
