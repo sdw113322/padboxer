@@ -114,6 +114,7 @@ var Data = (function() {
 			currentEntry.name = name;
 			currentEntryNum = entryArray.length;
 			entryArray[currentEntryNum] = currentEntry;
+			window.localStorage.padboxer_main = JSON.stringify(entryArray);
 		},
 		backup: window.localStorage.padboxer_main,
 		restore: function(string){
