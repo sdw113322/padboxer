@@ -98,8 +98,9 @@ var Data = (function() {
 		get: function(item){
 			return currentEntry[item];
 		},
-		save: function(item,value){
+		edit: function(item,value){
 			currentEntry[item] = value;
+			currentEntry.version = version;
 			entryArray[currentEntryNum] = currentEntry;
 			window.localStorage.padboxer_main = JSON.stringify(entryArray);
 		},
@@ -107,6 +108,17 @@ var Data = (function() {
 			if(window.localStorage.padboxer_current != name){
 				window.localStorage.padboxer_current = name;
 				getEntry();
+			}
+		},
+		deleteEntry: function(name){
+			if(window.localStorage.padboxer_current != name){
+				for(var i in entryArray){
+					if(entryArray[i].name === name){
+						entryArray.splice(i,i);
+						if(currentEntryNum > i)
+							currentEntryNum --;
+					}
+				}
 			}
 		},
 		newEntry: function(name){
