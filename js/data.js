@@ -122,7 +122,7 @@ var Data = (function() {
 			}
 		},
 		newEntry: function(name){
-			currentEntry = tmpEntry;
+			currentEntry = createEntry();
 			currentEntry.name = name;
 			currentEntryNum = entryArray.length;
 			entryArray[currentEntryNum] = currentEntry;
