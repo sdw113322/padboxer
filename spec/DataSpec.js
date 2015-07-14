@@ -5,8 +5,8 @@ describe("Data", function() {
 	it("新資料",function(){
 		Data.load();
 		var entry = JSON.parse(localStorage.padboxer_main);
-		expect(entry.name).toBe("主帳號");
-		expect(entry.boxid).toEqual(0);
-		expect(entry.box).toBe([]);
+		expect(entry[0].name).toBe("主帳號");
+		expect(entry[0].boxid).toEqual(0);
+		expect(entry[0].box).toEqual([]);
 	});
 });
