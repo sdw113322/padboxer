@@ -123,10 +123,8 @@ var Data = (function() {
 			}
 		},
 		newEntry: function(name){
-			currentEntry = createEntry();
-			currentEntry.name = name;
-			currentEntryNum = entryArray.length;
-			entryArray[currentEntryNum] = currentEntry;
+			entryArray[entryArray.length] = createEntry();
+			entryArray[entryArray.length-1].name = name;
 			window.localStorage.padboxer_main = JSON.stringify(entryArray);
 		},
 		rename: function(old_name,new_name){
