@@ -78,7 +78,7 @@ var Data = (function() {
 			}else{
 				//for new user
 				if(window.localStorage.getItem("padboxer_main") === null){
-					currentEntry = tmpEntry;
+					currentEntry = createEntry();
 					entryArray[0] = currentEntry;
 					currentEntryNum = 0;
 					window.localStorage.padboxer_main = JSON.stringify(entryArray);
@@ -127,6 +127,13 @@ var Data = (function() {
 			currentEntryNum = entryArray.length;
 			entryArray[currentEntryNum] = currentEntry;
 			window.localStorage.padboxer_main = JSON.stringify(entryArray);
+		},
+		rename: function(old_name,new_name){
+			for(var i in entryArray){
+			if(entryArray[i].name === old_name){
+				entryArray[i].name = new_name;
+			}
+		}
 		},
 		backup: window.localStorage.padboxer_main,
 		restore: function(string){
