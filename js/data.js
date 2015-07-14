@@ -23,7 +23,7 @@ var Data = (function() {
 	return {
 		load: function(){
 			//for version <= 2.3
-			if(!(window.localStorage.getItem("box") === null)){
+			if(window.localStorage.getItem("box") !== null){
 				//create current entry
 				currentEntry.name = "主帳號";
 				currentEntry.version = version;
@@ -34,12 +34,12 @@ var Data = (function() {
 				//相容檢查
 				//box
 				if(currentEntry.box.length > 0){
-					if(currentEntry.box[0].hasOwnProperty('priority') == false)
+					if(currentEntry.box[0].hasOwnProperty('priority') === false)
 						for(var i in currentEntry.box)
 							currentEntry.box[i].priority = 0;
-					if(currentEntry.box[0].hasOwnProperty('quantity') == false)
-						for(var i in currentEntry.box)
-							currentEntry.box[i].quantity = 1;
+					if(currentEntry.box[0].hasOwnProperty('quantity') === false)
+						for(var j in currentEntry.box)
+							currentEntry.box[j].quantity = 1;
 				}
 				//material
 				if(currentEntry.material.length==46){
