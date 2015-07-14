@@ -75,7 +75,6 @@ var Data = (function() {
 				window.localStorage.removeItem("boxid");
 				window.localStorage.removeItem("material");
 				window.localStorage.removeItem("setting");
-				console.log(currentEntry);
 			}else{
 				//for new user
 				if(window.localStorage.getItem("padboxer_main") === null){
@@ -115,9 +114,10 @@ var Data = (function() {
 			if(window.localStorage.padboxer_current != name){
 				for(var i in entryArray){
 					if(entryArray[i].name === name){
-						entryArray.splice(i,i);
+						entryArray.splice(i,1);
 						if(currentEntryNum > i)
 							currentEntryNum --;
+						window.localStorage.padboxer_main = JSON.stringify(entryArray);
 					}
 				}
 			}
@@ -129,17 +129,18 @@ var Data = (function() {
 		},
 		rename: function(old_name,new_name){
 			for(var i in entryArray){
-			if(entryArray[i].name === old_name){
-				entryArray[i].name = new_name;
+				if(entryArray[i].name === old_name){
+					entryArray[i].name = new_name;
+				}
 			}
-		}
+			window.localStorage.padboxer_main = JSON.stringify(entryArray);
 		},
 		backup: window.localStorage.padboxer_main,
 		restore: function(string){
 			try {
 				JSON.parse(string);
 			} catch (e) {
-				alert("Error! Invalid JSON string");
+				throw e;
 			}
 			window.localStorage.padboxer_main = string;
 		}
