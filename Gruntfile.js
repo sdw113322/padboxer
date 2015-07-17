@@ -20,6 +20,7 @@ module.exports = function (grunt) {
       , options: {
           specs: "spec/*Spec.js"
 		//, helpers: "spec/*Helper.js"
+		, vendor: "lib/**/*.js"
 		, version: "2.3.4"
       }
     }
