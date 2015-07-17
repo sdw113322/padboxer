@@ -75,7 +75,7 @@ describe("Data", function() {
 		Data.switchEntry("the other");
 	});
 	it("刪除資料",function(){
-		Data.deleteEntry("the other");
+		expect(Data.deleteEntry.bind(null,"the other")).toThrow();
 		Data.deleteEntry("Main");
 		expect(Data.get("name")).toBe("the other");
 		expect(localStorage.padboxer_current).toBe("the other");
