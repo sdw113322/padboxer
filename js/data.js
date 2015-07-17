@@ -120,7 +120,8 @@ var Data = (function() {
 						window.localStorage.padboxer_main = JSON.stringify(entryArray);
 					}
 				}
-			}
+			}else
+				throw new Error("不得刪除正在使用的Entry");
 		},
 		newEntry: function(name){
 			entryArray[entryArray.length] = createEntry();
@@ -137,11 +138,7 @@ var Data = (function() {
 		},
 		backup: window.localStorage.padboxer_main,
 		restore: function(string){
-			try {
-				JSON.parse(string);
-			} catch (e) {
-				throw e;
-			}
+			JSON.parse(string);
 			window.localStorage.padboxer_main = string;
 		}
 	};
