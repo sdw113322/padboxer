@@ -15,7 +15,7 @@ var Index = (function() {
 		modal.hide();
 	}
 	function externalLoad(){
-		modal.modal("show");
+		modal.show();
 		$.ajax({
 			dataType: 'jsonp',
 			url: "http://tidal-outlook-93517.appspot.com/source3.php", 
