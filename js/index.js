@@ -12,10 +12,10 @@ var Index = (function() {
 			if(complete[i] === false)
 				return;
 		}
-		modal.hide();
+		modal.modal('hide');
 	}
 	function externalLoad(){
-		modal.show();
+		modal.modal('show');
 		$.ajax({
 			dataType: 'jsonp',
 			url: "http://tidal-outlook-93517.appspot.com/source3.php", 
