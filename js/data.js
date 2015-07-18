@@ -64,6 +64,21 @@ var Data = (function() {
 				if(typeof currentEntry.setting[5] == "undefined"){
 					currentEntry.setting[5] = 0;
 				}
+				//數字檢查
+				if(typeof currentEntry.boxid === 'string')
+					currentEntry.boxid = Number(currentEntry.boxid);
+				for(var k in currentEntry.box){
+					for(var l in currentEntry.box[k]){
+						if(typeof currentEntry.box[k][l] === 'string')
+							currentEntry.box[k][l] = Number(currentEntry.box[k][l]);
+					}
+				}
+				for(var m in currentEntry.material){
+					for(var n in currentEntry.material[m]){
+						if(typeof currentEntry.material[m][n] === 'string')
+							currentEntry.material[m][n] = Number(currentEntry.material[m][n]);
+					}
+				}
 				//save
 				entryArray[0] = currentEntry;
 				currentEntryNum = 0;

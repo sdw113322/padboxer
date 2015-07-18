@@ -84,16 +84,23 @@ var Index = (function() {
 			evolution = JSON.parse(window.localStorage.padboxer_evolution);
 			ultimate = JSON.parse(window.localStorage.padboxer_ultimate);
 		},
-		get: function(item){
+		get: function(no,item){
 			switch(item){
 				case "name":
-				return name;
+				for(var i in name)
+					if(Number(name[i].no) === no)
+						return name[i];
 				break;
 				case "evolution":
-				return evolution;
+				for(var j in evolution)
+					if(Number(evolution[j].no) === no)
+						return evolution[j];
 				break;
 				case "ultimate":
-				return ultimate;
+				var result = [];
+				for(var k in ultimate)
+					if(Number(ultimate[k].no) == no)
+						result.push(ultimate[k]);
 				break;		
 			}
 		}	
