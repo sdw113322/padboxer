@@ -12,6 +12,9 @@ var Index = (function() {
 			if(complete[i] === false)
 				return;
 		}
+		name = JSON.parse(window.localStorage.padboxer_name);
+		evolution = JSON.parse(window.localStorage.padboxer_evolution);
+		ultimate = JSON.parse(window.localStorage.padboxer_ultimate);
 		modal.modal('hide');
 	}
 	function externalLoad(){
@@ -61,6 +64,7 @@ var Index = (function() {
 	return{
 		setModal: function(input){
 			modal = input;
+			return modal;
 		},
 		load: function(){
 			if(window.localStorage.getItem("evolution") !== null){
@@ -79,10 +83,12 @@ var Index = (function() {
 				var updated = new Date(window.localStorage.padboxer_time);
 				if(now - updated > (86400000 * 7))
 					externalLoad();
+				else{
+					name = JSON.parse(window.localStorage.padboxer_name);
+					evolution = JSON.parse(window.localStorage.padboxer_evolution);
+					ultimate = JSON.parse(window.localStorage.padboxer_ultimate);
+				}
 			}
-			name = JSON.parse(window.localStorage.padboxer_name);
-			evolution = JSON.parse(window.localStorage.padboxer_evolution);
-			ultimate = JSON.parse(window.localStorage.padboxer_ultimate);
 		},
 		getMaterials: function(no,choice){
 			var evol = Index.get(no,"evolution");
@@ -98,7 +104,7 @@ var Index = (function() {
 				result.need = evol.need;
 				result.result = evol.result;
 				break;
-				case: "u":
+				case "u":
 				if(typeof choice === "undefined")
 					//throw new Error("未指定究極進化選項");
 				var branches = Index.get(id,"ultimate");
@@ -109,7 +115,10 @@ var Index = (function() {
 					}
 			}
 			return result;
-		};
+		},
+		update: function(){
+			externalLoad();
+		},
 		get: function(no,item){
 			switch(item){
 				case "name":

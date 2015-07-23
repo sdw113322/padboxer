@@ -83,7 +83,7 @@ var Data = (function() {
 				entryArray[0] = currentEntry;
 				currentEntryNum = 0;
 				window.localStorage.padboxer_main = JSON.stringify(entryArray);
-				window.localStorage.padboxer_current = JSON.stringify(currentEntry.name);
+				window.localStorage.padboxer_current = currentEntry.name;
 				//delete
 				window.localStorage.removeItem("settingA");
 				window.localStorage.removeItem("box");

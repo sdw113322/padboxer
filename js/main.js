@@ -401,7 +401,6 @@ function boxDisplay( box )
 
 function materialDisplay( material , mode )
 {
-	Material.init();
 	var setting = JSON.parse(window.localStorage.setting);
 	$("#material").empty();
 	$("#material").append($("<div>").addClass("row").append($("<div>").addClass("material-body col-md-8")));
@@ -661,50 +660,6 @@ function internalLoad( load_times )
 		return false;
 }
 
-function externalLoad()
-{
-	$.ajax({
-		dataType: 'jsonp',
-		url: "http://tidal-outlook-93517.appspot.com/source3.php", 
-		success: function(data){
-			var string = JSON.stringify(data);
-			window.localStorage.name = string;
-			loadingComplete(3);
-		},
-		error: function(request,error) 
-		{
-		 alert ( "錯誤: " + error );
-		}
-	});
-	$.ajax({
-		dataType: 'jsonp',
-		url: "http://tidal-outlook-93517.appspot.com/source1.php", 
-		success: function(data){
-			var string = JSON.stringify(data);
-			window.localStorage.evolution = string;
-			loadingComplete(1);
-		},
-		error: function(request,error) 
-		{
-		 alert ( "錯誤: " + error );
-		}
-	});
-	$.ajax({
-		dataType: 'jsonp',
-		url: "http://tidal-outlook-93517.appspot.com/source2.php", 
-		success: function(data){
-			var string = JSON.stringify(data);
-			window.localStorage.ultimate = string;
-			loadingComplete(2);
-		},
-		error: function(request,error) 
-		{
-		 alert ( "錯誤: " + error );
-		}
-	});
-	window.localStorage.time = new Date();
-}
-
 function deleteMonster(id,box)//不是 property 裡的 id，是指索引值
 {
 		box.splice(id,1);
@@ -854,14 +809,26 @@ $(document).ready(function() {
 	$('.modal').on('show.bs.modal', centerModals);
 	$(window).on('resize', centerModals);
 	$("#btn-add").removeAttr("disabled");
+	
+	Data.load();
+	Material.load();
+	Box.load();
+	$('#loading-modal').on('success',function(event,id){
+		$("#loading" + id).removeClass("danger").addClass("success").children().first().text("完成");
+	});
+	Index.setModal($('#loading-modal'));
+	Index.load();
+	
 	window.localStorage.removeItem("settingA");
 	var setting_err = false;
+	/*
 	try {
 		JSON.parse(window.localStorage.setting);
 	} catch (e) {
 		alert("Error! Invalid JSON string\ncontent:\n" + window.localStorage.setting);
 		setting_err = true;
 	}
+	*/
 	if(window.localStorage.getItem("setting") === null || setting_err === true){
 		var setting = new Array();
 		setting[0] = false;
@@ -906,20 +873,6 @@ $(document).ready(function() {
 			$("#setting3" + i).prop("checked" , setting[3][i]);
 	}
 	var err = false;
-	for (var i = 0; i < localStorage.length; i++){
-		if(localStorage.key(i) != "time")
-			try {
-			JSON.parse(window.localStorage.getItem(localStorage.key(i)));
-			} catch (e) {
-				alert("錯誤~~不合規定的JSON字串~~\n\n錯誤資訊:\n" + e + "\n內容:\n" + window.localStorage.getItem(localStorage.key(i)));
-				err = true;
-			}
-	}
-	if(err == false)
-		if(internalLoad(0) == false){
-			externalLoad();
-			$('#loading-modal').modal('show');
-		}
 	$("#add #btn-add-enter").click(function(){
 		var box = dataLoad("box");
 		var a = $("#add input[name='no']").val();
@@ -1170,7 +1123,7 @@ $(document).ready(function() {
 	});
 	*/
 	$("#update").click(function(){
-		window.localStorage.removeItem("time");
+		Index.update();
 		document.location.reload(true);
 	});
 	$("#preview-modal .btn-primary").click(function(){
