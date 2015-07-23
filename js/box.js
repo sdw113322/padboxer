@@ -59,7 +59,7 @@ var Box = (function() {
 				need = evol.need;
 				result = evol.result;
 				break;
-				case: "u":
+				case "u":
 				if(typeof monster.choice === "undefined")
 					throw new Error("未指定究極進化選項");
 				var branches = Index.get(monster.no,"ultimate");
