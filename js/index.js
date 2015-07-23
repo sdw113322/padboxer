@@ -84,6 +84,32 @@ var Index = (function() {
 			evolution = JSON.parse(window.localStorage.padboxer_evolution);
 			ultimate = JSON.parse(window.localStorage.padboxer_ultimate);
 		},
+		getMaterials: function(no,choice){
+			var evol = Index.get(no,"evolution");
+			var result = {};
+			result.status = evol.status;
+			//找需要的素材及進化結果
+			switch(evol.status){
+				case "n":
+				case "?":
+				//throw new Error("不能進化");
+				break;
+				case "y":
+				result.need = evol.need;
+				result.result = evol.result;
+				break;
+				case: "u":
+				if(typeof choice === "undefined")
+					//throw new Error("未指定究極進化選項");
+				var branches = Index.get(id,"ultimate");
+				for(var i in branches)
+					if(Number(branches[i].result) === Number(choice)){
+						result.need = branches[i].need;
+						result.result = branches[i].result;
+					}
+			}
+			return result;
+		};
 		get: function(no,item){
 			switch(item){
 				case "name":
