@@ -64,7 +64,6 @@ var Index = (function() {
 	return{
 		setModal: function(input){
 			modal = input;
-			return modal;
 		},
 		load: function(){
 			if(window.localStorage.getItem("evolution") !== null){
@@ -105,14 +104,17 @@ var Index = (function() {
 				result.result = evol.result;
 				break;
 				case "u":
-				if(typeof choice === "undefined")
+				if(typeof choice === "undefined"){
+					result.need = [];
 					//throw new Error("未指定究極進化選項");
-				var branches = Index.get(id,"ultimate");
-				for(var i in branches)
-					if(Number(branches[i].result) === Number(choice)){
-						result.need = branches[i].need;
-						result.result = branches[i].result;
-					}
+				}else{
+					var branches = Index.get(no,"ultimate");
+					for(var i in branches)
+						if(Number(branches[i].result) === Number(choice)){
+							result.need = branches[i].need;
+							result.result = branches[i].result;
+						}
+				}
 			}
 			return result;
 		},
@@ -123,19 +125,20 @@ var Index = (function() {
 			switch(item){
 				case "name":
 				for(var i in name)
-					if(Number(name[i].no) === no)
+					if(Number(name[i].no) === Number(no))
 						return name[i];
 				break;
 				case "evolution":
 				for(var j in evolution)
-					if(Number(evolution[j].no) === no)
+					if(Number(evolution[j].no) === Number(no))
 						return evolution[j];
 				break;
 				case "ultimate":
 				var result = [];
 				for(var k in ultimate)
-					if(Number(ultimate[k].no) == no)
+					if(Number(ultimate[k].no) == Number(no))
 						result.push(ultimate[k]);
+				return result;
 				break;		
 			}
 		}	

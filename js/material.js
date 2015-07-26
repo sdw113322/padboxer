@@ -4,16 +4,16 @@ var Material = (function() {
 		var evolution = {};
 		var ultimate = {};
 		var box = Box.allMonsters();
-		var need = [];
 		var allNeed = {};
-		var PAllNeed = {};
+		var PallNeed = {};
 		for(var i in box){
+			var need = [];
 			var monster = Box.get(box[i]);
 			evolution = Index.get(monster.no,"evolution");
 			if(evolution.status === "y"){
 				need = evolution.need;
 			}else if(evolution.status === "u" && typeof monster.choice !== "undefined"){
-				var branches = Index.get(id,"ultimate");
+				var branches = Index.get(monster.no,"ultimate");
 				for(var i in branches)
 					if(Number(branches[i].result) === Number(monster.choice)){
 						need = branches[i].need;
@@ -32,11 +32,15 @@ var Material = (function() {
 		}
 		for(var k in materials){
 			var need = allNeed[materials[k].no];
-			var Pneed = PAllNeed[materials[k].no];
-			if(need != undefined)
+			var Pneed = PallNeed[materials[k].no];
+			if(need !== undefined)
 				materials[k].need = need;
-			if(Pneed != undefined)
+			else
+				materials[k].need = 0;
+			if(Pneed !== undefined)
 				materials[k].Pneed = Pneed;
+			else
+				materials[k].Pneed = 0;
 		}
 	}
     function transform( no ) { 
@@ -115,6 +119,12 @@ var Material = (function() {
 		state: function( no ) {
 			if(Material.include(no) === true)
 				return getState( transform(no) );
+			else
+				return false;
+		},
+		get: function( no ){
+			if(Material.include(no) === true)
+				return materials[transform(no)];
 			else
 				return false;
 		},
