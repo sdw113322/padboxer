@@ -9,7 +9,8 @@ var Box = (function() {
 			var monster = {
 				"id": boxid,
 				"no": no,
-				"quantity": quantity
+				"quantity": quantity,
+				"priority": 0
 			};
 			if(from !== null)
 				monster.from = from;
@@ -17,6 +18,8 @@ var Box = (function() {
 			box.push(monster);
 			Data.edit("boxid",boxid);
 			Data.edit("box",box);
+			Material.boxEdit(no,quantity,undefined,false);
+			return boxid - 1;
 		},
 		allMonsters: function(){
 			var list = [];
