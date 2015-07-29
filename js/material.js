@@ -25,9 +25,9 @@ var Material = (function() {
 				else
 					allNeed[need[j]] += monster.quantity;
 				if(typeof PallNeed[need[j]] === "undefined" )
-					PallNeed[need[j]] = monster.quantity;
+					PallNeed[need[j]] = monster.priority;
 				else
-					PallNeed[need[j]] += monster.quantity;
+					PallNeed[need[j]] += monster.priority;
 			}
 		}
 		for(var k in materials){
@@ -61,6 +61,15 @@ var Material = (function() {
 		else
 			return "notation-important";
 	}
+	function save(){
+		var result = [];
+		for(var i in materials){
+			result[i] = {};
+			result[i].no = materials[i].no;
+			result[i].quantity = materials[i].quantity;
+		}
+		Data.edit("material",result);
+	}
     return {
 		load: function() {
 			materials = Data.get("material");
@@ -90,12 +99,15 @@ var Material = (function() {
 						materials[transform(res.need[j])].need += quantity;
 				}
 			}
+			save();
 		},
 		drift: function(id,offset){
 			materials[id].quantity += offset;
+			save();
 		},
 		edit: function(id,quantity){
 			materials[id].quantity = quantity;
+			save();
 		},
 		evolution: function(no,choice,prior){
 			var res = Index.getMaterials(no,choice);

@@ -98,6 +98,11 @@ var Box = (function() {
 			//修改素材數量
 			var prior = (monster.priority > 0);
 			Material.evolution(monster.no,monster.choice,prior);
+			//修改box
+			if(monster.quantity === 1){
+				monster.no = evol.result;
+				monster.choice = undefined;
+			}
 		}
 	}
 }());
