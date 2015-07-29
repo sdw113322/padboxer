@@ -584,6 +584,7 @@ $(document).ready(function() {
 	$("#btn-add").removeAttr("disabled");
 	
 	Data.load();
+	Setting.load();
 	$('#loading-modal').on('success',function(event,id){
 		$("#loading" + id).removeClass("danger").addClass("success").children().first().text("完成");
 	});
