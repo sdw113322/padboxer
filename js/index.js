@@ -16,12 +16,14 @@ var Index = (function() {
 		evolution = JSON.parse(window.localStorage.padboxer_evolution);
 		ultimate = JSON.parse(window.localStorage.padboxer_ultimate);
 		modal.modal('hide');
+		document.location.reload(true);
 	}
 	function externalLoad(){
 		modal.modal('show');
 		$.ajax({
 			dataType: 'jsonp',
 			url: "http://tidal-outlook-93517.appspot.com/source3.php", 
+			//url: "http://bug.22web.org/generator/source3.php", 
 			success: function(data){
 				var string = JSON.stringify(data);
 				window.localStorage.padboxer_name = string;
@@ -35,6 +37,7 @@ var Index = (function() {
 		$.ajax({
 			dataType: 'jsonp',
 			url: "http://tidal-outlook-93517.appspot.com/source1.php", 
+			//url: "http://bug.22web.org/generator/source1.php", 
 			success: function(data){
 				var string = JSON.stringify(data);
 				window.localStorage.padboxer_evolution = string;
@@ -48,6 +51,7 @@ var Index = (function() {
 		$.ajax({
 			dataType: 'jsonp',
 			url: "http://tidal-outlook-93517.appspot.com/source2.php", 
+			//url: "http://bug.22web.org/generator/source2.php", 
 			success: function(data){
 				var string = JSON.stringify(data);
 				window.localStorage.padboxer_ultimate = string;
