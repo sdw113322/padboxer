@@ -1,4 +1,3 @@
-var version = "2.5";
 var Data = (function() {
 	var entryArray = [];
 	var currentEntry = {};

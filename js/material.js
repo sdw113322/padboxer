@@ -88,18 +88,24 @@ var Material = (function() {
 		},
 		boxEdit: function(no,quantity,choice,prior){
 			var res = Index.getMaterials(no,choice);
+			var result = [];
 			if(prior === true){
 				for(var i in res.need){
-					if(Material.include(res.need[i]) === true)
+					if(Material.include(res.need[i]) === true){
 						materials[transform(res.need[i])].Pneed += quantity;
+						result.push(Number(res.need[i]));
+					}
 				}
 			}else{
 				for(var j in res.need){
-					if(Material.include(res.need[j]) === true)
+					if(Material.include(res.need[j]) === true){
 						materials[transform(res.need[j])].need += quantity;
+						result.push(Number(res.need[j]));
+					}
 				}
 			}
 			save();
+			return result;
 		},
 		drift: function(id,offset){
 			materials[id].quantity += offset;
@@ -111,12 +117,14 @@ var Material = (function() {
 		},
 		evolution: function(no,choice,prior){
 			var res = Index.getMaterials(no,choice);
+			var result = [];
 			if(prior === true){
 				for(var i in res.need){
 					if(Material.include(res.need[i]) === true){
 						materials[transform(res.need[i])].Pneed --;
-						materials[transform(res.need[j])].need --;
-						materials[transform(res.need[j])].quantity --;
+						materials[transform(res.need[i])].need --;
+						materials[transform(res.need[i])].quantity --;
+						result.push(Number(res.need[i]));
 					}
 				}
 			}else{
@@ -124,9 +132,12 @@ var Material = (function() {
 					if(Material.include(res.need[j]) === true){
 						materials[transform(res.need[j])].need --;
 						materials[transform(res.need[j])].quantity --;
+						result.push(Number(res.need[j]));
 					}
 				}
 			}
+			save();
+			return result;
 		},
 		state: function( no ) {
 			if(Material.include(no) === true)
