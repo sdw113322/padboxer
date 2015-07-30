@@ -50,7 +50,11 @@
 				var id = Number($( this ).parent().parent().parent().attr("id"));
 				var mon = Box.get(id);
 				Box.edit(id,"quantity",mon.quantity + 1);
-				Material.boxEdit(mon.no,1,mon.choice,false);
+				var resort = true;
+				boxRowEdit(id);
+				$("#mainTable table").trigger("update", [resort]);
+				var mats = Material.boxEdit(mon.no,1,mon.choice,false);
+				_.each(mats,materialRowEdit);
 			})
 		);
 		$( this ).children().append(
@@ -63,7 +67,11 @@
 				var mon = Box.get(id);
 				if(mon.priority < mon.quantity){
 					Box.edit(id,"priority",mon.priority + 1);
-					Material.boxEdit(mon.no,1,mon.choice,true);
+					var resort = true;
+					boxRowEdit(id);
+					$("#mainTable table").trigger("update", [resort]);
+					var mats = Material.boxEdit(mon.no,1,mon.choice,true);
+					_.each(mats,materialRowEdit);
 				}
 			})
 		);
@@ -90,121 +98,34 @@
 					.addClass("glyphicon glyphicon-forward")
 					.attr("title","進化")
 				).click(no,function(){
-					var text = $( this ).parent().parent().parent().children().first().text();
-					var id = $( this ).parent().parent().parent().attr("id");
-					var evolution = JSON.parse(window.localStorage.evolution);
-					var ultimate = JSON.parse(window.localStorage.ultimate);
-					var box = dataLoad("box");
-					var material = dataLoad("material");
-					var need = [];
-					var notHave = [];
-					var result = 0;
-					var notIn = [];
-					var error = 0;
-					var choice = $( this ).parent().parent().parent().attr("data-choice");
-					var priority = $( this ).parent().parent().parent().attr("data-priority");
-					var quantity = $( this ).parent().parent().parent().children().eq(6);
-					var needMaterial = NeedMaterial( text , choice );
-					if(needMaterial.status != 'n' && needMaterial.status != 'un'){
-						need = needMaterial.result;
-						result = evolution[text].result;
-					}else if(needMaterial.status == 'n'){
-						alert("無法進化");
-						error = 1;
-					}else{
-						alert("錯誤");
-						error = 1;
-					}
-					if(error == 0){
-						for(var index in need){
-							var i = 0;
-							while(material[i].no != parseInt(need[index]) && i<50){
-								i++;
-							}
-							if(material[50].no != parseInt(need[index]) && i==50)
-								i++;
-							if(i<51){
-								material[i].quantity --;
-								if(material[i].quantity < 0){
-									error = 2;
-									notHave.push(need[index]);
-								}
-							}else{
-								notIn.push(need[index]);
-							}
-						}
-					}
-					if(error == 0){
-						if(notIn.length == 0)
-							var accept = confirm ("真的要進化嗎？");
-						else
-							var accept = confirm ("沒有統計" + notIn + "\n真的要進化嗎？");
-					}
-					if(error == 0 && accept == true){
-						var string = JSON.stringify(material);
-						window.localStorage.material = string;
-						var offset = 0;
-						for(var i in box){
-							if(box[i].id == id)
-								offset = i;
-						}
-						if(box[offset].quantity<=1){
-							deleteMonster(offset,box);
-							$("#mainTable table #" + id).remove();
-						}
-						else{
-							box[offset].quantity--;
-							$(this).parent().parent().parent().children().eq(6).text(box[offset].quantity);
-						}
-						var setting = JSON.parse(window.localStorage.setting);
-						var from = 0;
-						for(var i in box){
-							if(typeof box[i].from != 'undefined')
-								if(box[i].from == box[offset].id)
-									from = i;
-						}
-						from = Number(from);
-						if(result != 0 && setting[0]){
-							if(from === 0){
-								addMonster(result,1,box,box[offset].id);
-							}
-							else{
-								box[from].quantity++;
-								var fromID = box[from].id;
-								var fromQuan = $("tr#" + fromID).children().eq(6).text();
-								fromQuan++;
-								$("tr#" + fromID).children().eq(6).text(fromQuan);
-								var NextNeedMaterial = NeedMaterial( result , 0 );
-								var nextNeed = NextNeedMaterial.result;
-								for(var i in nextNeed){
-									Material.needPlus(nextNeed[i],1);
-								}
-							}
-						}
-						for(var index in need){
-							Material.evolution(need[index],1);
-						}
-						if($(this).parent().parent().parent().attr("data-priority")>0){
-							var priority = $(this).parent().parent().parent().attr("data-priority");
-							priority--;
-							$(this).parent().parent().parent().attr("data-priority",priority);
-							$(this).parent().parent().parent().children().eq(7).text(priority);
-							box[offset].priority--;
-							for(var index in need){
-								Material.Pevolution(need[index],1);
-							}
-						}
-						string = JSON.stringify(box);
-						window.localStorage.box = string;
+					var id = Number($( this ).parent().parent().parent().attr("id"));
+					var mon = Box.get(id);
+					//try{
+						var result = Box.evolution(id);
 						var resort = true;
+						if(result["delete"] !== undefined)
+							for(var i in result["delete"])
+								$("#mainTable table #" + result["delete"][i]).remove();
+						if(result["edit"] !== undefined)
+							for(var j in result["edit"])
+								boxRowEdit(result["edit"][j]);
+						if(result["add"] !== undefined)
+							for(var k in result["add"])
+								boxRowDisplay(result["add"][k]);
 						$("#mainTable table").trigger("update", [resort]);
-					}else if(error == 0){
-					}
-					if(error == 2){
-						alert(notHave + "不存在\n無法進化");
-					
-					}
-					updateMeterial();
+						var res = Index.getMaterials(mon.no,mon.choice);
+						var mats = res.need;
+						mats = _.map(mats,function(x){return Number(x);});
+						_.each(mats,materialRowEdit);
+						if(Setting.get(0) === true){
+							var mats2 = Index.getMaterials(Number(res.result),undefined).need;
+							mats2 = _.map(mats2,function(x){return Number(x);});
+							_.each(mats2,materialRowEdit);
+						}
+						updateMaterialStatus();
+					//}catch(e){
+					//	alert(e);
+					//}
 				})
 			);
 		$( this ).children().append(
@@ -215,19 +136,19 @@
 				).click(function(){
 					var id = Number($(this).parent().parent().parent().attr('id'));
 					var mon = Box.get(id);
-					Material.boxEdit(mon.no,mon.quantity,mon.choice,false);
-					Material.boxEdit(mon.no,mon.priority,mon.choice,true);
+					Material.boxEdit(mon.no,-mon.quantity,mon.choice,false);
+					var mats = Material.boxEdit(mon.no,-mon.priority,mon.choice,true);
+					_.each(mats,materialRowEdit);
 					Box.remove(id);
 					var resort = true;
 					$("#mainTable table #" + id).remove();
 					$("#mainTable table").trigger("update", [resort]);
-					updateMeterial();
+					updateMaterialStatus();
 				})
 			);
 		return this;
 	};
 	$.fn.showNeedMaterial = function( no , id , choice ) {
-		var setting = Data.get("setting");
 		var needMaterial = Index.getMaterials(no,choice);
 		if(Index.get(no,"evolution").status == 'n'){
 			$( this ).text("無法進化");
@@ -255,7 +176,7 @@
 			);
 		}else{
 			for(var key in needMaterial.need){
-				$( this ).addIcon(setting[1],setting[2],needMaterial.need[key]);
+				$( this ).addIcon(Setting.get(1),Setting.get(2),needMaterial.need[key]);
 				if(key < needMaterial.need.length - 1)
 					$( this ).append(" ");
 			}
@@ -264,7 +185,7 @@
 	};
 }( jQuery ));
 
-function updateMeterial()
+function updateMaterialStatus()
 {
 	$("#mainTable div.icon span").each(function(){
 		var materialNo = $( this ).attr("data-no");
@@ -281,54 +202,72 @@ function updateMeterial()
 	});
 }
 
+function materialRowEdit(no){
+	$("#material tr").each(function(){
+		var mat = Material.get(no);
+		if(Number($(this).children().eq(0).text()) === no){
+			$(this).children().eq(3).text(mat.quantity);
+			$(this).children().eq(4).text(mat.need);
+			$(this).children().eq(5).text(mat.quantity - mat.need);
+			$(this).children().eq(6).text(mat.Pneed);
+			$(this).children().eq(7).text(mat.quantity - mat.Pneed);
+		}
+	});
+}
+
+function boxRowDisplay(id){
+	var mon = Box.get(id);
+	var row = $("<tr>");
+	if(mon.hasOwnProperty('choice'))
+		row.attr('data-choice', mon.choice );
+	row.attr( 'id' , mon.id ).attr( 'data-priority' , mon.priority );
+	row.append($(" <td> ").text( mon.no ));
+	//顯示圖片
+	row.append($("<td>").addIcon(false,Setting.get(2),mon.no));
+	//顯示中文名
+	row.append($("<td>").text(Index.get(mon.no,"name").chinese));
+	//顯示日文名
+	row.append($("<td>").text(Index.get(mon.no,"name").japanese));
+	//顯示進化素材
+	row.append($("<td>").showNeedMaterial(mon.no,id,mon.choice));
+	if(Index.getMaterials(mon.no,mon.choice).result !== undefined)
+		row.append($("<td>").addIcon(false,Setting.get(2),Index.getMaterials(mon.no,mon.choice).result));
+	else
+		row.append($("<td>"));
+	//顯示數量
+	row.append($("<td>").text(mon.quantity).addClass("number"));
+	row.append($("<td>").text(mon.priority).addClass("number"));
+	//顯示動作
+	row.append($("<td>").showAction($( this ).attr("data-priority"),mon.no));
+	row.tooltipster(); //active tooltipster
+	for(k=0;k<9;k++){
+		if(Setting.get(3)[k] === false)
+			row.children().eq(k).css( "display", "none" );
+	}
+	$("#mainTable tbody").append(row);
+}
+
+function boxRowEdit(id){
+	var mon = Box.get(id);
+	$("tr#" + id).children().eq(6).text(mon.quantity);
+	$("tr#" + id).children().eq(7).text(mon.priority);
+}
+
 function boxDisplay()
 {
-	var i = 0;
-	var choice;
 	var all = Box.allMonsters();
-	var setting = Data.get("setting");
 	
 	$("#mainTable").append($("<table>")
 		.append("<thead><tr><th>No.</th><th></th><th>中文名</th><th>日文名</th><th>進化素材</th><th>目標</th><th>數量</th><th>★數量</th><th>動作</th></tr></thead>")	
 		.append($("<tbody>"))
 	);
-	for(i=0;i<all.length;i++){
-		var mon = Box.get(all[i]);
-		if(mon.hasOwnProperty('choice'))
-			choice = mon.choice;
-		else
-			choice = 0;
-		$("#mainTable tbody").append( $(" <tr> ").attr( 'id' , mon.id ).attr( 'data-choice' , choice ).attr( 'data-priority' , mon.priority )
-						.append( $(" <td> ").text( mon.no )));
+	for(var i=0;i<all.length;i++){
+		boxRowDisplay(all[i]);
 	}
-	$("#mainTable tbody tr").each(function() {
-		var id  = Number($(this).attr('id'));
-		var mon = Box.get(id);
-		var priority = mon.priority;
-		var quantity = mon.quantity;
-		//顯示圖片
-		$( this ).append($("<td>").addIcon(false,setting[2],mon.no));
-		//顯示中文名
-			$( this ).append($("<td>").text(Index.get(mon.no,"name").chinese));
-		//顯示日文名
-			$( this ).append($("<td>").text(Index.get(mon.no,"name").japanese));
-		//顯示進化素材
-		$( this ).append($("<td>").showNeedMaterial(mon.no,id,mon.choice));
-		if(Index.getMaterials(mon.no,mon.choice).result !== undefined)
-			$( this ).append($("<td>").addIcon(false,setting[2],Index.getMaterials(mon.no,mon.choice).result));
-		else
-			$( this ).append($("<td>"));
-		//顯示數量
-		$( this ).append($("<td>").text(mon.quantity).addClass("number"));
-		$( this ).append($("<td>").text(mon.priority).addClass("number"));
-		//顯示動作
-		$( this ).append($("<td>").showAction($( this ).attr("data-priority"),mon.no));
-	});
 }
 
 function materialDisplay( material , mode )
 {
-	var setting = Data.get("setting");
 	$("#material").empty();
 	$("#material").append($("<div>").addClass("row").append($("<div>").addClass("material-body col-md-8")));
 	for(var i in materialTemplate[mode][0]){
@@ -379,17 +318,15 @@ function materialDisplay( material , mode )
 			)
 		)
 	);
-	if(setting[5] != undefined)
-		$('input[name="setting5"][value="'+ setting[5] +'"]').attr('checked',true);
+	if(Setting.get(5) != undefined)
+		$('input[name="setting5"][value="'+ Setting.get(5) +'"]').attr('checked',true);
 	else
 		$('input[name="setting5"][value=0]').attr('checked',true);
 	
 	$('input[name="setting5"]').click(function(){
 		var type = this.value;
-		var setting = JSON.parse(window.localStorage.setting);
 		type = Number(type);
-		setting[5] = type;
-		window.localStorage.setting = JSON.stringify(setting);
+		Setting.edit(5,type);
 		materialDisplay( material , type );
 	});
 	$("#material .list-group").append($("<a>").addClass("list-group-item").attr("href","#").attr("onclick","scroll(0,0)").append("TOP"));
@@ -402,7 +339,7 @@ function materialDisplay( material , mode )
 				$("<tr>").addClass(materialAttr[materialTemplate[mode][0][key1][key2]].element).append(
 					$("<td>").text(materialAttr[materialTemplate[mode][0][key1][key2]].no)
 				).append(
-					$("<td>").addIcon(false,setting[2],materialAttr[materialTemplate[mode][0][key1][key2]].no)
+					$("<td>").addIcon(false,Setting.get(2),materialAttr[materialTemplate[mode][0][key1][key2]].no)
 				).append(
 					$("<td>").text(materialAttr[materialTemplate[mode][0][key1][key2]].name)
 				).append(
@@ -448,7 +385,7 @@ function materialDisplay( material , mode )
 		}
 	}
 	SetMaterialSidebarPosition();
-	if(setting[4] === true)
+	if(Setting.get(4) === true)
 		$("#material tr").each(function(){
 			$(this).children().eq(6).hide();
 			$(this).children().eq(7).hide();
@@ -469,12 +406,11 @@ function internalLoad( load_times )
 	var curr_year = data_date.getFullYear();
 	$(".data-date").text(curr_year + "/" + curr_month + "/" + curr_date);
 	
-	var setting = Data.get("setting");
 	boxDisplay();
-	if(setting[5] == undefined)
+	if(Setting.get(5) == undefined)
 		materialDisplay(material,0);
 	else
-		materialDisplay(material,setting[5]);
+		materialDisplay(material,Setting.get(5));
 	
 	$(".material-display").tooltipster(); //active tooltipster
 	$("#material tbody tr").each(function(){
@@ -486,10 +422,10 @@ function internalLoad( load_times )
 		$(this).children().eq(7).text(mat.quantity - mat.Pneed);
 	});
 	for(var i=0;i<9;i++){
-			if(setting[3][i] === false)
+			if(Setting.get(3)[i] === false)
 				$("#mainTable tr").each(function(){$(this).children().eq(i).css( "display", "none" );});
 		}
-	updateMeterial();
+	updateMaterialStatus();
 	$("#mainTable table").tablesorter();
 }
 
@@ -506,7 +442,7 @@ function addMaterial( id )
 			$(this).children().eq(7).text(Ptotal);
 		}
 	});
-	updateMeterial();
+	updateMaterialStatus();
 }
 
 function minusMaterial( id )
@@ -522,39 +458,20 @@ function minusMaterial( id )
 			$(this).children().eq(7).text(Ptotal);
 		}
 	});
-	updateMeterial();
+	updateMaterialStatus();
 }
 
 function addMonster(no,times,box,from)
 {
 	var id = Box.add(no,times,from);
-	
+	var mats = Material.boxEdit(no,times,undefined,false);
+	_.each(mats,materialRowEdit);
 	var resort = true;
-	var setting = Data.get("setting");
-
-	$row = $("<tr>").attr("id",id).attr("data-choice",0).attr("data-priority",0)
-			.append($("<td>").text(no))
-			.append($("<td>").addIcon(false,setting[2],no))
-			.append($("<td>").text(Index.get(no,"name").chinese))
-			.append($("<td>").text(Index.get(no,"name").japanese))
-			.append($("<td>").showNeedMaterial(no,id,undefined))
-			.append(function(){
-				if(Index.get(no,"evolution").status == "y")
-					return $("<td>").addIcon(false,setting[2],Index.get(no,"evolution").result);
-				else
-					return $("<td>");
-			})
-			.append($("<td>").text(times).addClass("number"))
-			.append($("<td>").text(0).addClass("number"))
-			.append($("<td>").showAction(0,no));
-	$("#mainTable table").find('tbody').append($row).trigger("addRows", [$row, resort]);
-	for(k=0;k<9;k++){
-		if(setting[3][k] === false)
-			$row.children().eq(k).css( "display", "none" );
-	}
+	boxRowDisplay(id);
+	$("#mainTable table").trigger("update", [resort]);
 	$("#add input[name='no']").val("");
 	$("#add input[name='quantity']").val("1");
-	updateMeterial();
+	updateMaterialStatus();
 	$(".material-display").tooltipster(); //active tooltipster
 } 
 /* center modal */
@@ -595,8 +512,6 @@ $(document).ready(function() {
 	
 	internalLoad();
 	
-	window.localStorage.removeItem("settingA");
-	var setting_err = false;
 	/*
 	try {
 		JSON.parse(window.localStorage.setting);
@@ -605,49 +520,7 @@ $(document).ready(function() {
 		setting_err = true;
 	}
 	*/
-	if(window.localStorage.getItem("setting") === null || setting_err === true){
-		var setting = new Array();
-		setting[0] = false;
-		setting[1] = false;
-		setting[2] = null;
-		setting[3] = [true,true,true,true,true,true,true,true,true];
-		setting[4] = false;
-		setting[5] = 0;
-		window.localStorage.setting = JSON.stringify(setting);
-		window.localStorage.removeItem("settingA");
-	}else{
-		var setting = JSON.parse(window.localStorage.setting);
-		$("#setting0").prop("checked" , setting[0]);
-		$("#setting1").prop("checked" , setting[1]);
-		if(setting[2] === null)
-			$("#setting2").val("NULL");
-		else
-			$("#setting2").val(setting[2]);
-		if(typeof setting[3] == "undefined"){
-			setting[3] = [true,true,true,true,true,true,true,true,true];
-			window.localStorage.setting = JSON.stringify(setting);
-		}
-		if(typeof setting[3][7] == "undefined"){
-			setting[3][7] = true;
-			setting[3][8] = true;
-			window.localStorage.setting = JSON.stringify(setting);
-		}
-		if(typeof setting[4] == "undefined"){
-			setting[4] = false;
-			$("#setting4").prop("checked" , false);
-		}else
-			$("#setting4").prop("checked" , setting[4]);
-		if(typeof setting[5] == "undefined"){
-			setting[5] = 0;
-		}else{
-			if(setting[5]==0)
-				$("#setting50").prop("checked" , true);
-			else
-				$("#setting51").prop("checked" , true);
-		}
-		for(var i = 0;i < 9;i++)
-			$("#setting3" + i).prop("checked" , setting[3][i]);
-	}
+	
 	var err = false;
 	$("#add #btn-add-enter").click(function(){
 		var a = Number($("#add input[name='no']").val());
@@ -659,12 +532,13 @@ $(document).ready(function() {
 		var id = Number($("input[type='radio']:checked", "#ultimateBranch").attr("data-id"));
 		Box.edit(id,"choice",branchChoice);
 		$("#mainTable table tr[id='"+ id +"']").children().eq(4).empty().showNeedMaterial(Box.get(id).no,id,branchChoice);
-		$("#mainTable table tr[id='"+ id +"']").children().eq(5).addIcon(false,setting[2],branchChoice);
+		$("#mainTable table tr[id='"+ id +"']").children().eq(5).addIcon(false,Setting.get(2),branchChoice);
 		$("#mainTable table tr[id='"+ id +"']").attr("data-choice",branchChoice);
 		$(".material-display").tooltipster(); //active tooltipster
 		Material.boxEdit(Box.get(id).no,Box.get(id).priority,Box.get(id).choice,true);
-		Material.boxEdit(Box.get(id).no,Box.get(id).quantity,Box.get(id).choice,false);
-		updateMeterial();
+		var mats = Material.boxEdit(Box.get(id).no,Box.get(id).quantity,Box.get(id).choice,false);
+		_.each(mats,materialRowEdit);
+		updateMaterialStatus();
 		$('#ultimateBranch').modal('hide');
 	});
 	$('#ultimateBranch').on('hidden.bs.modal', function (e) {
@@ -804,7 +678,7 @@ $(document).ready(function() {
 				$(this).children().eq(7).text(Ptotal);
 			}
 		});
-		updateMeterial();
+		updateMaterialStatus();
 		$('#material-modal').modal('hide');
 	});
 	$("#box-modal .btn-primary").click(function(){
@@ -827,9 +701,10 @@ $(document).ready(function() {
 			var allDiff = allValue - allOriginal;
 			var starDiff = starValue - starOriginal;
 			Material.boxEdit(Box.get(id).no,allDiff,Box.get(id).choice,false);
-			Material.boxEdit(Box.get(id).no,starDiff,Box.get(id).choice,true);
+			var mats = Material.boxEdit(Box.get(id).no,starDiff,Box.get(id).choice,true);
+			_.each(mats,materialRowEdit);
 
-			updateMeterial();
+			updateMaterialStatus();
 		}else{
 			alert("Error!\n優先數量大於所有數量");
 		}
@@ -872,14 +747,30 @@ $(document).ready(function() {
 		var box = dataLoad("box");
 		$.debounce( 250, addMonster(no,qty,box,null) );
 	});
+	
+	
+	$("#setting0").prop("checked" , Setting.get(0));
+	$("#setting1").prop("checked" , Setting.get(1));
+	if(Setting.get(2) === null)
+		$("#setting2").val("NULL");
+	else
+		$("#setting2").val(Setting.get(2));
+	$("#setting4").prop("checked" , Setting.get(4));
+	
+	if(Setting.get(5)==0)
+		$("#setting50").prop("checked" , true);
+	else
+		$("#setting51").prop("checked" , true);
+	
+	for(var i = 0;i < 9;i++)
+		$("#setting3" + i).prop("checked" , Setting.get(3)[i]);
+	
 	$( "#setting2" ).change(function() {
-		var setting = JSON.parse(window.localStorage.setting);
 		var val = $( "#setting2 option:selected" ).val();
 		if(val === "NULL")
-			setting[2] = null;
+			Setting.edit(2,null);
 		else
-			setting[2] = val;
-		window.localStorage.setting = JSON.stringify(setting);
+			Setting.edit(2,val);
 	});
 	$( "input[type='checkbox']" ).change(function() {
 		var input = $(this).attr("id");
@@ -898,27 +789,30 @@ $(document).ready(function() {
 			inputID = 3;
 			break;
 		}
-		var setting = JSON.parse(window.localStorage.setting);
 		if(inputID != 3)
 			if($(this).prop( "checked" )){
-				setting[inputID] = true;		
+				Setting.edit(inputID,true);	
 			}else{
-				setting[inputID] = false;
+				Setting.edit(inputID,false);	
 			}
 		else{
 			var rows = document.getElementsByName('setting3[]');
 			for (var i = 0, l = rows.length; i < l; i++) {
 				if (rows[i].checked) {
-					setting[inputID][i] = true;
+					var setting = Setting.get(inputID);
+					setting[i] = true;
+					Setting.edit(inputID,setting);
 					$("#mainTable tr").each(function(){$(this).children().eq(i).show();});
 				}else{
-					setting[inputID][i] = false;
+					var setting = Setting.get(inputID);
+					setting[i] = false;
+					Setting.edit(inputID,setting);
 					$("#mainTable tr").each(function(){$(this).children().eq(i).hide();});
 				}
 			}
 		}
 		if(inputID == 4){
-			if(setting[4] === true)
+			if(Setting.get(4) === true)
 				$("#material tr").each(function(){
 					$(this).children().eq(6).hide();
 					$(this).children().eq(7).hide();
@@ -929,8 +823,8 @@ $(document).ready(function() {
 					$(this).children().eq(7).show();
 				});
 		}
-		window.localStorage.setting = JSON.stringify(setting);
 	});
+	
 	$(window).bind('scroll', SetMaterialSidebarPosition);
 	$(".version").append(version);
 });

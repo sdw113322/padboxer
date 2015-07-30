@@ -18,7 +18,6 @@ var Box = (function() {
 			box.push(monster);
 			Data.edit("boxid",boxid);
 			Data.edit("box",box);
-			Material.boxEdit(no,quantity,undefined,false);
 			return boxid - 1;
 		},
 		allMonsters: function(){
@@ -48,7 +47,7 @@ var Box = (function() {
 			Data.edit("box",box);
 		},
 		evolution: function(id){
-			var monster = box[id];
+			var monster = Box.get(id);
 			var evol = Index.get(monster.no,"evolution");
 			var need = [];
 			var result = {};
@@ -75,15 +74,18 @@ var Box = (function() {
 			//確認是否有足夠素材
 			var mater = { };
 			var notEnough = [];
+			var notIn = [];
 			for(i = 0; i < need.length; ++i) {
 				if(!mater[need[i]])
 					mater[need[i]] = 0;
 				++mater[need[i]];
 			}
 			for(var j in mater){
-				if(Material.include(j) === true)
-					if(Material.quantity(j) < mater[j])
+				if(Material.include(j) === true){
+					if(Material.get(j).quantity < mater[j])
 						notEnough.push(j);
+				}else
+					notIn.push(j);
 			}
 			if(notEnough.length > 0){
 				var errmsg = "缺少下列素材:";
@@ -95,13 +97,69 @@ var Box = (function() {
 				}
 				throw new Error(errmsg);
 			}
-			//修改素材數量
-			var prior = (monster.priority > 0);
-			Material.evolution(monster.no,monster.choice,prior);
-			//修改box
-			if(monster.quantity === 1){
-				monster.no = evol.result;
-				monster.choice = undefined;
+			if(notIn.length == 0)
+				var accept = confirm ("真的要進化嗎？");
+			else
+				var accept = confirm ("沒有統計" + notIn + "\n真的要進化嗎？");
+			if(accept === true){
+				//修改素材數量
+				var prior = (monster.priority > 0);
+				Material.evolution(monster.no,monster.choice,prior);
+				if(Setting.get(0) === true && (evol.status === "y" || evol.status === "u")){
+					Material.boxEdit(evol.result,1,monster.choice,false);
+					if(monster.priority > 0)
+						Material.boxEdit(evol.result,1,monster.choice,true);
+				}
+				//修改box
+				if(Setting.get(0) === true && (evol.status === "y" || evol.status === "u")){
+					var to = -1;
+					for(var i in box)
+						if(box[i].from !== undefined)
+							if(box[i].from === monster.id)
+								to = box[i].id;
+					if(monster.quantity === 1){
+						if(to === -1){
+							var newMon = Box.add(evol.result,1,null);
+							Box.remove(id);
+							return {"delete" : [id],"add":[newMon]};
+						}else{
+							Box.edit(to,"quantity",Box.get(to).quantity+1);
+							if(monster.priority > 0){
+								Box.edit(to,"priority",Box.get(to).priority+1);
+							}
+							Box.remove(id);
+							return {"delete" : [id],"edit":[to]};
+						}
+					}else{
+						if(to === -1){
+							var newMon = Box.add(evol.result,1,monster.id);
+							if(monster.priority > 0)
+								Box.edit(newMon,"priority",1);
+						}else{
+							Box.edit(to,"quantity",Box.get(to).quantity+1);
+							if(monster.priority > 0){
+								Box.edit(to,"priority",Box.get(to).priority+1);
+							}
+						}
+						Box.edit(id,"quantity",Box.get(id).quantity-1);
+						if(monster.priority > 0)
+							Box.edit(id,"priority",Box.get(id).priority-1);
+						if(to === -1)
+							return {"add" : [newMon],"edit" : [id]};
+						else
+							return {"edit" : [id,to]};
+					}
+				}else{
+					if(monster.quantity === 1){
+						Box.remove(id);
+						return{"delete" : [id]};
+					}else{
+						if(monster.priority > 0)
+							Box.edit(id,"priority",Box.get(id).priority-1);
+						Box.edit(id,"quantity",Box.get(id).quantity-1);
+						return {"edit" : [id]};
+					}
+				}
 			}
 		}
 	}
