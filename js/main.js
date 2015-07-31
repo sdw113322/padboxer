@@ -551,45 +551,35 @@ $(document).ready(function() {
 		$( "#add input[name='no']" ).focus();
 	});
 	$("#btn-add-preview").click(function(){
-		var name = JSON.parse(window.localStorage.name);
-		var evolution = JSON.parse(window.localStorage.evolution);
-		var ultimate = JSON.parse(window.localStorage.ultimate);
 		var no = $("#add input[name='no']").val();
 		var qty = $("#add input[name='quantity']").val();
-		var setting = JSON.parse(window.localStorage.setting);
 		$("#preview-modal .modal-body").empty().append($("<span>").attr("id","preview-status"));
-		$("#preview-modal h4").text(no + " - " + name[no].chinese);
-		if(evolution[no].status == "y"){
+		$("#preview-modal h4").text(no + " - " + Index.get(no,"name").chinese);
+		if(Index.get(no,"evolution").status == "y"){
 			$("#preview-modal #preview-status").text("可以進化")
-			$("#preview-modal .modal-body").append($("<h5>").text( "進化為 " + evolution[no].result +" - "+name[evolution[no].result].chinese + "需要：" ));
+			$("#preview-modal .modal-body").append($("<h5>").text( "進化為 " + Index.get(no,"evolution").result +" - "+Index.get(Index.get(no,"evolution").result,"name").chinese + "需要：" ));
 			$("#preview-modal .modal-body").append($("<table>").addClass("table table-bordered").append($("<thead>").append($("<tr>").append($("<th>")).append($("<th>").text("名稱")).append($("<th>").text("現有")).append($("<th>").text("總共")))));
-			for(var key in evolution[no].need){
-				
+			for(var key in Index.get(no,"evolution").need){
 				$("#preview-modal .modal-body table").append($("<tr>")
-					.append($("<td>").addIcon(false,setting[2],evolution[no].need[key]))
-					.append($("<td>").text(evolution[no].need[key] + " - " + name[evolution[no].need[key]].chinese))
-					.append($("<td>").text($("#material table tr td:first-child:contains('" + evolution[no].need[key] + "')").next().next().next().text()))
-					.append($("<td>").text($("#material table tr td:first-child:contains('" + evolution[no].need[key] + "')").next().next().next().next().next().text()))
+					.append($("<td>").addIcon(false,Setting.get(2),Index.get(no,"evolution").need[key]))
+					.append($("<td>").text(Index.get(no,"evolution").need[key] + " - " + Index.get(Index.get(no,"evolution").need[key],"name").chinese))
+					.append($("<td>").text($("#material table tr td:first-child:contains('" + Index.get(no,"evolution").need[key] + "')").next().next().next().text()))
+					.append($("<td>").text($("#material table tr td:first-child:contains('" + Index.get(no,"evolution").need[key] + "')").next().next().next().next().next().text()))
 				);
 			}
-		}else if(evolution[no].status == "u"){
+		}else if(Index.get(no,"evolution").status == "u"){
 			$("#preview-modal #preview-status").text("可以究極進化");
-			var i = 1;
 			var ultimateResult = [];
 			if(ultimateResult.length > 0)
 			ultimateResult.length = 0;
-			while(i < ultimate.length){
-				if(no == ultimate[i].no)
-					ultimateResult.push(ultimate[i]);
-				i++;
-			}
+			ultimateResult = Index.get(no,"ultimate");
 			$.each(ultimateResult,function(index,value){
-				$("#preview-modal .modal-body").append($("<h5>").text( "進化為 " + value.result +" - "+name[value.result].chinese + "需要：" ));
+				$("#preview-modal .modal-body").append($("<h5>").text( "進化為 " + value.result +" - "+Index.get(value.result,"name").chinese + "需要：" ));
 				$("#preview-modal .modal-body").append($("<table>").addClass("table table-bordered").attr("data-number",index).append($("<thead>").append($("<tr>").append($("<th>")).append($("<th>").text("名稱")).append($("<th>").text("現有")).append($("<th>").text("總共")))));
 				for(var key in value.need){
 					$("#preview-modal .modal-body table[data-number='"+ index +"']").append($("<tr>")
-						.append($("<td>").addIcon(false,setting[2],value.need[key]))
-						.append($("<td>").text(value.need[key] + " - " + name[value.need[key]].chinese))
+						.append($("<td>").addIcon(false,Setting.get(2),value.need[key]))
+						.append($("<td>").text(value.need[key] + " - " + Index.get(value.need[key],"name").chinese))
 						.append($("<td>").text($("#material table tr td:first-child:contains('" + value.need[key] + "')").next().next().next().text()))
 						.append($("<td>").text($("#material table tr td:first-child:contains('" + value.need[key] + "')").next().next().next().next().next().text()))
 					);
@@ -713,30 +703,34 @@ $(document).ready(function() {
 	$("#import-modal #importOld").click(function(){
 		var value = $("#import-modal .modal-body textarea").val();
 		var splits = value.split("      ");
-		window.localStorage.boxid = splits[0];
-		window.localStorage.box = splits[1];
-		window.localStorage.material = splits[2];
-		window.localStorage.setting = splits[3];
-		boxReset();
-		internalLoad();
+		try{
+			JSON.parse(splits[1]);
+			JSON.parse(splits[2]);
+			JSON.parse(splits[3]);
+		}catch(e){
+			alert(e);
+		}finally{
+			Data.edit("boxid",Number(splits[0]));
+			Data.edit("box",JSON.parse(splits[1]));
+			Data.edit("material",JSON.parse(splits[2]));
+			Data.edit("setting",JSON.parse(splits[3]));
+			document.location.reload(true);
+		}
 		$("#import-modal .modal-body textarea").val("");
 		$('#import-modal').modal('hide');
 	});
-	/*
 	$("#import-modal #importNew").click(function(){
 		var value = $("#import-modal .modal-body textarea").val();
-		var data = JSON.parse(value);
 		//要加版本判斷機制
-		window.localStorage.boxid = data.boxid;
-		window.localStorage.box = JSON.stringify(data.box);
-		window.localStorage.material = JSON.stringify(data.material);
-		window.localStorage.setting = JSON.stringify(data.setting);
-		boxReset();
-		internalLoad();
+		try{
+			Data.restore(value);
+		}catch(e){
+			alert(e);
+		}
+		document.location.reload(true);
 		$("#import-modal .modal-body textarea").val("");
 		$('#import-modal').modal('hide');
 	});
-	*/
 	$("#update").click(function(){
 		Index.update();
 	});
