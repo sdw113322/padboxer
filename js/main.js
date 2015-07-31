@@ -359,14 +359,14 @@ function materialDisplay( material , mode )
 								$("<span>").addClass("glyphicon glyphicon-plus add-material").attr("title","+1")
 							).click(function(){
 								var id = $(this).attr('data-id');
-								$.debounce( 250, addMaterial(id) );
+								_.debounce( addMaterial(id) , 250);
 							})
 						).append(
 							$("<button>").addClass("btn btn-default").attr("type","button").attr("data-id",materialTemplate[mode][0][key1][key2]).append(
 								$("<span>").addClass("glyphicon glyphicon-minus minus-material").attr("title","-1")
 							).click(function(){
 								var id = $(this).attr('data-id');
-								$.debounce( 250, minusMaterial(id) );
+								_.debounce(minusMaterial(id), 250);
 							})
 						).append(
 							$("<button>").addClass("btn btn-default").attr("type","button").attr("data-id",materialTemplate[mode][0][key1][key2]).append(
@@ -525,7 +525,7 @@ $(document).ready(function() {
 	$("#add #btn-add-enter").click(function(){
 		var a = Number($("#add input[name='no']").val());
 		var b = Number($("#add input[name='quantity']").val());
-		$.debounce( 250, addMonster(a,b,null,null) );
+		_.debounce(addMonster(a,b,null,null), 250);
 	});
 	$("#ultimateBranch .btn-primary").click(function(){
 		var branchChoice = Number($("input[type='radio']:checked", "#ultimateBranch").val());
@@ -738,8 +738,7 @@ $(document).ready(function() {
 		$('#preview-modal').modal('hide');
 		var no = $("#add input[name='no']").val();
 		var qty = $("#add input[name='quantity']").val();
-		var box = dataLoad("box");
-		$.debounce( 250, addMonster(no,qty,box,null) );
+		_.debounce(addMonster(no,qty,box,null), 250);
 	});
 	
 	
