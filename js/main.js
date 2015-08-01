@@ -1,338 +1,192 @@
 (function( $ ) {
 	$.fn.addIcon = function( qty_notification , outter_link , no ) {
+		no = Number(no);
 		var core = function(){
 			return $("<img>")
 				.attr("src","icon/"+ no +".png")
 				.attr("width",36)
 				.attr("height",36)
 				.attr("class","material-display")//tootipster has been used
-				.attr("title",name[no].chinese);
+				.attr("title",Index.get(no,"name").chinese);
 		};
-		if(!(window.localStorage.getItem("name") === null)){
-			var name = JSON.parse(window.localStorage.name);
-			if(no in name)
-				if(qty_notification == true){
-					if(outter_link == null)
-						this.append(
-							$("<div>").addClass("icon").append(core).append(
-								$("<span>").attr("data-no",no)
-							)
-						);
-					else
-						this.append(
-							$("<div>").addClass("icon").append(
-								$("<a>")
-								.attr("href",outter_link + no)
-								.attr("target","_blank")
-								.append(core)
-							).append(
-								$("<span>").attr("data-no",no)
-							)
-						);
-				}else
-					if(outter_link == null)
-						this.append(core);
-					else
-						this.append(
-							$("<a>")
-							.attr("href",outter_link + no)
-							.attr("target","_blank")
-							.append(core)
-						);
-		}
+		if(qty_notification == true){
+			if(outter_link == null)
+				this.append(
+					$("<div>").addClass("icon").append(core).append(
+						$("<span>").attr("data-no",no)
+					)
+				);
+			else
+				this.append(
+					$("<div>").addClass("icon").append(
+						$("<a>")
+						.attr("href",outter_link + no)
+						.attr("target","_blank")
+						.append(core)
+					).append(
+						$("<span>").attr("data-no",no)
+					)
+				);
+		}else
+			if(outter_link == null)
+				this.append(core);
+			else
+				this.append(
+					$("<a>")
+					.attr("href",outter_link + no)
+					.attr("target","_blank")
+					.append(core)
+				);
 		return this;
 	};
 	$.fn.showAction = function( priority , no ) {
-		if(!(window.localStorage.getItem("evolution") === null)){
-			var evolution = JSON.parse(window.localStorage.evolution);
-			$( this ).append($("<div>").addClass("btn-group"));
+		$( this ).append($("<div>").addClass("btn-group"));
+		$( this ).children().append(
+			$("<button>").addClass("btn btn-default").attr("type","button").append(
+				$("<span>")
+				.addClass("glyphicon glyphicon-plus")
+				.attr("title","+1")
+			).click(no,function(){
+				var id = Number($( this ).parent().parent().parent().attr("id"));
+				var mon = Box.get(id);
+				Box.edit(id,"quantity",mon.quantity + 1);
+				var resort = true;
+				boxRowEdit(id);
+				$("#mainTable table").trigger("update", [resort]);
+				var mats = Material.boxEdit(mon.no,1,mon.choice,false);
+				_.each(mats,materialRowEdit);
+			})
+		);
+		$( this ).children().append(
+			$("<button>").addClass("btn btn-default").attr("type","button").append(
+			$("<span>")
+				.addClass("glyphicon glyphicon-star")
+				.attr("title","優先進化對象數量+1")
+			).click(no,function(){
+				var id = Number($( this ).parent().parent().parent().attr("id"));
+				var mon = Box.get(id);
+				if(mon.priority < mon.quantity){
+					Box.edit(id,"priority",mon.priority + 1);
+					var resort = true;
+					boxRowEdit(id);
+					$("#mainTable table").trigger("update", [resort]);
+					var mats = Material.boxEdit(mon.no,1,mon.choice,true);
+					_.each(mats,materialRowEdit);
+				}
+			})
+		);
+		$( this ).children().append(
+			$("<button>").addClass("btn btn-default").attr("type","button").append(
+					$("<span>")
+					.addClass("glyphicon glyphicon-pencil edit-material")
+					.attr("title","修改")
+				).click(function(){
+					$("#box-modal").modal('show');
+					var all = $( this ).parent().parent().parent().children().eq(6).text();
+					var star = $( this ).parent().parent().parent().children().eq(7).text();
+					$("#allQty").val(all).attr("data-original",all);
+					$("#allQty").val(all).attr("data-id",$( this ).parent().parent().parent().attr("id"));
+					$("#starQty").val(star).attr("data-original",star);
+					setTimeout(function(){$("#box-modal input").eq(0).focus();},500);
+				})
+			);
+		
+		if(Index.getMaterials(no,undefined).status != "n")
 			$( this ).children().append(
 				$("<button>").addClass("btn btn-default").attr("type","button").append(
 					$("<span>")
-					.addClass("glyphicon glyphicon-plus")
-					.attr("title","+1")
+					.addClass("glyphicon glyphicon-forward")
+					.attr("title","進化")
 				).click(no,function(){
-					var box = dataLoad("box");
-					var id = $( this ).parent().parent().parent().attr("id");
-					var choice = $( this ).parent().parent().parent().attr("data-choice");
-					for(var i in box){
-						if(box[i].id == id){
-							var quantity = box[i].quantity;
-							var no = box[i].no;
-							quantity++;
-							box[i].quantity = quantity;
-							$( this ).parent().parent().parent().children().eq(6).text(quantity);
-						}
-					}
-					var string = JSON.stringify(box);
-					window.localStorage.box = string;
-					var needMaterial = NeedMaterial( no , choice );
-					var need = needMaterial.result;
-					for(var index in need){
-						Material.needPlus(need[index],1);
-					}
-				})
-			);
-			$( this ).children().append(
-				$("<button>").addClass("btn btn-default").attr("type","button").append(
-				$("<span>")
-					.addClass("glyphicon glyphicon-star")
-					.attr("title","優先進化對象數量+1")
-				).click(no,function(){
-					var box = dataLoad("box");
-					var id = $( this ).parent().parent().parent().attr("id");
-					var priority2 = $( this ).parent().parent().parent().attr("data-priority");
-					for(var i in box){
-						if(box[i].id == id){
-							if(box[i].quantity > box[i].priority){
-								priority2++;
-								box[i].priority = priority2;
-								$( this ).parent().parent().parent().attr("data-priority",priority2);
-								$( this ).parent().parent().parent().children().eq(7).text(priority2);
-								var evolution = JSON.parse(window.localStorage.evolution);
-								var ultimate = JSON.parse(window.localStorage.ultimate);
-								var choice = $("#mainTable table #" + id).attr("data-choice");
-								var text = $("#mainTable table #" + id).children().eq(0).text();
-								var needMaterial = NeedMaterial( text , choice );
-								var need = needMaterial.result;
-								for(var index in need){
-									Material.PneedPlus(need[index],1);
-								}
-								updateMeterial();
-							}
-						}
-					}
-					var string = JSON.stringify(box);
-					window.localStorage.box = string;
-				})
-			);
-			$( this ).children().append(
-				$("<button>").addClass("btn btn-default").attr("type","button").append(
-						$("<span>")
-						.addClass("glyphicon glyphicon-pencil edit-material")
-						.attr("title","修改")
-					).click(function(){
-						$("#box-modal").modal('show');
-						var all = $( this ).parent().parent().parent().children().eq(6).text();
-						var star = $( this ).parent().parent().parent().children().eq(7).text();
-						$("#allQty").val(all).attr("data-original",all);
-						$("#allQty").val(all).attr("data-id",$( this ).parent().parent().parent().attr("id"));
-						$("#starQty").val(star).attr("data-original",star);
-						setTimeout(function(){$("#box-modal input").eq(0).focus();},500);
-					})
-				);
-			if(no in evolution && evolution[no].status != "n")
-				$( this ).children().append(
-					$("<button>").addClass("btn btn-default").attr("type","button").append(
-						$("<span>")
-						.addClass("glyphicon glyphicon-forward")
-						.attr("title","進化")
-					).click(no,function(){
-						var text = $( this ).parent().parent().parent().children().first().text();
-						var id = $( this ).parent().parent().parent().attr("id");
-						var evolution = JSON.parse(window.localStorage.evolution);
-						var ultimate = JSON.parse(window.localStorage.ultimate);
-						var box = dataLoad("box");
-						var material = dataLoad("material");
-						var need = [];
-						var notHave = [];
-						var result = 0;
-						var notIn = [];
-						var error = 0;
-						var choice = $( this ).parent().parent().parent().attr("data-choice");
-						var priority = $( this ).parent().parent().parent().attr("data-priority");
-						var quantity = $( this ).parent().parent().parent().children().eq(6);
-						var needMaterial = NeedMaterial( text , choice );
-						if(needMaterial.status != 'n' && needMaterial.status != 'un'){
-							need = needMaterial.result;
-							result = evolution[text].result;
-						}else if(needMaterial.status == 'n'){
-							alert("無法進化");
-							error = 1;
-						}else{
-							alert("錯誤");
-							error = 1;
-						}
-						if(error == 0){
-							for(var index in need){
-								var i = 0;
-								while(material[i].no != parseInt(need[index]) && i<50){
-									i++;
-								}
-								if(material[50].no != parseInt(need[index]) && i==50)
-									i++;
-								if(i<51){
-									material[i].quantity --;
-									if(material[i].quantity < 0){
-										error = 2;
-										notHave.push(need[index]);
-									}
-								}else{
-									notIn.push(need[index]);
-								}
-							}
-						}
-						if(error == 0){
-							if(notIn.length == 0)
-								var accept = confirm ("真的要進化嗎？");
-							else
-								var accept = confirm ("沒有統計" + notIn + "\n真的要進化嗎？");
-						}
-						if(error == 0 && accept == true){
-							var string = JSON.stringify(material);
-							window.localStorage.material = string;
-							var offset = 0;
-							for(var i in box){
-								if(box[i].id == id)
-									offset = i;
-							}
-							if(box[offset].quantity<=1){
-								deleteMonster(offset,box);
-								$("#mainTable table #" + id).remove();
-							}
-							else{
-								box[offset].quantity--;
-								$(this).parent().parent().parent().children().eq(6).text(box[offset].quantity);
-							}
-							var setting = JSON.parse(window.localStorage.setting);
-							var from = 0;
-							for(var i in box){
-								if(typeof box[i].from != 'undefined')
-									if(box[i].from == box[offset].id)
-										from = i;
-							}
-							from = Number(from);
-							if(result != 0 && setting[0]){
-								if(from === 0){
-									addMonster(result,1,box,box[offset].id);
-								}
-								else{
-									box[from].quantity++;
-									var fromID = box[from].id;
-									var fromQuan = $("tr#" + fromID).children().eq(6).text();
-									fromQuan++;
-									$("tr#" + fromID).children().eq(6).text(fromQuan);
-									var NextNeedMaterial = NeedMaterial( result , 0 );
-									var nextNeed = NextNeedMaterial.result;
-									for(var i in nextNeed){
-										Material.needPlus(nextNeed[i],1);
-									}
-								}
-							}
-							for(var index in need){
-								Material.evolution(need[index],1);
-							}
-							if($(this).parent().parent().parent().attr("data-priority")>0){
-								var priority = $(this).parent().parent().parent().attr("data-priority");
-								priority--;
-								$(this).parent().parent().parent().attr("data-priority",priority);
-								$(this).parent().parent().parent().children().eq(7).text(priority);
-								box[offset].priority--;
-								for(var index in need){
-									Material.Pevolution(need[index],1);
-								}
-							}
-							string = JSON.stringify(box);
-							window.localStorage.box = string;
-							var resort = true;
-							$("#mainTable table").trigger("update", [resort]);
-						}else if(error == 0){
-						}
-						if(error == 2){
-							alert(notHave + "不存在\n無法進化");
-						
-						}
-						updateMeterial();
-					})
-				);
-			$( this ).children().append(
-					$("<button>").addClass("btn btn-default").attr("type","button").append(
-						$("<span>")
-						.addClass("glyphicon glyphicon-remove")
-						.attr("title","刪除")
-					).click(function(){
-						var id = $(this).parent().parent().parent().attr('id');
-						var box = dataLoad("box");
-						var choice = $("#mainTable table #" + id).attr("data-choice");
-						var text = $("#mainTable table #" + id).children().eq(0).text();
-						var offset = 0;
-						for(var i in box){
-							if(box[i].id == id)
-								offset = i;
-						}
-						var quantity = box[offset].quantity;
-						var priority = box[offset].priority;
-						deleteMonster(offset,box);
-						var string = JSON.stringify(box);
-						window.localStorage.box = string;
+					var id = Number($( this ).parent().parent().parent().attr("id"));
+					var mon = Box.get(id);
+					try{
+						var result = Box.evolution(id);
+					}catch(e){
+						alert(e);
+					}finally{
 						var resort = true;
-						$("#mainTable table #" + id).remove();
+						if(result["delete"] !== undefined)
+							for(var i in result["delete"])
+								$("#mainTable table #" + result["delete"][i]).remove();
+						if(result["edit"] !== undefined)
+							for(var j in result["edit"])
+								boxRowEdit(result["edit"][j]);
+						if(result["add"] !== undefined)
+							for(var k in result["add"])
+								boxRowDisplay(result["add"][k]);
 						$("#mainTable table").trigger("update", [resort]);
-						var needMaterial = NeedMaterial( text , choice );
-						if(needMaterial.status != 'n' && needMaterial.status != 'un'){
-							for(var index in needMaterial.result){
-								Material.needMinus(needMaterial.result[index],quantity);
-							}
-							if(quantity > 0)
-								for(var index in needMaterial.result){
-									Material.PneedMinus(needMaterial.result[index],priority);
-								}
+						var res = Index.getMaterials(mon.no,mon.choice);
+						var mats = res.need;
+						mats = _.map(mats,function(x){return Number(x);});
+						_.each(mats,materialRowEdit);
+						if(Setting.get(0) === true){
+							var mats2 = Index.getMaterials(Number(res.result),undefined).need;
+							mats2 = _.map(mats2,function(x){return Number(x);});
+							_.each(mats2,materialRowEdit);
 						}
-						updateMeterial();
-					})
-				);
-		}
+						updateMaterialStatus();
+					}
+				})
+			);
+		$( this ).children().append(
+				$("<button>").addClass("btn btn-default").attr("type","button").append(
+					$("<span>")
+					.addClass("glyphicon glyphicon-remove")
+					.attr("title","刪除")
+				).click(function(){
+					var id = Number($(this).parent().parent().parent().attr('id'));
+					var mon = Box.get(id);
+					Material.boxEdit(mon.no,-mon.quantity,mon.choice,false);
+					var mats = Material.boxEdit(mon.no,-mon.priority,mon.choice,true);
+					_.each(mats,materialRowEdit);
+					Box.remove(id);
+					var resort = true;
+					$("#mainTable table #" + id).remove();
+					$("#mainTable table").trigger("update", [resort]);
+					updateMaterialStatus();
+				})
+			);
 		return this;
 	};
 	$.fn.showNeedMaterial = function( no , id , choice ) {
-		if(!(window.localStorage.getItem("evolution") === null && window.localStorage.getItem("ultimate") === null)){
-			var ultimate = JSON.parse(window.localStorage.ultimate);
-			var name = JSON.parse(window.localStorage.name);
-			var setting = JSON.parse(window.localStorage.setting);
-			var needMaterial = NeedMaterial( no , choice );
-			if(needMaterial.status == 'n'){
-				$( this ).text("無法進化");
-			}else if(needMaterial.status == 'un'){
-				$( this ).append($("<button>")
-					.text("請選取究極進化分支")
-					.addClass("btn btn-warning")
-					.attr("data-toggle","modal")
-					.attr("data-target","#ultimateBranch")
-					.click(id,function(){
-						var i = 1;
-						var ultimateResult = [];
-						if(ultimateResult.length > 0)
-							ultimateResult.length = 0;
-						while(i < ultimate.length){
-							if(no == ultimate[i].no)
-								ultimateResult.push(ultimate[i].result);
-							i++;
-						}
-						$.each(ultimateResult,function(index,value){
-							$("#ultimateBranch .modal-body form").append($("<label>")
-								.append($("<input>")
-									.attr("type","radio")
-									.attr("value",value)
-									.attr("data-id",id)
-									.attr("name","ultimateChoose")
-								).append("   " + value + " - " + name[value].chinese + " - " + name[value].japanese )
-							);
-						});
-					})
-				);
-			}else{
-				for(var key in needMaterial.result){
-					$( this ).addIcon(setting[1],setting[2],needMaterial.result[key]);
-					if(key < needMaterial.result.length - 1)
-						$( this ).append(" ");
-				}
+		var needMaterial = Index.getMaterials(no,choice);
+		if(Index.get(no,"evolution").status == 'n'){
+			$( this ).text("無法進化");
+		}else if(Index.get(no,"evolution").status === 'u' && choice === undefined){
+			$( this ).append($("<button>")
+				.text("請選取究極進化分支")
+				.addClass("btn btn-warning")
+				.attr("data-toggle","modal")
+				.attr("data-target","#ultimateBranch")
+				.click(id,function(){
+					$.each(Index.get(no,"ultimate"),function(index,value){
+						var name = Index.get(value.result,"name");
+						$("#ultimateBranch .modal-body form").append($("<div>")
+							.addClass("radio")
+							.append($("<label>").append($("<input>")
+								.attr("type","radio")
+								.attr("value",value.result)
+								.attr("data-id",id)
+								.attr("name","ultimateChoose")
+							).append("   " + value.result + " - " + name.chinese + " - " + name.japanese )
+							)
+						);
+					});
+				})
+			);
+		}else{
+			for(var key in needMaterial.need){
+				$( this ).addIcon(Setting.get(1),Setting.get(2),needMaterial.need[key]);
+				if(key < needMaterial.need.length - 1)
+					$( this ).append(" ");
 			}
 		}
 		return this;
 	};
 }( jQuery ));
 
-function updateMeterial()
+function updateMaterialStatus()
 {
 	$("#mainTable div.icon span").each(function(){
 		var materialNo = $( this ).attr("data-no");
@@ -349,60 +203,72 @@ function updateMeterial()
 	});
 }
 
-function dataLoad( target )
-{
-	var result = [];
-	if(!(window.localStorage.getItem(target) === null)){
-		var string = window.localStorage.getItem(target);
-		result = JSON.parse(string);
-		if(target == "material" && result.length==46){
-			result[46] = JSON.parse("{\"no\":1325,\"quantity\":0}");
-			result[47] = JSON.parse("{\"no\":1326,\"quantity\":0}");
-			result[48] = JSON.parse("{\"no\":1327,\"quantity\":0}");
-			result[49] = JSON.parse("{\"no\":1328,\"quantity\":0}");
-			result[50] = JSON.parse("{\"no\":1329,\"quantity\":0}");
+function materialRowEdit(no){
+	$("#material tr").each(function(){
+		var mat = Material.get(no);
+		if(Number($(this).children().eq(0).text()) === no){
+			$(this).children().eq(3).text(mat.quantity);
+			$(this).children().eq(4).text(mat.need);
+			$(this).children().eq(5).text(mat.quantity - mat.need);
+			$(this).children().eq(6).text(mat.Pneed);
+			$(this).children().eq(7).text(mat.quantity - mat.Pneed);
 		}
-		if(target == "box" && result.length > 0){
-			if(result[0].hasOwnProperty('priority') == false)
-				for(var i in result)
-					result[i].priority = 0;
-		}
-		if(target == "box" && result.length > 0){
-			if(result[0].hasOwnProperty('quantity') == false)
-				for(var i in result)
-					result[i].quantity = 1;
-		}
-		return result;
-	}else{
-		if(target == "box")
-			window.localStorage.boxid = 0;
-		else if(target == "material"){
-			var string = "[{\"no\":147,\"quantity\":\"0\"},{\"no\":148,\"quantity\":0},{\"no\":149,\"quantity\":0},{\"no\":150,\"quantity\":0},{\"no\":151,\"quantity\":0},{\"no\":321,\"quantity\":0},{\"no\":1176,\"quantity\":0},{\"no\":161,\"quantity\":0},{\"no\":171,\"quantity\":0},{\"no\":166,\"quantity\":0},{\"no\":162,\"quantity\":0},{\"no\":172,\"quantity\":0},{\"no\":167,\"quantity\":0},{\"no\":1294,\"quantity\":0},{\"no\":163,\"quantity\":0},{\"no\":173,\"quantity\":0},{\"no\":168,\"quantity\":0},{\"no\":1295,\"quantity\":0},{\"no\":164,\"quantity\":0},{\"no\":174,\"quantity\":0},{\"no\":169,\"quantity\":0},{\"no\":165,\"quantity\":0},{\"no\":175,\"quantity\":0},{\"no\":170,\"quantity\":0},{\"no\":234,\"quantity\":0},{\"no\":152,\"quantity\":0},{\"no\":153,\"quantity\":0},{\"no\":154,\"quantity\":0},{\"no\":227,\"quantity\":0},{\"no\":1085,\"quantity\":0},{\"no\":1086,\"quantity\":0},{\"no\":1087,\"quantity\":0},{\"no\":155,\"quantity\":0},{\"no\":156,\"quantity\":0},{\"no\":157,\"quantity\":0},{\"no\":158,\"quantity\":0},{\"no\":159,\"quantity\":0},{\"no\":160,\"quantity\":0},{\"no\":246,\"quantity\":0},{\"no\":247,\"quantity\":0},{\"no\":248,\"quantity\":0},{\"no\":249,\"quantity\":0},{\"no\":250,\"quantity\":0},{\"no\":251,\"quantity\":0},{\"no\":915,\"quantity\":0},{\"no\":916,\"quantity\":0},{\"no\":1325,\"quantity\":0},{\"no\":1326,\"quantity\":0},{\"no\":1327,\"quantity\":0},{\"no\":1328,\"quantity\":0},{\"no\":1329,\"quantity\":0}]";
-			window.localStorage.material = string;
-			result = JSON.parse(string);
-		}
-		return result;
-	}
+	});
 }
 
-function boxDisplay( box )
+function boxRowDisplay(id){
+	var mon = Box.get(id);
+	var row = $("<tr>");
+	if(mon.hasOwnProperty('choice'))
+		row.attr('data-choice', mon.choice );
+	row.attr( 'id' , mon.id ).attr( 'data-priority' , mon.priority );
+	row.append($(" <td> ").text( mon.no ));
+	//顯示圖片
+	row.append($("<td>").addIcon(false,Setting.get(2),mon.no));
+	//顯示中文名
+	row.append($("<td>").text(Index.get(mon.no,"name").chinese));
+	//顯示日文名
+	row.append($("<td>").text(Index.get(mon.no,"name").japanese));
+	//顯示進化素材
+	row.append($("<td>").showNeedMaterial(mon.no,id,mon.choice));
+	if(Index.getMaterials(mon.no,mon.choice).result !== undefined)
+		row.append($("<td>").addIcon(false,Setting.get(2),Index.getMaterials(mon.no,mon.choice).result));
+	else
+		row.append($("<td>"));
+	//顯示數量
+	row.append($("<td>").text(mon.quantity).addClass("number"));
+	row.append($("<td>").text(mon.priority).addClass("number"));
+	//顯示動作
+	row.append($("<td>").showAction($( this ).attr("data-priority"),mon.no));
+	row.tooltipster(); //active tooltipster
+	for(k=0;k<9;k++){
+		if(Setting.get(3)[k] === false)
+			row.children().eq(k).css( "display", "none" );
+	}
+	$("#mainTable tbody").append(row);
+}
+
+function boxRowEdit(id){
+	var mon = Box.get(id);
+	$("tr#" + id).children().eq(6).text(mon.quantity);
+	$("tr#" + id).children().eq(7).text(mon.priority);
+}
+
+function boxDisplay()
 {
-	var i = 0;
-	var choice;
-	for(i=0;i<box.length;i++){
-		if(box[i].hasOwnProperty('choice'))
-			choice = box[i].choice;
-		else
-			choice = 0;
-		$("#mainTable tbody").append( $(" <tr> ").attr( 'id' , box[i].id ).attr( 'data-choice' , choice ).attr( 'data-priority' , box[i].priority )
-						.append( $(" <td> ").text( box[i].no )));
-	}	
+	var all = Box.allMonsters();
+	
+	$("#mainTable").append($("<table>")
+		.append("<thead><tr><th>No.</th><th></th><th>中文名</th><th>日文名</th><th>進化素材</th><th>目標</th><th>數量</th><th>★數量</th><th>動作</th></tr></thead>")	
+		.append($("<tbody>"))
+	);
+	for(var i=0;i<all.length;i++){
+		boxRowDisplay(all[i]);
+	}
 }
 
 function materialDisplay( material , mode )
 {
-	Material.init();
-	var setting = JSON.parse(window.localStorage.setting);
 	$("#material").empty();
 	$("#material").append($("<div>").addClass("row").append($("<div>").addClass("material-body col-md-8")));
 	for(var i in materialTemplate[mode][0]){
@@ -453,17 +319,15 @@ function materialDisplay( material , mode )
 			)
 		)
 	);
-	if(setting[5] != undefined)
-		$('input[name="setting5"][value="'+ setting[5] +'"]').attr('checked',true);
+	if(Setting.get(5) != undefined)
+		$('input[name="setting5"][value="'+ Setting.get(5) +'"]').attr('checked',true);
 	else
 		$('input[name="setting5"][value=0]').attr('checked',true);
 	
 	$('input[name="setting5"]').click(function(){
 		var type = this.value;
-		var setting = JSON.parse(window.localStorage.setting);
 		type = Number(type);
-		setting[5] = type;
-		window.localStorage.setting = JSON.stringify(setting);
+		Setting.edit(5,type);
 		materialDisplay( material , type );
 	});
 	$("#material .list-group").append($("<a>").addClass("list-group-item").attr("href","#").attr("onclick","scroll(0,0)").append("TOP"));
@@ -476,7 +340,7 @@ function materialDisplay( material , mode )
 				$("<tr>").addClass(materialAttr[materialTemplate[mode][0][key1][key2]].element).append(
 					$("<td>").text(materialAttr[materialTemplate[mode][0][key1][key2]].no)
 				).append(
-					$("<td>").addIcon(false,setting[2],materialAttr[materialTemplate[mode][0][key1][key2]].no)
+					$("<td>").addIcon(false,Setting.get(2),materialAttr[materialTemplate[mode][0][key1][key2]].no)
 				).append(
 					$("<td>").text(materialAttr[materialTemplate[mode][0][key1][key2]].name)
 				).append(
@@ -496,23 +360,22 @@ function materialDisplay( material , mode )
 								$("<span>").addClass("glyphicon glyphicon-plus add-material").attr("title","+1")
 							).click(function(){
 								var id = $(this).attr('data-id');
-								$.debounce( 250, addMaterial(id) );
+								_.debounce( addMaterial(id) , 250);
 							})
 						).append(
 							$("<button>").addClass("btn btn-default").attr("type","button").attr("data-id",materialTemplate[mode][0][key1][key2]).append(
 								$("<span>").addClass("glyphicon glyphicon-minus minus-material").attr("title","-1")
 							).click(function(){
 								var id = $(this).attr('data-id');
-								$.debounce( 250, minusMaterial(id) );
+								_.debounce(minusMaterial(id), 250);
 							})
 						).append(
 							$("<button>").addClass("btn btn-default").attr("type","button").attr("data-id",materialTemplate[mode][0][key1][key2]).append(
 								$("<span>").addClass("glyphicon glyphicon-pencil edit-material").attr("title","修改")
 							).click(function(){
-								var id = $(this).attr('data-id');
-								var material = dataLoad("material");
+								var id = Number($(this).attr('data-id'));
 								$("#material-modal").modal('show');
-								$("#material-modal input").val(material[id].quantity);
+								$("#material-modal input").val(Material.quantity(id));
 								$("#material-modal input").attr("data-id",id);
 								setTimeout(function(){$("#material-modal input").focus();},500);
 							})
@@ -523,7 +386,7 @@ function materialDisplay( material , mode )
 		}
 	}
 	SetMaterialSidebarPosition();
-	if(setting[4] === true)
+	if(Setting.get(4) === true)
 		$("#material tr").each(function(){
 			$(this).children().eq(6).hide();
 			$(this).children().eq(7).hide();
@@ -537,185 +400,39 @@ function boxReset()
 
 function internalLoad( load_times )
 {
-	if(!(window.localStorage.getItem("name") === null)&&!(window.localStorage.getItem("evolution") === null)&&!(window.localStorage.getItem("ultimate") === null)){
-		var name = JSON.parse(window.localStorage.name);
-		var evolution = JSON.parse(window.localStorage.evolution);
-		var ultimate = JSON.parse(window.localStorage.ultimate);
-		if(window.localStorage.getItem("time") === null){
-			var date1 = new Date(0);
-		}
-		else
-			var date1 = new Date(window.localStorage.time);
-		var date2 = new Date();
-		var delta = date2 - date1;
-		if(delta > (86400000 * 7) && load_times < 1){
-			return false;
-		}
-		var data_date = new Date(evolution[0].time);
-		var curr_date = data_date.getDate();
-		var curr_month = data_date.getMonth();
-		curr_month++;
-		var curr_year = data_date.getFullYear();
-		$(".data-date").text(curr_year + "/" + curr_month + "/" + curr_date);
-		$("#mainTable").append($("<table>")
-			.append("<thead><tr><th>No.</th><th></th><th>中文名</th><th>日文名</th><th>進化素材</th><th>目標</th><th>數量</th><th>★數量</th><th>動作</th></tr></thead>")	
-			.append($("<tbody>"))
-		);
-		var box = dataLoad("box");
-		var material = dataLoad("material");
-		var allNeed = [];
-		var PAllNeed = [];
-		var setting = JSON.parse(window.localStorage.setting);
-		boxDisplay(box);
-		if(setting[5] == undefined)
-			materialDisplay(material,0);
-		else
-			materialDisplay(material,setting[5]);
-		var k = 0;
-		$("#mainTable tbody tr").each(function() {
-			var text = $( this ).children().text();
-			var choice = $( this ).attr('data-choice');
-			var id  = $(this).attr('id');
-			var priority = box[k].priority;
-			var quantity = box[k].quantity;
-			//顯示圖片
-			$( this ).append($("<td>").addIcon(false,setting[2],text));
-			//顯示中文名
-			if(text in name){
-				$( this ).append($("<td>").text(name[text].chinese));
-			//顯示日文名
-				$( this ).append($("<td>").text(name[text].japanese));
-			}else
-				$( this ).append($("<td>")).append($("<td>"));
-			//顯示進化素材
-			$( this ).append($("<td>").showNeedMaterial(text,id,choice));
-			if(text in evolution){
-				if(evolution[text].status == 'y'){
-					var j = 0;
-					for(j=0;j<evolution[text].need.length;j++){
-						if(evolution[text].need[j] in allNeed){
-							allNeed[evolution[text].need[j]] += Number(quantity);
-						}else{
-							allNeed[evolution[text].need[j]] = Number(quantity);
-						}
-						if($( this ).attr('data-priority')>0)
-							if(evolution[text].need[j] in PAllNeed)
-								PAllNeed[evolution[text].need[j]] += Number(priority);
-							else
-								PAllNeed[evolution[text].need[j]] = Number(priority);
-					}
-					$( this ).append($("<td>").addIcon(false,setting[2],evolution[text].result));
-				}
-				else if(evolution[text].status == 'u'){
-					if(choice > 0){
-						var i = 1;
-						var ultimateNeed = ultimate[i].need;
-						while(ultimate[i].result!=choice){
-							i++;
-							ultimateNeed = ultimate[i].need;
-						}
-						for(j=0;j<ultimateNeed.length;j++){
-							if(ultimateNeed[j] in allNeed){
-								allNeed[ultimateNeed[j]] += Number(quantity);
-							}else{
-								allNeed[ultimateNeed[j]] = Number(quantity);
-							}
-							if($( this ).attr('data-priority')>0)
-								if(ultimateNeed[j] in PAllNeed)
-									PAllNeed[ultimateNeed[j]] += Number(priority);
-								else
-									PAllNeed[ultimateNeed[j]] = Number(priority);
-						}
-						$( this ).append($("<td>").addIcon(false,setting[2],choice));
-					}else{
-						$( this ).append($("<td>"));
-					}
-				}else{
-					$( this ).append($("<td>"));
-				}
-			}
-			//顯示數量
-			$( this ).append($("<td>").text(box[k].quantity).addClass("number"));
-			$( this ).append($("<td>").text(box[k].priority).addClass("number"));
-			//顯示動作
-			$( this ).append($("<td>").showAction($( this ).attr("data-priority"),text));
-			k++;
-		});
-		$(".material-display").tooltipster(); //active tooltipster
-		$("#material tbody tr").each(function(){
-			var no = $(this).children().first().text();
-			$(this).children().eq(4).text(allNeed[no]);
-			var total = $(this).children().eq(3).text() - $(this).children().eq(4).text();
-			$(this).children().eq(5).text(total);
-			$(this).children().eq(6).text(PAllNeed[no]);
-			var Ptotal = $(this).children().eq(3).text() - $(this).children().eq(6).text();
-			$(this).children().eq(7).text(Ptotal);
-		});
-		for(var i=0;i<9;i++){
-				if(setting[3][i] === false)
-					$("#mainTable tr").each(function(){$(this).children().eq(i).css( "display", "none" );});
-			}
-		updateMeterial();
-		$("#mainTable table").tablesorter();
-	}else
-		return false;
-}
-
-function externalLoad()
-{
-	$.ajax({
-		dataType: 'jsonp',
-		url: "http://bug.22web.org/generator/source3.php", 
-		success: function(data){
-			var string = JSON.stringify(data);
-			window.localStorage.name = string;
-			loadingComplete(3);
-		},
-		error: function(request,error) 
-		{
-		 alert ( "錯誤: " + error );
-		}
+	var data_date = new Date(window.localStorage.padboxer_time);
+	var curr_date = data_date.getDate();
+	var curr_month = data_date.getMonth();
+	curr_month++;
+	var curr_year = data_date.getFullYear();
+	$(".data-date").text(curr_year + "/" + curr_month + "/" + curr_date);
+	
+	boxDisplay();
+	if(Setting.get(5) == undefined)
+		materialDisplay(material,0);
+	else
+		materialDisplay(material,Setting.get(5));
+	
+	$(".material-display").tooltipster(); //active tooltipster
+	$("#material tbody tr").each(function(){
+		var no = Number($(this).children().first().text());
+		var mat = Material.get(no);
+		$(this).children().eq(4).text(mat.need);
+		$(this).children().eq(5).text(mat.quantity - mat.need);
+		$(this).children().eq(6).text(mat.Pneed);
+		$(this).children().eq(7).text(mat.quantity - mat.Pneed);
 	});
-	$.ajax({
-		dataType: 'jsonp',
-		url: "http://bug.22web.org/generator/source1.php", 
-		success: function(data){
-			var string = JSON.stringify(data);
-			window.localStorage.evolution = string;
-			loadingComplete(1);
-		},
-		error: function(request,error) 
-		{
-		 alert ( "錯誤: " + error );
+	for(var i=0;i<9;i++){
+			if(Setting.get(3)[i] === false)
+				$("#mainTable tr").each(function(){$(this).children().eq(i).css( "display", "none" );});
 		}
-	});
-	$.ajax({
-		dataType: 'jsonp',
-		url: "http://bug.22web.org/generator/source2.php", 
-		success: function(data){
-			var string = JSON.stringify(data);
-			window.localStorage.ultimate = string;
-			loadingComplete(2);
-		},
-		error: function(request,error) 
-		{
-		 alert ( "錯誤: " + error );
-		}
-	});
-	window.localStorage.time = new Date();
-}
-
-function deleteMonster(id,box)//不是 property 裡的 id，是指索引值
-{
-		box.splice(id,1);
+	updateMaterialStatus();
+	$("#mainTable table").tablesorter();
 }
 
 function addMaterial( id )
 {
-	var material = dataLoad("material");
-	material[id].quantity ++;
-	var string = JSON.stringify(material);
-	window.localStorage.material = string;
+	Material.drift(id,1);
 	$("#material tr").each(function(){
 		if($(this).children().eq(8).children().children().attr("data-id") == id){
 			var available = Number($(this).children().eq(3).text()) + 1;
@@ -724,18 +441,14 @@ function addMaterial( id )
 			$(this).children().eq(3).text(available);
 			$(this).children().eq(5).text(total);
 			$(this).children().eq(7).text(Ptotal);
-			Material.quantityPlus(id);
 		}
 	});
-	updateMeterial();
+	updateMaterialStatus();
 }
 
 function minusMaterial( id )
 {
-	var material = dataLoad("material");
-	material[id].quantity --;
-	var string = JSON.stringify(material);
-	window.localStorage.material = string;
+	Material.drift(id,-1);
 	$("#material tr").each(function(){
 		if($(this).children().eq(8).children().children().attr("data-id") == id){
 			var available = Number($(this).children().eq(3).text()) - 1;
@@ -744,91 +457,24 @@ function minusMaterial( id )
 			$(this).children().eq(3).text(available);
 			$(this).children().eq(5).text(total);
 			$(this).children().eq(7).text(Ptotal);
-			Material.quantityMinus(id);
 		}
 	});
-	updateMeterial();
+	updateMaterialStatus();
 }
 
 function addMonster(no,times,box,from)
 {
-	var name = JSON.parse(window.localStorage.name);
-	var evolution = JSON.parse(window.localStorage.evolution);
-	var ultimate = JSON.parse(window.localStorage.ultimate);
-	var mon = new Array(times);
-	var i = 0;
+	var id = Box.add(no,times,from);
+	var mats = Material.boxEdit(no,times,undefined,false);
+	_.each(mats,materialRowEdit);
 	var resort = true;
-	var choice = 0;
-	var setting = JSON.parse(window.localStorage.setting);
-	mon[i] = {};
-	mon[i]["id"] = window.localStorage.boxid;
-	mon[i]["no"] = no;
-	mon[i]["priority"] = 0;
-	mon[i]["quantity"] = times;
-	if(from != null)
-		mon[i]["from"] = from;
-	box.push(mon[i]);
-	window.localStorage.boxid ++;
-	$row = $("<tr>").attr("id",mon[i]["id"]).attr("data-choice",0).attr("data-priority",0)
-			.append($("<td>").text(no))
-			.append($("<td>").addIcon(false,setting[2],no))
-			.append($("<td>").text(name[no].chinese))
-			.append($("<td>").text(name[no].japanese))
-			.append($("<td>").showNeedMaterial(no,mon[i]["id"],0))
-			.append(function(){
-				if(evolution[no].status == "y")
-					return $("<td>").addIcon(false,setting[2],evolution[no].result);
-				else
-					return $("<td>");
-			})
-			.append($("<td>").text(times).addClass("number"))
-			.append($("<td>").text(0).addClass("number"))
-			.append($("<td>").showAction(0,no));
-	$("#mainTable table").find('tbody').append($row).trigger("addRows", [$row, resort]);
-	if(no in evolution){
-		if(evolution[no].status == 'y'){
-			for(var key in evolution[no].need){
-				Material.needPlus(evolution[no].need[key],times);
-			}
-		}
-		else if(evolution[no].status == 'u'){
-			if(choice > 0){
-				var j = 1;
-				var ultimateNeed = ultimate[j].need;
-				while(ultimate[j].result!=choice){
-					j++;
-					ultimateNeed = ultimate[j].need;
-				}
-				for(var key in ultimateNeed){
-					Material.needPlus(ultimateNeed[key],times);
-				}
-			}
-		}
-	}
-	for(k=0;k<9;k++){
-		if(setting[3][k] === false)
-			$row.children().eq(k).css( "display", "none" );
-	}
-	var string = JSON.stringify(box);
-	window.localStorage.box = string;
+	boxRowDisplay(id);
+	$("#mainTable table").trigger("update", [resort]);
 	$("#add input[name='no']").val("");
 	$("#add input[name='quantity']").val("1");
-	updateMeterial();
+	updateMaterialStatus();
 	$(".material-display").tooltipster(); //active tooltipster
 } 
-function loadingComplete( id )
-{
-	$("#loading" + id).removeClass("danger").addClass("success").children().first().text("完成");
-	var count = 0;
-	for(var i=1;i<=3;i++){
-		if($("#loading" + i).hasClass("success") === true)
-			count++;
-	}
-	if(count === 3){
-		$('#loading-modal').modal('hide');
-		internalLoad(1);
-	}
-}
 /* center modal */
 function centerModals(){
   $('.modal').each(function(i){
@@ -854,108 +500,46 @@ $(document).ready(function() {
 	$('.modal').on('show.bs.modal', centerModals);
 	$(window).on('resize', centerModals);
 	$("#btn-add").removeAttr("disabled");
-	window.localStorage.removeItem("settingA");
-	var setting_err = false;
+	
+	Data.load();
+	Setting.load();
+	$('#loading-modal').on('success',function(event,id){
+		$("#loading" + id).removeClass("danger").addClass("success").children().first().text("完成");
+	});
+	Index.setModal($('#loading-modal'));
+	Index.load();
+	Box.load();
+	Material.load();
+	
+	internalLoad();
+	
+	/*
 	try {
 		JSON.parse(window.localStorage.setting);
 	} catch (e) {
 		alert("Error! Invalid JSON string\ncontent:\n" + window.localStorage.setting);
 		setting_err = true;
 	}
-	if(window.localStorage.getItem("setting") === null || setting_err === true){
-		var setting = new Array();
-		setting[0] = false;
-		setting[1] = false;
-		setting[2] = null;
-		setting[3] = [true,true,true,true,true,true,true,true,true];
-		setting[4] = false;
-		setting[5] = 0;
-		window.localStorage.setting = JSON.stringify(setting);
-		window.localStorage.removeItem("settingA");
-	}else{
-		var setting = JSON.parse(window.localStorage.setting);
-		$("#setting0").prop("checked" , setting[0]);
-		$("#setting1").prop("checked" , setting[1]);
-		if(setting[2] === null)
-			$("#setting2").val("NULL");
-		else
-			$("#setting2").val(setting[2]);
-		if(typeof setting[3] == "undefined"){
-			setting[3] = [true,true,true,true,true,true,true,true,true];
-			window.localStorage.setting = JSON.stringify(setting);
-		}
-		if(typeof setting[3][7] == "undefined"){
-			setting[3][7] = true;
-			setting[3][8] = true;
-			window.localStorage.setting = JSON.stringify(setting);
-		}
-		if(typeof setting[4] == "undefined"){
-			setting[4] = false;
-			$("#setting4").prop("checked" , false);
-		}else
-			$("#setting4").prop("checked" , setting[4]);
-		if(typeof setting[5] == "undefined"){
-			setting[5] = 0;
-		}else{
-			if(setting[5]==0)
-				$("#setting50").prop("checked" , true);
-			else
-				$("#setting51").prop("checked" , true);
-		}
-		for(var i = 0;i < 9;i++)
-			$("#setting3" + i).prop("checked" , setting[3][i]);
-	}
+	*/
+	
 	var err = false;
-	for (var i = 0; i < localStorage.length; i++){
-		if(localStorage.key(i) != "time")
-			try {
-			JSON.parse(window.localStorage.getItem(localStorage.key(i)));
-			} catch (e) {
-				alert("錯誤~~不合規定的JSON字串~~\n\n錯誤資訊:\n" + e + "\n內容:\n" + window.localStorage.getItem(localStorage.key(i)));
-				err = true;
-			}
-	}
-	if(err == false)
-		if(internalLoad(0) == false){
-			externalLoad();
-			$('#loading-modal').modal('show');
-		}
 	$("#add #btn-add-enter").click(function(){
-		var box = dataLoad("box");
-		var a = $("#add input[name='no']").val();
-		var b = $("#add input[name='quantity']").val();
-		$.debounce( 250, addMonster(a,b,box,null) );
+		var a = Number($("#add input[name='no']").val());
+		var b = Number($("#add input[name='quantity']").val());
+		_.debounce(addMonster(a,b,null,null), 250);
 	});
 	$("#ultimateBranch .btn-primary").click(function(){
-		var branchChoice = $("input[type='radio']:checked", "#ultimateBranch").val();
-		var id = $("input[type='radio']:checked", "#ultimateBranch").attr("data-id");
-		var box = dataLoad("box");
-		var ultimate = JSON.parse(window.localStorage.ultimate);
-		var offset = 0;
-			for(var i in box){
-				if(box[i].id == id)
-					offset = i;
-			}
-		box[offset].choice = branchChoice;
-		var string = JSON.stringify(box);
-		window.localStorage.box = string;
-		//boxReset();
-		//internalLoad();
-		$("#mainTable table tr[id='"+ id +"']").children().eq(4).empty().showNeedMaterial(box[offset].no,id,branchChoice);
-		$("#mainTable table tr[id='"+ id +"']").children().eq(5).addIcon(false,setting[2],branchChoice);
+		var branchChoice = Number($("input[type='radio']:checked", "#ultimateBranch").val());
+		var id = Number($("input[type='radio']:checked", "#ultimateBranch").attr("data-id"));
+		Box.edit(id,"choice",branchChoice);
+		$("#mainTable table tr[id='"+ id +"']").children().eq(4).empty().showNeedMaterial(Box.get(id).no,id,branchChoice);
+		$("#mainTable table tr[id='"+ id +"']").children().eq(5).addIcon(false,Setting.get(2),branchChoice);
 		$("#mainTable table tr[id='"+ id +"']").attr("data-choice",branchChoice);
 		$(".material-display").tooltipster(); //active tooltipster
-		var i = 1;
-		var ultimateNeed = ultimate[i].need;
-		var choice = branchChoice;
-		while(ultimate[i].result!=choice){
-			i++;
-			ultimateNeed = ultimate[i].need;
-		}
-		for(j=0;j<ultimateNeed.length;j++){
-			Material.needPlus(ultimateNeed[j],1);
-		}
-		updateMeterial();
+		Material.boxEdit(Box.get(id).no,Box.get(id).priority,Box.get(id).choice,true);
+		var mats = Material.boxEdit(Box.get(id).no,Box.get(id).quantity,Box.get(id).choice,false);
+		_.each(mats,materialRowEdit);
+		updateMaterialStatus();
 		$('#ultimateBranch').modal('hide');
 	});
 	$('#ultimateBranch').on('hidden.bs.modal', function (e) {
@@ -968,45 +552,35 @@ $(document).ready(function() {
 		$( "#add input[name='no']" ).focus();
 	});
 	$("#btn-add-preview").click(function(){
-		var name = JSON.parse(window.localStorage.name);
-		var evolution = JSON.parse(window.localStorage.evolution);
-		var ultimate = JSON.parse(window.localStorage.ultimate);
 		var no = $("#add input[name='no']").val();
 		var qty = $("#add input[name='quantity']").val();
-		var setting = JSON.parse(window.localStorage.setting);
 		$("#preview-modal .modal-body").empty().append($("<span>").attr("id","preview-status"));
-		$("#preview-modal h4").text(no + " - " + name[no].chinese);
-		if(evolution[no].status == "y"){
+		$("#preview-modal h4").text(no + " - " + Index.get(no,"name").chinese);
+		if(Index.get(no,"evolution").status == "y"){
 			$("#preview-modal #preview-status").text("可以進化")
-			$("#preview-modal .modal-body").append($("<h5>").text( "進化為 " + evolution[no].result +" - "+name[evolution[no].result].chinese + "需要：" ));
+			$("#preview-modal .modal-body").append($("<h5>").text( "進化為 " + Index.get(no,"evolution").result +" - "+Index.get(Index.get(no,"evolution").result,"name").chinese + "需要：" ));
 			$("#preview-modal .modal-body").append($("<table>").addClass("table table-bordered").append($("<thead>").append($("<tr>").append($("<th>")).append($("<th>").text("名稱")).append($("<th>").text("現有")).append($("<th>").text("總共")))));
-			for(var key in evolution[no].need){
-				
+			for(var key in Index.get(no,"evolution").need){
 				$("#preview-modal .modal-body table").append($("<tr>")
-					.append($("<td>").addIcon(false,setting[2],evolution[no].need[key]))
-					.append($("<td>").text(evolution[no].need[key] + " - " + name[evolution[no].need[key]].chinese))
-					.append($("<td>").text($("#material table tr td:first-child:contains('" + evolution[no].need[key] + "')").next().next().next().text()))
-					.append($("<td>").text($("#material table tr td:first-child:contains('" + evolution[no].need[key] + "')").next().next().next().next().next().text()))
+					.append($("<td>").addIcon(false,Setting.get(2),Index.get(no,"evolution").need[key]))
+					.append($("<td>").text(Index.get(no,"evolution").need[key] + " - " + Index.get(Index.get(no,"evolution").need[key],"name").chinese))
+					.append($("<td>").text($("#material table tr td:first-child:contains('" + Index.get(no,"evolution").need[key] + "')").next().next().next().text()))
+					.append($("<td>").text($("#material table tr td:first-child:contains('" + Index.get(no,"evolution").need[key] + "')").next().next().next().next().next().text()))
 				);
 			}
-		}else if(evolution[no].status == "u"){
+		}else if(Index.get(no,"evolution").status == "u"){
 			$("#preview-modal #preview-status").text("可以究極進化");
-			var i = 1;
 			var ultimateResult = [];
 			if(ultimateResult.length > 0)
 			ultimateResult.length = 0;
-			while(i < ultimate.length){
-				if(no == ultimate[i].no)
-					ultimateResult.push(ultimate[i]);
-				i++;
-			}
+			ultimateResult = Index.get(no,"ultimate");
 			$.each(ultimateResult,function(index,value){
-				$("#preview-modal .modal-body").append($("<h5>").text( "進化為 " + value.result +" - "+name[value.result].chinese + "需要：" ));
+				$("#preview-modal .modal-body").append($("<h5>").text( "進化為 " + value.result +" - "+Index.get(value.result,"name").chinese + "需要：" ));
 				$("#preview-modal .modal-body").append($("<table>").addClass("table table-bordered").attr("data-number",index).append($("<thead>").append($("<tr>").append($("<th>")).append($("<th>").text("名稱")).append($("<th>").text("現有")).append($("<th>").text("總共")))));
 				for(var key in value.need){
 					$("#preview-modal .modal-body table[data-number='"+ index +"']").append($("<tr>")
-						.append($("<td>").addIcon(false,setting[2],value.need[key]))
-						.append($("<td>").text(value.need[key] + " - " + name[value.need[key]].chinese))
+						.append($("<td>").addIcon(false,Setting.get(2),value.need[key]))
+						.append($("<td>").text(value.need[key] + " - " + Index.get(value.need[key],"name").chinese))
 						.append($("<td>").text($("#material table tr td:first-child:contains('" + value.need[key] + "')").next().next().next().text()))
 						.append($("<td>").text($("#material table tr td:first-child:contains('" + value.need[key] + "')").next().next().next().next().next().text()))
 					);
@@ -1073,7 +647,7 @@ $(document).ready(function() {
 		}
 	});
 	$("#backup").click(function(){
-		var backup = window.localStorage.boxid + "      " + window.localStorage.box + "      " + window.localStorage.material + "      " + window.localStorage.setting;
+		var backup = Data.backup;
 		$("#backup-modal .modal-body textarea").val(backup);
 	});
 	$("#backup-modal .btn-primary").click(function(){
@@ -1082,12 +656,9 @@ $(document).ready(function() {
 		saveAs(blob, "padboxer-backup.txt");
 	});
 	$("#material-modal .btn-primary").click(function(){
-		var value = $("#material-modal .modal-body form input").val();
-		var id = $("#material-modal .modal-body form input").attr("data-id");
-		var material = dataLoad("material");
-		material[id].quantity = value;
-		var string = JSON.stringify(material);
-		window.localStorage.material = string;
+		var value = Number($("#material-modal .modal-body form input").val());
+		var id = Number($("#material-modal .modal-body form input").attr("data-id"));
+		Material.edit(id,value);
 		$("#material tr").each(function(){
 			if($(this).children().eq(8).children().children().attr("data-id") == id){
 				var available = value;
@@ -1096,47 +667,35 @@ $(document).ready(function() {
 				$(this).children().eq(3).text(available);
 				$(this).children().eq(5).text(total);
 				$(this).children().eq(7).text(Ptotal);
-				Material.setQuantity(id,value);
 			}
 		});
-		updateMeterial();
+		updateMaterialStatus();
 		$('#material-modal').modal('hide');
 	});
 	$("#box-modal .btn-primary").click(function(){
-		var allValue = $("#allQty").val();
-		var starValue = $("#starQty").val();
+		var allValue = Number($("#allQty").val());
+		var starValue = Number($("#starQty").val());
 		if(allValue >= starValue){
-			var allOriginal = $("#allQty").attr("data-original");
-			var starOriginal = $("#starQty").attr("data-original");
-			var id = $("#allQty").attr("data-id");
-			var box = dataLoad("box");
-			var offset = 0;
-			for(var i in box){
-				if(box[i].id == id)
-					offset = i;
-			}
-			box[offset].quantity = allValue;
-			box[offset].priority = starValue;
-			var string = JSON.stringify(box);
-			window.localStorage.box = string;
+			var allOriginal = Number($("#allQty").attr("data-original"));
+			var starOriginal = Number($("#starQty").attr("data-original"));
+			var id = Number($("#allQty").attr("data-id"));
+			Box.edit(id,"quantity",allValue);
+			Box.edit(id,"priority",starValue);
+
 			$("#mainTable tr").each(function(){
 				if($(this).attr("id") == id){
 					$(this).children().eq(6).text(allValue);
 					$(this).children().eq(7).text(starValue);
 				}
 			});
+			
 			var allDiff = allValue - allOriginal;
 			var starDiff = starValue - starOriginal;
-			var choice = 0;
-			if(typeof box[offset].choice != 'undefined')
-				choice = box[offset].choice;
-			var needMaterial = NeedMaterial(box[offset].no,choice);
-			var need = needMaterial.result;
-			for(var index in need){
-				Material.needPlus(need[index],allDiff);
-				Material.PneedPlus(need[index],starDiff);
-			}
-			updateMeterial();
+			Material.boxEdit(Box.get(id).no,allDiff,Box.get(id).choice,false);
+			var mats = Material.boxEdit(Box.get(id).no,starDiff,Box.get(id).choice,true);
+			_.each(mats,materialRowEdit);
+
+			updateMaterialStatus();
 		}else{
 			alert("Error!\n優先數量大於所有數量");
 		}
@@ -1145,49 +704,67 @@ $(document).ready(function() {
 	$("#import-modal #importOld").click(function(){
 		var value = $("#import-modal .modal-body textarea").val();
 		var splits = value.split("      ");
-		window.localStorage.boxid = splits[0];
-		window.localStorage.box = splits[1];
-		window.localStorage.material = splits[2];
-		window.localStorage.setting = splits[3];
-		boxReset();
-		internalLoad();
+		try{
+			JSON.parse(splits[1]);
+			JSON.parse(splits[2]);
+			JSON.parse(splits[3]);
+		}catch(e){
+			alert(e);
+		}finally{
+			Data.edit("boxid",Number(splits[0]));
+			Data.edit("box",JSON.parse(splits[1]));
+			Data.edit("material",JSON.parse(splits[2]));
+			Data.edit("setting",JSON.parse(splits[3]));
+			document.location.reload(true);
+		}
 		$("#import-modal .modal-body textarea").val("");
 		$('#import-modal').modal('hide');
 	});
-	/*
 	$("#import-modal #importNew").click(function(){
 		var value = $("#import-modal .modal-body textarea").val();
-		var data = JSON.parse(value);
 		//要加版本判斷機制
-		window.localStorage.boxid = data.boxid;
-		window.localStorage.box = JSON.stringify(data.box);
-		window.localStorage.material = JSON.stringify(data.material);
-		window.localStorage.setting = JSON.stringify(data.setting);
-		boxReset();
-		internalLoad();
+		try{
+			Data.restore(value);
+		}catch(e){
+			alert(e);
+		}
+		document.location.reload(true);
 		$("#import-modal .modal-body textarea").val("");
 		$('#import-modal').modal('hide');
 	});
-	*/
 	$("#update").click(function(){
-		window.localStorage.removeItem("time");
-		document.location.reload(true);
+		Index.update();
 	});
 	$("#preview-modal .btn-primary").click(function(){
 		$('#preview-modal').modal('hide');
 		var no = $("#add input[name='no']").val();
 		var qty = $("#add input[name='quantity']").val();
-		var box = dataLoad("box");
-		$.debounce( 250, addMonster(no,qty,box,null) );
+		_.debounce(addMonster(no,qty,box,null), 250);
 	});
+	
+	
+	$("#setting0").prop("checked" , Setting.get(0));
+	$("#setting1").prop("checked" , Setting.get(1));
+	if(Setting.get(2) === null)
+		$("#setting2").val("NULL");
+	else
+		$("#setting2").val(Setting.get(2));
+	$("#setting4").prop("checked" , Setting.get(4));
+	
+	if(Setting.get(5)==0)
+		$("#setting50").prop("checked" , true);
+	else
+		$("#setting51").prop("checked" , true);
+	
+	for(var i = 0;i < 9;i++)
+		$("#setting3" + i).prop("checked" , Setting.get(3)[i]);
+	
 	$( "#setting2" ).change(function() {
-		var setting = JSON.parse(window.localStorage.setting);
 		var val = $( "#setting2 option:selected" ).val();
 		if(val === "NULL")
-			setting[2] = null;
+			Setting.edit(2,null);
 		else
-			setting[2] = val;
-		window.localStorage.setting = JSON.stringify(setting);
+			Setting.edit(2,val);
 	});
 	$( "input[type='checkbox']" ).change(function() {
 		var input = $(this).attr("id");
@@ -1206,27 +783,30 @@ $(document).ready(function() {
 			inputID = 3;
 			break;
 		}
-		var setting = JSON.parse(window.localStorage.setting);
 		if(inputID != 3)
 			if($(this).prop( "checked" )){
-				setting[inputID] = true;		
+				Setting.edit(inputID,true);	
 			}else{
-				setting[inputID] = false;
+				Setting.edit(inputID,false);	
 			}
 		else{
 			var rows = document.getElementsByName('setting3[]');
 			for (var i = 0, l = rows.length; i < l; i++) {
 				if (rows[i].checked) {
-					setting[inputID][i] = true;
+					var setting = Setting.get(inputID);
+					setting[i] = true;
+					Setting.edit(inputID,setting);
 					$("#mainTable tr").each(function(){$(this).children().eq(i).show();});
 				}else{
-					setting[inputID][i] = false;
+					var setting = Setting.get(inputID);
+					setting[i] = false;
+					Setting.edit(inputID,setting);
 					$("#mainTable tr").each(function(){$(this).children().eq(i).hide();});
 				}
 			}
 		}
 		if(inputID == 4){
-			if(setting[4] === true)
+			if(Setting.get(4) === true)
 				$("#material tr").each(function(){
 					$(this).children().eq(6).hide();
 					$(this).children().eq(7).hide();
@@ -1237,8 +817,8 @@ $(document).ready(function() {
 					$(this).children().eq(7).show();
 				});
 		}
-		window.localStorage.setting = JSON.stringify(setting);
 	});
+	
 	$(window).bind('scroll', SetMaterialSidebarPosition);
 	$(".version").append(version);
 });
