@@ -100,8 +100,11 @@
 				).click(no,function(){
 					var id = Number($( this ).parent().parent().parent().attr("id"));
 					var mon = Box.get(id);
-					//try{
+					try{
 						var result = Box.evolution(id);
+					}catch(e){
+						alert(e);
+					}finally{
 						var resort = true;
 						if(result["delete"] !== undefined)
 							for(var i in result["delete"])
@@ -123,9 +126,7 @@
 							_.each(mats2,materialRowEdit);
 						}
 						updateMaterialStatus();
-					//}catch(e){
-					//	alert(e);
-					//}
+					}
 				})
 			);
 		$( this ).children().append(

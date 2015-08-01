@@ -48,7 +48,7 @@ var Box = (function() {
 		},
 		evolution: function(id){
 			var monster = Box.get(id);
-			var evol = Index.get(monster.no,"evolution");
+			var evol = Index.getMaterials(monster.no,monster.choice);
 			var need = [];
 			var result = {};
 			//找需要的素材及進化結果
@@ -57,19 +57,13 @@ var Box = (function() {
 				case "?":
 				throw new Error("不能進化");
 				break;
+				case "u":
+				if(typeof monster.choice === "undefined")
+					throw new Error("未指定究極進化選項");
 				case "y":
 				need = evol.need;
 				result = evol.result;
 				break;
-				case "u":
-				if(typeof monster.choice === "undefined")
-					throw new Error("未指定究極進化選項");
-				var branches = Index.get(monster.no,"ultimate");
-				for(var i in branches)
-					if(Number(branches[i].result) === Number(monster.choice)){
-						need = branches[i].need;
-						result = branches[i].result;
-					}
 			}
 			//確認是否有足夠素材
 			var mater = { };
@@ -102,16 +96,17 @@ var Box = (function() {
 			else
 				var accept = confirm ("沒有統計" + notIn + "\n真的要進化嗎？");
 			if(accept === true){
+				var product = Number(evol.result);
 				//修改素材數量
 				var prior = (monster.priority > 0);
 				Material.evolution(monster.no,monster.choice,prior);
 				if(Setting.get(0) === true && (evol.status === "y" || evol.status === "u")){
-					Material.boxEdit(evol.result,1,monster.choice,false);
+					Material.boxEdit(product,1,monster.choice,false);
 					if(monster.priority > 0)
-						Material.boxEdit(evol.result,1,monster.choice,true);
+						Material.boxEdit(product,1,monster.choice,true);
 				}
 				//修改box
-				if(Setting.get(0) === true && (evol.status === "y" || evol.status === "u")){
+				if(Setting.get(0) === true && (Index.get(product,"evolution").status === "y" || Index.get(product,"evolution").status === "u")){
 					var to = -1;
 					for(var i in box)
 						if(box[i].from !== undefined)
@@ -119,7 +114,7 @@ var Box = (function() {
 								to = box[i].id;
 					if(monster.quantity === 1){
 						if(to === -1){
-							var newMon = Box.add(evol.result,1,null);
+							var newMon = Box.add(product,1,null);
 							Box.remove(id);
 							return {"delete" : [id],"add":[newMon]};
 						}else{
@@ -132,7 +127,7 @@ var Box = (function() {
 						}
 					}else{
 						if(to === -1){
-							var newMon = Box.add(evol.result,1,monster.id);
+							var newMon = Box.add(product,1,monster.id);
 							if(monster.priority > 0)
 								Box.edit(newMon,"priority",1);
 						}else{
