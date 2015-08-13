@@ -12,9 +12,6 @@ var Index = (function() {
 			if(complete[i] === false)
 				return;
 		}
-		name = JSON.parse(window.localStorage.padboxer_name);
-		evolution = JSON.parse(window.localStorage.padboxer_evolution);
-		ultimate = JSON.parse(window.localStorage.padboxer_ultimate);
 		modal.modal('hide');
 		document.location.reload(true);
 	}
@@ -87,9 +84,14 @@ var Index = (function() {
 				if(now - updated > (86400000 * 7))
 					externalLoad();
 				else{
-					name = JSON.parse(window.localStorage.padboxer_name);
-					evolution = JSON.parse(window.localStorage.padboxer_evolution);
-					ultimate = JSON.parse(window.localStorage.padboxer_ultimate);
+					try{
+						name = JSON.parse(window.localStorage.padboxer_name);
+						evolution = JSON.parse(window.localStorage.padboxer_evolution);
+						ultimate = JSON.parse(window.localStorage.padboxer_ultimate);
+					}catch(e){
+						alert(e);
+						externalLoad();
+					}
 				}
 			}
 		},
