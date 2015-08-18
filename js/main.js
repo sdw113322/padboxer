@@ -665,7 +665,7 @@ function externalLoad()
 {
 	$.ajax({
 		dataType: 'jsonp',
-		url: "http://bug.22web.org/generator/source3.php", 
+		url: "http://tidal-outlook-93517.appspot.com/source3.php", 
 		success: function(data){
 			var string = JSON.stringify(data);
 			window.localStorage.name = string;
@@ -678,7 +678,7 @@ function externalLoad()
 	});
 	$.ajax({
 		dataType: 'jsonp',
-		url: "http://bug.22web.org/generator/source1.php", 
+		url: "http://tidal-outlook-93517.appspot.com/source1.php", 
 		success: function(data){
 			var string = JSON.stringify(data);
 			window.localStorage.evolution = string;
@@ -691,7 +691,7 @@ function externalLoad()
 	});
 	$.ajax({
 		dataType: 'jsonp',
-		url: "http://bug.22web.org/generator/source2.php", 
+		url: "http://tidal-outlook-93517.appspot.com/source2.php", 
 		success: function(data){
 			var string = JSON.stringify(data);
 			window.localStorage.ultimate = string;
