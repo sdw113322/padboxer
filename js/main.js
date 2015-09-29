@@ -526,7 +526,11 @@ $(document).ready(function() {
 	$("#add #btn-add-enter").click(function(){
 		var a = Number($("#add input[name='no']").val());
 		var b = Number($("#add input[name='quantity']").val());
-		_.debounce(addMonster(a,b,null,null), 250);
+		if(Index.get(a,"evolution") !== undefined){
+			_.debounce(addMonster(a,b,null,null), 250);
+			$("#add input[name='no']").parent().removeClass("has-error");
+		}else
+			$("#add input[name='no']").parent().addClass("has-error");
 	});
 	$("#ultimateBranch .btn-primary").click(function(){
 		var branchChoice = Number($("input[type='radio']:checked", "#ultimateBranch").val());
