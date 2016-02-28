@@ -828,4 +828,5 @@ $(document).ready(function() {
 	
 	$(window).bind('scroll', SetMaterialSidebarPosition);
 	$(".version").append(version);
+	$(".icon-date").append(iconDate);
 });
