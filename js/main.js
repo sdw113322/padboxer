@@ -739,6 +739,9 @@ $(document).ready(function() {
 	$("#update").click(function(){
 		Index.update();
 	});
+	$("#update2").click(function(){
+		document.location.reload(true);
+	});
 	$("#preview-modal .btn-primary").click(function(){
 		$('#preview-modal').modal('hide');
 		var no = $("#add input[name='no']").val();
@@ -825,4 +828,5 @@ $(document).ready(function() {
 	
 	$(window).bind('scroll', SetMaterialSidebarPosition);
 	$(".version").append(version);
+	$(".icon-date").append(iconDate);
 });
