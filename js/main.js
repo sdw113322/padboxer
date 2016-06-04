@@ -655,7 +655,7 @@ $(document).ready(function() {
 		$("#backup-modal .modal-body textarea").val(backup);
 	});
 	$("#backup-modal .btn-primary").click(function(){
-		var backup = window.localStorage.boxid + "      " + window.localStorage.box + "      " + window.localStorage.material + "      " + window.localStorage.setting;
+		var backup = Data.backup;
 		var blob = new Blob([backup], {type: "text/plain;charset=utf-8"});
 		saveAs(blob, "padboxer-backup.txt");
 	});
@@ -735,6 +735,24 @@ $(document).ready(function() {
 		document.location.reload(true);
 		$("#import-modal .modal-body textarea").val("");
 		$('#import-modal').modal('hide');
+	});
+	$("#import-modal #importFromFile").change(function(event){
+		var input = event.target;
+
+		var reader = new FileReader();
+		reader.onload = function(){
+			var text = reader.result;
+			//要加版本判斷機制
+			try{
+				Data.restore(text);
+				document.location.reload(true);
+				$("#import-modal .modal-body textarea").val("");
+				$('#import-modal').modal('hide');
+			}catch(e){
+				alert(e);
+			}
+		};
+		reader.readAsText(input.files[0]);
 	});
 	$("#update").click(function(){
 		Index.update();
