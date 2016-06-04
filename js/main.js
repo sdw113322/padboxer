@@ -655,7 +655,7 @@ $(document).ready(function() {
 		$("#backup-modal .modal-body textarea").val(backup);
 	});
 	$("#backup-modal .btn-primary").click(function(){
-		var backup = window.localStorage.boxid + "      " + window.localStorage.box + "      " + window.localStorage.material + "      " + window.localStorage.setting;
+		var backup = Data.backup;
 		var blob = new Blob([backup], {type: "text/plain;charset=utf-8"});
 		saveAs(blob, "padboxer-backup.txt");
 	});
