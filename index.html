@@ -194,9 +194,15 @@
 			<textarea style="width: 100%; height: 300px;"></textarea>
 		  </div>
 		  <div class="modal-footer">
-			<button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
 			<button type="submit" class="btn btn-primary" id="importOld">儲存變更(v2.4以下)</button>
 			<button type="submit" class="btn btn-primary" id="importNew">儲存變更(v2.5以上)</button>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+			<div class="fileUpload btn btn-primary">
+				<span>從檔案匯入</span>
+				<input type="file" id="importFromFile" />
+			</div>
 		  </div>
 		</div>
 	  </div>
