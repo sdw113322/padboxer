@@ -1,5 +1,5 @@
 var version = "2.7 dev";
-var iconDate = "2016/3/5";
+var iconDate = "2016/10/31";
 //素材資料 (編號,屬性,名稱)
 function materialData(no,element,name){
 	this.no = no;
