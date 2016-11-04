@@ -679,6 +679,11 @@ $(document).ready(function() {
 	$("#box-modal .btn-primary").click(function(){
 		var allValue = Number($("#allQty").val());
 		var starValue = Number($("#starQty").val());
+		if(allValue < 0 || starValue < 0){
+			alert("Error!\n數量不可小於0");
+			$('#box-modal').modal('hide');
+			return;
+		}
 		if(allValue >= starValue){
 			var allOriginal = Number($("#allQty").attr("data-original"));
 			var starOriginal = Number($("#starQty").attr("data-original"));
