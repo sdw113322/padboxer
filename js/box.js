@@ -84,10 +84,10 @@ var Box = (function() {
 			if(notEnough.length > 0){
 				var errmsg = "缺少下列素材:";
 				for(var k in notEnough){
+					errmsg +=  "\n";
 					errmsg += notEnough[k];
 					errmsg += " - ";
 					errmsg += Index.get(notEnough[k],"name").chinese;
-					errmsg +=  "\n";
 				}
 				throw new Error(errmsg);
 			}
