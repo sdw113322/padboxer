@@ -186,6 +186,34 @@
 	};
 }( jQuery ));
 
+window.onerror = function (msg, url, lineNo, columnNo, error) {
+    var string = msg.toLowerCase();
+    var substring = "script error";
+    if (string.indexOf(substring) > -1){
+        alert('Script Error: See Browser Console for Detail');
+    } else {
+        var message = [
+            'Message: ' + msg,
+            'URL: ' + url,
+            'Line: ' + lineNo,
+            'Column: ' + columnNo,
+            'Error object: ' + JSON.stringify(error)
+        ].join(' - ');
+
+        alert(message);
+    }
+	
+	if(confirm("是否重新下載資料?")){
+		window.localStorage.removeItem("padboxer_time");
+		Index.load();
+	}else if(confirm("是否清空紀錄?")){
+		window.localStorage.clear();
+		Index.load();
+	}
+
+    return false;
+};
+
 function updateMaterialStatus()
 {
 	$("#mainTable div.icon span").each(function(){
