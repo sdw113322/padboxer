@@ -186,6 +186,34 @@
 	};
 }( jQuery ));
 
+window.onerror = function (msg, url, lineNo, columnNo, error) {
+    var string = msg.toLowerCase();
+    var substring = "script error";
+    if (string.indexOf(substring) > -1){
+        alert('Script Error: See Browser Console for Detail');
+    } else {
+        var message = [
+            'Message: ' + msg,
+            'URL: ' + url,
+            'Line: ' + lineNo,
+            'Column: ' + columnNo,
+            'Error object: ' + JSON.stringify(error)
+        ].join(' - ');
+
+        alert(message);
+    }
+	
+	if(confirm("是否重新下載資料?")){
+		window.localStorage.removeItem("padboxer_time");
+		Index.load();
+	}else if(confirm("是否清空紀錄?")){
+		window.localStorage.clear();
+		Index.load();
+	}
+
+    return false;
+};
+
 function updateMaterialStatus()
 {
 	$("#mainTable div.icon span").each(function(){
@@ -679,6 +707,11 @@ $(document).ready(function() {
 	$("#box-modal .btn-primary").click(function(){
 		var allValue = Number($("#allQty").val());
 		var starValue = Number($("#starQty").val());
+		if(allValue < 0 || starValue < 0){
+			alert("Error!\n數量不可小於0");
+			$('#box-modal').modal('hide');
+			return;
+		}
 		if(allValue >= starValue){
 			var allOriginal = Number($("#allQty").attr("data-original"));
 			var starOriginal = Number($("#starQty").attr("data-original"));
