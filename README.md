@@ -11,5 +11,9 @@ In the "BOX" tab, you can add/view monsters you would like to (ultimate) evolve.
 In the "material" tab, you can edit the quantity of materials you have.<br>
 There are "evolve" buttons in the "BOX" tab. It makes users use the program more convenient.
 
-If you find any bugs or have any feature requests, please make use of our bug tracker(http://bug.22web.org/).
+========
+padboxer計畫進行大改造
+有想要的新功能或有問題或建議，歡迎來 https://etherpad.net/p/padboxer 留下意見
 
+padboxer is planned to update!
+If you have any questions, suggestions, or feature requirements, welcome to https://etherpad.net/p/padboxer and leave some messages.
