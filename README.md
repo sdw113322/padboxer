@@ -10,7 +10,6 @@ The program can be used to calculate the demand of (ultimate) evolution material
 In the "BOX" tab, you can add/view monsters you would like to (ultimate) evolve.<br>
 In the "material" tab, you can edit the quantity of materials you have.<br>
 There are "evolve" buttons in the "BOX" tab. It makes users use the program more convenient.
-
 ========
 padboxer計畫進行大改造
 有想要的新功能或有問題或建議，歡迎來 https://etherpad.net/p/padboxer 留下意見
