@@ -13,10 +13,8 @@ There are "evolve" buttons in the "BOX" tab. It makes users use the program more
 
 ___
 
-padboxer計畫進行大改造
-
+padboxer計畫進行大改造<br>
 有想要的新功能或有問題或建議，歡迎來 https://etherpad.net/p/padboxer 留下意見
 
-padboxer is planned to update!
-
+padboxer is planned to update!<br>
 If you have any questions, suggestions, or feature requirements, welcome to https://etherpad.net/p/padboxer and leave some messages.
